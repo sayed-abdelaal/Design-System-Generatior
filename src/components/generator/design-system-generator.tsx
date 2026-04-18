@@ -3,6 +3,25 @@
 import Image from "next/image";
 import type { ChangeEvent, CSSProperties, Dispatch, SetStateAction } from "react";
 import { useMemo, useState } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Alert02Icon,
+  Analytics01Icon,
+  ArrowRight01Icon,
+  Calendar01Icon,
+  ChartHistogramIcon,
+  DashboardSquare01Icon,
+  DatabaseIcon,
+  Home01Icon,
+  Mail01Icon,
+  Menu01Icon,
+  Notification03Icon,
+  Search01Icon,
+  Settings01Icon,
+  StarIcon as StarHugeIcon,
+  TableIcon,
+  UserIcon,
+} from "@hugeicons/core-free-icons";
 import {
   Download,
   Layers3,
@@ -93,7 +112,7 @@ const INITIAL_INPUTS: BrandInputs = {
   logoDataUrl: null,
 };
 
-const PREVIEW_MODES = ["ui-kit", "components", "dashboard", "marketing"] as const;
+const PREVIEW_MODES = ["ui-kit", "components", "icons", "dashboard", "marketing"] as const;
 const TYPOGRAPHY_SCALE_ORDER = [
   "display1",
   "display2",
@@ -206,6 +225,11 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
   const dialogOverlay = system.components.dialog.overlayTone === "strong"
     ? "color-mix(in srgb, var(--preview-foreground) 34%, transparent)"
     : "color-mix(in srgb, var(--preview-foreground) 18%, transparent)";
+  const iconButtons = resolveTokenReference(system.icons.semanticUsage.buttons, system.palettes);
+  const iconAlerts = resolveTokenReference(system.icons.semanticUsage.alerts, system.palettes);
+  const iconNav = resolveTokenReference(system.icons.semanticUsage.nav, system.palettes);
+  const iconTables = resolveTokenReference(system.icons.semanticUsage.tables, system.palettes);
+  const iconInputs = resolveTokenReference(system.icons.semanticUsage.inputs, system.palettes);
 
   return {
     "--preview-background": resolved.background,
@@ -234,6 +258,13 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-font-display": system.typography.displayFont,
     "--preview-font-heading": system.typography.headingFont,
     "--preview-font-body": system.typography.bodyFont,
+    "--preview-icon-size": `${system.icons.defaultSize}px`,
+    "--preview-icon-stroke": system.icons.strokeWidth,
+    "--preview-icon-buttons": system.icons.colorBehavior === "semantic" ? iconButtons : system.icons.colorBehavior === "muted" ? resolved.textMuted : "currentColor",
+    "--preview-icon-alerts": system.icons.colorBehavior === "semantic" ? iconAlerts : system.icons.colorBehavior === "muted" ? resolved.textMuted : "currentColor",
+    "--preview-icon-nav": system.icons.colorBehavior === "semantic" ? iconNav : system.icons.colorBehavior === "muted" ? resolved.textMuted : "currentColor",
+    "--preview-icon-tables": system.icons.colorBehavior === "semantic" ? iconTables : system.icons.colorBehavior === "muted" ? resolved.textMuted : "currentColor",
+    "--preview-icon-inputs": system.icons.colorBehavior === "semantic" ? iconInputs : system.icons.colorBehavior === "muted" ? resolved.textMuted : "currentColor",
     "--preview-radius-sm": system.radius.sm,
     "--preview-radius-md": system.radius.md,
     "--preview-radius-lg": system.radius.lg,
@@ -332,6 +363,10 @@ function getScreenPresetKey(previewMode: PreviewMode) {
   }
 
   if (previewMode === "components") {
+    return "settings" as const;
+  }
+
+  if (previewMode === "icons") {
     return "settings" as const;
   }
 
@@ -442,6 +477,27 @@ function getSystemMetrics(system: GeneratedSystem) {
 
 function getTokenSwatchColor(option: TokenReference, palettes: GeneratedSystem["palettes"]) {
   return resolveTokenReference(option, palettes);
+}
+
+function PreviewIcon({
+  icon,
+  context,
+  size,
+  strokeWidth,
+}: {
+  icon: Parameters<typeof HugeiconsIcon>[0]["icon"];
+  context: "buttons" | "alerts" | "nav" | "tables" | "inputs";
+  size?: number;
+  strokeWidth?: number;
+}) {
+  return (
+    <HugeiconsIcon
+      icon={icon}
+      size={size ?? "var(--preview-icon-size)"}
+      strokeWidth={strokeWidth ?? Number("1.7")}
+      color={`var(--preview-icon-${context})`}
+    />
+  );
 }
 
 function TokenReferencePicker({
@@ -1022,6 +1078,8 @@ function PreviewPanel({
               <UIKitPreview system={system} />
             ) : previewMode === "components" ? (
               <ComponentsPreview system={system} />
+            ) : previewMode === "icons" ? (
+              <IconsPreview system={system} />
             ) : previewMode === "dashboard" ? (
               <DashboardPreview brandName={brandName} system={system} />
             ) : (
@@ -1485,6 +1543,92 @@ function TokenPanel({
                   </label>
                 ))}
               </div>
+            </div>
+          </div>
+        </details>
+        ) : null}
+
+        {activeTab === "components" ? (
+        <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
+            <span className="inline-flex items-center gap-2"><Sparkles className="h-4 w-4" /> Icon system</span>
+          </summary>
+          <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Default icon size</span>
+                <input
+                  className="field px-3 py-2 text-sm"
+                  type="number"
+                  min={12}
+                  max={48}
+                  value={system.icons.defaultSize}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    icons: { ...current.icons, defaultSize: Number(event.target.value || 20) },
+                  }))}
+                />
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stroke width</span>
+                <input
+                  className="field px-3 py-2 text-sm"
+                  type="number"
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  value={system.icons.strokeWidth}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    icons: { ...current.icons, strokeWidth: Number(event.target.value || 1.7) },
+                  }))}
+                />
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Color behavior</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.icons.colorBehavior}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    icons: { ...current.icons, colorBehavior: event.target.value as typeof current.icons.colorBehavior },
+                  }))}
+                >
+                  <option value="semantic">Semantic tokens</option>
+                  <option value="current">Current context color</option>
+                  <option value="muted">Muted icons</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              {([
+                ["buttons", "Buttons"],
+                ["alerts", "Alerts"],
+                ["nav", "Navigation"],
+                ["tables", "Tables"],
+                ["inputs", "Inputs"],
+              ] as const).map(([key, label]) => (
+                <label key={key} className="space-y-1 text-xs text-app-muted">
+                  <span>{label} icon token</span>
+                  <select
+                    className="field px-3 py-2 text-sm"
+                    value={system.icons.semanticUsage[key]}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      icons: {
+                        ...current.icons,
+                        semanticUsage: {
+                          ...current.icons.semanticUsage,
+                          [key]: event.target.value as TokenReference,
+                        },
+                      },
+                    }))}
+                  >
+                    {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                  </select>
+                </label>
+              ))}
             </div>
           </div>
         </details>
@@ -3139,12 +3283,12 @@ function UIKitPreview({ system }: { system: GeneratedSystem }) {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Primary button</button>
-            <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Secondary action</button>
-            <button className="preview-button-ghost px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Ghost action</button>
+            <button className="preview-button-primary flex items-center gap-2 px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium"><PreviewIcon icon={ArrowRight01Icon} context="buttons" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Primary button</button>
+            <button className="preview-button-secondary flex items-center gap-2 px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium"><PreviewIcon icon={StarHugeIcon} context="buttons" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Secondary action</button>
+            <button className="preview-button-ghost flex items-center gap-2 px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium"><PreviewIcon icon={Menu01Icon} context="buttons" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Ghost action</button>
           </div>
           <div className="grid gap-3">
-            <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Workspace name" readOnly />
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]"><PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /><span>Workspace name</span></div>
             <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="success" value="Brand color validated" readOnly />
             <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="error" value="Accent color needs contrast help" readOnly />
             {system.components.input.showHelperText ? (
@@ -3268,11 +3412,11 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
             <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">System label</span>
           </div>
           <div className="mt-5 space-y-3">
-            <div className="preview-alert-success px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Success alert recipe</div>
-            <div className="preview-alert-warning px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Warning alert recipe</div>
-            <div className="preview-alert-danger px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Danger alert recipe</div>
-            <div className="preview-alert-info px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Info alert recipe</div>
-            <div className="preview-alert-attention px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Attention alert recipe</div>
+            <div className="preview-alert-success flex items-center gap-3 px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm"><PreviewIcon icon={Notification03Icon} context="alerts" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Success alert recipe</div>
+            <div className="preview-alert-warning flex items-center gap-3 px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm"><PreviewIcon icon={Alert02Icon} context="alerts" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Warning alert recipe</div>
+            <div className="preview-alert-danger flex items-center gap-3 px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm"><PreviewIcon icon={Alert02Icon} context="alerts" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Danger alert recipe</div>
+            <div className="preview-alert-info flex items-center gap-3 px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm"><PreviewIcon icon={DatabaseIcon} context="alerts" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Info alert recipe</div>
+            <div className="preview-alert-attention flex items-center gap-3 px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm"><PreviewIcon icon={Alert02Icon} context="alerts" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Attention alert recipe</div>
           </div>
         </div>
 
@@ -3430,6 +3574,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         <div className="preview-surface p-5">
           <div className="flex items-center justify-between" style={{ minHeight: system.foundations.spacing[system.components.navbar.height], paddingInline: system.foundations.spacing[system.components.navbar.paddingX], backdropFilter: `blur(${system.foundations.blur[system.components.navbar.blur]})` }}>
             <div className="flex items-center gap-3">
+              <PreviewIcon icon={DashboardSquare01Icon} context="nav" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
               <span
                 className="inline-flex items-center justify-center"
                 style={{
@@ -3455,7 +3600,8 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
           <div className="mt-5 grid" style={{ gridTemplateColumns: `${system.foundations.containers[system.components.sidebar.width]} 1fr`, gap: system.foundations.spacing[system.components.sidebar.itemGap] }}>
             <aside className="preview-elevated p-4">
               {["Overview", "Theme", "Components", "Sessions"].map((item, index) => (
-                <div key={item} className="text-sm" style={{ padding: "0.75rem 1rem", borderRadius: system.radius[system.components.sidebar.itemRadius], background: index === 1 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>
+                <div key={item} className="flex items-center gap-3 text-sm" style={{ padding: "0.75rem 1rem", borderRadius: system.radius[system.components.sidebar.itemRadius], background: index === 1 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>
+                  <PreviewIcon icon={index === 0 ? Home01Icon : index === 1 ? Settings01Icon : index === 2 ? TableIcon : UserIcon} context="nav" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
                   {item}
                 </div>
               ))}
@@ -3505,7 +3651,10 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                 ["Export", "Tailwind v4 ready"],
               ].map(([term, value]) => (
                 <div key={term} className="contents">
-                  <span className="text-sm font-medium">{term}</span>
+                  <span className="flex items-center gap-2 text-sm font-medium">
+                    <PreviewIcon icon={term === "Brand" ? StarHugeIcon : term === "Theme" ? Calendar01Icon : Mail01Icon} context="tables" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+                    {term}
+                  </span>
                   <span className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{value}</span>
                 </div>
               ))}
@@ -3537,6 +3686,89 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                 <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Email address" readOnly />
                 <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Password" readOnly />
                 <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Continue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function IconsPreview({ system }: { system: GeneratedSystem }) {
+  const iconSize = system.icons.defaultSize;
+  const iconStroke = system.icons.strokeWidth;
+  const iconShowcase = [
+    { label: "Buttons", icon: ArrowRight01Icon, context: "buttons" as const },
+    { label: "Alerts", icon: Alert02Icon, context: "alerts" as const },
+    { label: "Navigation", icon: Home01Icon, context: "nav" as const },
+    { label: "Tables", icon: TableIcon, context: "tables" as const },
+    { label: "Inputs", icon: Search01Icon, context: "inputs" as const },
+    { label: "Analytics", icon: Analytics01Icon, context: "tables" as const },
+    { label: "Mail", icon: Mail01Icon, context: "inputs" as const },
+    { label: "Settings", icon: Settings01Icon, context: "nav" as const },
+  ];
+
+  return (
+    <div className="preview-stack flex flex-col">
+      <section className="preview-surface p-5">
+        <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "var(--preview-text-muted)" }}>Icon library</p>
+        <h3 className="preview-heading mt-3 text-3xl font-semibold">Hugeicons are now part of the design system surface.</h3>
+        <p className="mt-3 max-w-2xl text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+          Default size, stroke width, color behavior, and semantic icon usage all come from the editable icon system.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{iconSize}px default size</span>
+          <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{iconStroke.toFixed(1)} stroke</span>
+          <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{sectionLabel(system.icons.colorBehavior)} color mode</span>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="preview-elevated p-5">
+          <h4 className="preview-heading text-xl font-semibold">System icon grid</h4>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {iconShowcase.map((item) => (
+              <div key={item.label} className="preview-surface flex items-center gap-3 px-4 py-3">
+                <PreviewIcon icon={item.icon} context={item.context} size={iconSize} strokeWidth={iconStroke} />
+                <div>
+                  <p className="text-sm font-medium">{item.label}</p>
+                  <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(item.context)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="preview-elevated p-5">
+          <h4 className="preview-heading text-xl font-semibold">Context usage</h4>
+          <div className="mt-4 space-y-4">
+            <button className="preview-button-primary flex items-center gap-3 px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">
+              <PreviewIcon icon={ArrowRight01Icon} context="buttons" size={iconSize} strokeWidth={iconStroke} />
+              Export theme
+            </button>
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+              <PreviewIcon icon={Search01Icon} context="inputs" size={iconSize} strokeWidth={iconStroke} />
+              <span style={{ color: "var(--preview-text-muted)" }}>Search tokens</span>
+            </div>
+            <div className="preview-alert-warning flex items-center gap-3 px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">
+              <PreviewIcon icon={Alert02Icon} context="alerts" size={iconSize} strokeWidth={iconStroke} />
+              Alert icons inherit the alert semantic usage token.
+            </div>
+            <div className="preview-surface flex items-center justify-between px-4 py-3">
+              <div className="flex items-center gap-3">
+                <PreviewIcon icon={Menu01Icon} context="nav" size={iconSize} strokeWidth={iconStroke} />
+                <span className="font-medium">Navigation item</span>
+              </div>
+              <PreviewIcon icon={Notification03Icon} context="nav" size={iconSize} strokeWidth={iconStroke} />
+            </div>
+            <div className="preview-surface overflow-hidden border rounded-[var(--preview-table-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
+              <div className="flex items-center justify-between px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-sm">
+                <div className="flex items-center gap-3">
+                  <PreviewIcon icon={TableIcon} context="tables" size={iconSize} strokeWidth={iconStroke} />
+                  Data exports
+                </div>
+                <PreviewIcon icon={ChartHistogramIcon} context="tables" size={iconSize} strokeWidth={iconStroke} />
               </div>
             </div>
           </div>

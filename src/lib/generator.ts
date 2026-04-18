@@ -14,6 +14,7 @@ import {
   FoundationTokens,
   GeneratedSystem,
   InsetShadowScale,
+  IconSystem,
   BlurScale,
   DropShadowScale,
   LeadingScale,
@@ -475,6 +476,21 @@ function buildScreenPresets(density: Density): ScreenPresets {
   };
 }
 
+function buildIconSystem(direction: BrandInputs["styleDirection"]): IconSystem {
+  return {
+    defaultSize: direction === "editorial" ? 22 : direction === "bold" ? 24 : 20,
+    strokeWidth: direction === "minimal" ? 1.5 : direction === "bold" ? 1.9 : 1.7,
+    colorBehavior: direction === "minimal" ? "current" : "semantic",
+    semanticUsage: {
+      buttons: "neutral.50",
+      alerts: "warning.700",
+      nav: "primary.600",
+      tables: "secondary.600",
+      inputs: "accent.600",
+    },
+  };
+}
+
 function buildComponentRecipes(
   density: Density,
   direction: BrandInputs["styleDirection"],
@@ -797,6 +813,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
   const utilityCoverage = buildUtilityCoverage(density, inputs.styleDirection);
   const components = buildComponentRecipes(density, inputs.styleDirection);
   const screens = buildScreenPresets(density);
+  const icons = buildIconSystem(inputs.styleDirection);
 
   return {
     palettes,
@@ -809,6 +826,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
       bodyFont: getFontCssVariable(inputs.bodyFont, "manrope"),
       scale: buildTypographyScale(inputs.styleDirection),
     },
+    icons,
     radius: buildRadii(inputs.styleDirection),
     shadows: buildShadows(inputs.styleDirection),
     foundations,

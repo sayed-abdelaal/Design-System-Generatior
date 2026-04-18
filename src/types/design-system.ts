@@ -544,6 +544,23 @@ export type ScreenPresets = {
   formPage: ScreenPreset;
 };
 
+export type IconColorBehavior = "semantic" | "current" | "muted";
+
+export type IconUsageSemanticTokens = {
+  buttons: TokenReference;
+  alerts: TokenReference;
+  nav: TokenReference;
+  tables: TokenReference;
+  inputs: TokenReference;
+};
+
+export type IconSystem = {
+  defaultSize: number;
+  strokeWidth: number;
+  colorBehavior: IconColorBehavior;
+  semanticUsage: IconUsageSemanticTokens;
+};
+
 export type ComponentRecipes = {
   button: ButtonRecipe;
   input: InputRecipe;
@@ -597,6 +614,7 @@ export type GeneratedSystem = {
   lightTokens: ThemeSemanticTokens;
   darkTokens: ThemeSemanticTokens;
   typography: TypographyTokens;
+  icons: IconSystem;
   radius: RadiusScale;
   shadows: ShadowScale;
   foundations: FoundationTokens;
