@@ -93,6 +93,39 @@ select {
   color: color-mix(in oklch, var(--app-muted) 78%, white);
 }
 
+.workspace-tab {
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
+  background: color-mix(in oklch, var(--app-surface) 96%, white);
+  padding: 0.55rem 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--app-muted);
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.workspace-tab[data-active="true"] {
+  border-color: color-mix(in oklch, var(--app-accent) 26%, white);
+  background: color-mix(in oklch, var(--app-accent) 10%, white);
+  color: var(--app-foreground);
+}
+
+.workspace-tab:hover {
+  color: var(--app-foreground);
+  transform: translateY(-1px);
+}
+
+.workspace-card {
+  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
+  border-radius: 1.2rem;
+  background: color-mix(in oklch, var(--app-surface) 98%, white);
+  padding: 1rem;
+}
+
 .preview-shell {
   color: var(--preview-foreground);
   background: var(--preview-background);
@@ -132,8 +165,9 @@ select {
 }
 
 .preview-button-primary {
-  background: var(--preview-action-primary);
-  color: var(--preview-action-primary-foreground);
+  background: var(--preview-button-primary-bg);
+  color: var(--preview-button-primary-fg);
+  border: 1px solid var(--preview-button-primary-border);
   box-shadow: var(--preview-button-shadow);
   border-radius: var(--preview-button-radius);
   transition:
@@ -149,7 +183,7 @@ select {
 
 .preview-button-secondary {
   background: var(--preview-button-secondary-bg);
-  color: var(--preview-action-secondary);
+  color: var(--preview-button-secondary-fg);
   border: 1px solid var(--preview-button-secondary-border);
   border-radius: var(--preview-button-radius);
   transition:
@@ -159,7 +193,8 @@ select {
 
 .preview-button-ghost {
   background: var(--preview-button-ghost-bg);
-  color: var(--preview-text-secondary);
+  color: var(--preview-button-ghost-fg);
+  border: 1px solid var(--preview-button-ghost-border);
   border-radius: var(--preview-button-radius);
   transition:
     background-color 160ms var(--preview-transition-ease),
@@ -196,6 +231,7 @@ select {
 .preview-badge {
   background: var(--preview-badge-bg);
   color: var(--preview-badge-fg);
+  border: 1px solid var(--preview-badge-border);
   border-radius: var(--preview-badge-radius);
 }
 
@@ -215,8 +251,22 @@ select {
 
 .preview-alert-danger {
   background: var(--preview-alert-danger-bg);
-  color: var(--preview-danger);
+  color: var(--preview-alert-danger-color);
   border: 1px solid var(--preview-alert-danger-border);
+  border-radius: var(--preview-alert-radius);
+}
+
+.preview-alert-info {
+  background: color-mix(in srgb, var(--preview-alert-info-color) 12%, transparent);
+  color: var(--preview-alert-info-color);
+  border: 1px solid color-mix(in srgb, var(--preview-alert-info-color) 24%, transparent);
+  border-radius: var(--preview-alert-radius);
+}
+
+.preview-alert-attention {
+  background: color-mix(in srgb, var(--preview-alert-attention-color) 12%, transparent);
+  color: var(--preview-alert-attention-color);
+  border: 1px solid color-mix(in srgb, var(--preview-alert-attention-color) 24%, transparent);
   border-radius: var(--preview-alert-radius);
 }
 

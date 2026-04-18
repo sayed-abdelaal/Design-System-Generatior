@@ -4,7 +4,6 @@ import { FONT_OPTIONS } from "@/data/fonts";
 import { resolveTokenReference } from "@/lib/generator";
 import {
   GeneratedSystem,
-  PALETTE_NAMES,
   SCALE_STEPS,
   SEMANTIC_TOKEN_NAMES,
   ThemeSemanticTokens,
@@ -20,8 +19,8 @@ function semanticBlock(name: string, tokens: ThemeSemanticTokens, system: Genera
 }
 
 function paletteLines(system: GeneratedSystem) {
-  return PALETTE_NAMES.flatMap((paletteName) =>
-    SCALE_STEPS.map((step) => `  --ds-${paletteName}-${step}: ${system.palettes[paletteName][step]};`),
+  return Object.entries(system.palettes).flatMap(([paletteName, scale]) =>
+    SCALE_STEPS.map((step) => `  --ds-${paletteName}-${step}: ${scale[step]};`),
   ).join("\n");
 }
 
@@ -63,7 +62,11 @@ export function buildThemeCss(system: GeneratedSystem) {
 }
 
 export function buildTailwindThemeCss(system: GeneratedSystem) {
-  return `@import "tailwindcss";\n\n@theme static inline {\n  --color-background: var(--ds-background);\n  --color-foreground: var(--ds-foreground);\n  --color-surface: var(--ds-surface);\n  --color-surface-elevated: var(--ds-surface-elevated);\n  --color-text-primary: var(--ds-text-primary);\n  --color-text-secondary: var(--ds-text-secondary);\n  --color-text-muted: var(--ds-text-muted);\n  --color-border-default: var(--ds-border-default);\n  --color-border-strong: var(--ds-border-strong);\n  --color-action-primary: var(--ds-action-primary);\n  --color-action-secondary: var(--ds-action-secondary);\n  --color-focus-ring: var(--ds-focus-ring);\n  --color-success: var(--ds-success);\n  --color-warning: var(--ds-warning);\n  --color-danger: var(--ds-danger);\n  --font-sans: var(--ds-font-body);\n  --font-display: var(--ds-font-heading);\n${PALETTE_NAMES.flatMap((paletteName) => SCALE_STEPS.map((step) => `  --color-${paletteName}-${step}: ${system.palettes[paletteName][step]};`)).join("\n")}\n${Object.entries(system.foundations.spacing).map(([key, value]) => `  --spacing-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.fontWeights).map(([key, value]) => `  --font-weight-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.tracking).map(([key, value]) => `  --tracking-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.leading).map(([key, value]) => `  --leading-${key}: ${value};`).join("\n")}\n${Object.entries(system.radius).map(([key, value]) => `  --radius-${key}: ${value};`).join("\n")}\n${Object.entries(system.shadows).map(([key, value]) => `  --shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.insetShadows).map(([key, value]) => `  --inset-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.dropShadows).map(([key, value]) => `  --drop-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.blur).map(([key, value]) => `  --blur-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.breakpoints).map(([key, value]) => `  --breakpoint-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.containers).map(([key, value]) => `  --container-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.aspectRatios).map(([key, value]) => `  --aspect-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.easing).map(([key, value]) => `  --ease-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.animations).map(([key, value]) => `  --animate-${key}: ${value};`).join("\n")}\n}\n\n@theme {\n  @keyframes fade-in {\n    0% { opacity: 0; }\n    100% { opacity: 1; }\n  }\n\n  @keyframes rise-in {\n    0% { opacity: 0; transform: translateY(8px); }\n    100% { opacity: 1; transform: translateY(0); }\n  }\n\n  @keyframes pulse-soft {\n    0%, 100% { opacity: 1; }\n    50% { opacity: 0.7; }\n  }\n}\n`;
+  const paletteTokens = Object.entries(system.palettes)
+    .flatMap(([paletteName, scale]) => SCALE_STEPS.map((step) => `  --color-${paletteName}-${step}: ${scale[step]};`))
+    .join("\n");
+
+  return `@import "tailwindcss";\n\n@theme static inline {\n  --color-background: var(--ds-background);\n  --color-foreground: var(--ds-foreground);\n  --color-surface: var(--ds-surface);\n  --color-surface-elevated: var(--ds-surface-elevated);\n  --color-text-primary: var(--ds-text-primary);\n  --color-text-secondary: var(--ds-text-secondary);\n  --color-text-muted: var(--ds-text-muted);\n  --color-border-default: var(--ds-border-default);\n  --color-border-strong: var(--ds-border-strong);\n  --color-action-primary: var(--ds-action-primary);\n  --color-action-secondary: var(--ds-action-secondary);\n  --color-focus-ring: var(--ds-focus-ring);\n  --color-success: var(--ds-success);\n  --color-warning: var(--ds-warning);\n  --color-danger: var(--ds-danger);\n  --color-info: var(--ds-info);\n  --color-attention: var(--ds-attention);\n  --color-highlight: var(--ds-highlight);\n  --font-sans: var(--ds-font-body);\n  --font-display: var(--ds-font-heading);\n${paletteTokens}\n${Object.entries(system.foundations.spacing).map(([key, value]) => `  --spacing-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.fontWeights).map(([key, value]) => `  --font-weight-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.tracking).map(([key, value]) => `  --tracking-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.leading).map(([key, value]) => `  --leading-${key}: ${value};`).join("\n")}\n${Object.entries(system.radius).map(([key, value]) => `  --radius-${key}: ${value};`).join("\n")}\n${Object.entries(system.shadows).map(([key, value]) => `  --shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.insetShadows).map(([key, value]) => `  --inset-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.dropShadows).map(([key, value]) => `  --drop-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.blur).map(([key, value]) => `  --blur-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.breakpoints).map(([key, value]) => `  --breakpoint-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.containers).map(([key, value]) => `  --container-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.aspectRatios).map(([key, value]) => `  --aspect-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.easing).map(([key, value]) => `  --ease-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.animations).map(([key, value]) => `  --animate-${key}: ${value};`).join("\n")}\n}\n\n@theme {\n  @keyframes fade-in {\n    0% { opacity: 0; }\n    100% { opacity: 1; }\n  }\n\n  @keyframes rise-in {\n    0% { opacity: 0; transform: translateY(8px); }\n    100% { opacity: 1; transform: translateY(0); }\n  }\n\n  @keyframes pulse-soft {\n    0%, 100% { opacity: 1; }\n    50% { opacity: 0.7; }\n  }\n}\n`;
 }
 
 export function buildTokensJson(system: GeneratedSystem, brandName: string) {
@@ -77,6 +80,7 @@ export function buildTokensJson(system: GeneratedSystem, brandName: string) {
         brandName,
       },
       palettes: system.palettes,
+      customPalettes: system.customPalettes,
       semantics: {
         light: system.lightTokens,
         dark: system.darkTokens,
@@ -108,6 +112,7 @@ export function buildComponentsJson(system: GeneratedSystem, brandName: string) 
         brandName,
       },
       components: system.components,
+      customPalettes: system.customPalettes,
       utilities: system.utilities,
       utilityCoverage: system.utilityCoverage,
       foundations: system.foundations,

@@ -31,10 +31,10 @@ import {
 import { createGeneratedSystem, resolveTokenReference } from "@/lib/generator";
 import {
   BrandInputs,
+  ColorInputKey,
   Density,
   GeneratedSystem,
-  PALETTE_NAMES,
-  PaletteName,
+  NeutralBasePreference,
   SCALE_STEPS,
   ScaleStep,
   SEMANTIC_TOKEN_NAMES,
@@ -51,12 +51,40 @@ const STYLE_DIRECTIONS: StyleDirection[] = [
   "studio",
 ];
 
+const NEUTRAL_OPTIONS: Array<{ value: NeutralBasePreference; label: string }> = [
+  { value: "balanced", label: "Balanced" },
+  { value: "warm", label: "Warm" },
+  { value: "cool", label: "Cool" },
+  { value: "slate", label: "Slate" },
+  { value: "stone", label: "Stone" },
+  { value: "sand", label: "Sand" },
+  { value: "zinc", label: "Zinc" },
+  { value: "graphite", label: "Graphite" },
+  { value: "moss", label: "Moss" },
+  { value: "cocoa", label: "Cocoa" },
+  { value: "custom", label: "Custom hex" },
+];
+
+const ADVANCED_PALETTE_ROWS: Array<{ key: Exclude<ColorInputKey, "primary" | "secondary" | "accent">; label: string; helper: string }> = [
+  { key: "neutral", label: "Neutral", helper: "Overrides the generated neutral anchor directly." },
+  { key: "success", label: "Success", helper: "Controls success states and confirmations." },
+  { key: "warning", label: "Warning", helper: "Controls warning surfaces and notices." },
+  { key: "danger", label: "Danger", helper: "Controls destructive and error states." },
+  { key: "info", label: "Info", helper: "Controls informational states and supporting data." },
+  { key: "attention", label: "Attention", helper: "Controls stronger notice and urgency moments." },
+  { key: "highlight", label: "Highlight", helper: "Controls spotlight, emphasis, and annotation color." },
+];
+
 const INITIAL_INPUTS: BrandInputs = {
   brandName: "Northstar Labs",
   primaryColor: "#635bff",
   secondaryColor: "#d06d2f",
   accentColor: "#0ea5a4",
   neutralBasePreference: "balanced",
+  neutralBaseHex: "#7d6b5a",
+  advancedPaletteInputs: false,
+  paletteOverrides: {},
+  customColors: [],
   headingFont: "fraunces",
   bodyFont: "manrope",
   styleDirection: "fintech",
@@ -66,6 +94,8 @@ const INITIAL_INPUTS: BrandInputs = {
 const PREVIEW_MODES = ["ui-kit", "components", "dashboard", "marketing"] as const;
 type PreviewMode = (typeof PREVIEW_MODES)[number];
 type ActiveTheme = "light" | "dark";
+type BrandPanelTab = "brand" | "colors" | "assets";
+type EditorPanelTab = "foundations" | "system" | "components" | "handoff";
 type QualityFinding = {
   label: string;
   severity: "info" | "warning" | "critical";
@@ -88,6 +118,23 @@ function resolveThemeValues(system: GeneratedSystem, activeTheme: ActiveTheme) {
 
 function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
   const resolved = resolveThemeValues(system, activeTheme);
+  const buttonPrimaryBackground = resolveTokenReference(system.components.button.colors.primary.background, system.palettes);
+  const buttonPrimaryForeground = resolveTokenReference(system.components.button.colors.primary.foreground, system.palettes);
+  const buttonPrimaryBorder = resolveTokenReference(system.components.button.colors.primary.border, system.palettes);
+  const buttonSecondaryBackground = resolveTokenReference(system.components.button.colors.secondary.background, system.palettes);
+  const buttonSecondaryForeground = resolveTokenReference(system.components.button.colors.secondary.foreground, system.palettes);
+  const buttonSecondaryBorderColor = resolveTokenReference(system.components.button.colors.secondary.border, system.palettes);
+  const buttonGhostBackground = resolveTokenReference(system.components.button.colors.ghost.background, system.palettes);
+  const buttonGhostForeground = resolveTokenReference(system.components.button.colors.ghost.foreground, system.palettes);
+  const buttonGhostBorder = resolveTokenReference(system.components.button.colors.ghost.border, system.palettes);
+  const badgeBackground = resolveTokenReference(system.components.badge.color.background, system.palettes);
+  const badgeForeground = resolveTokenReference(system.components.badge.color.foreground, system.palettes);
+  const badgeBorder = resolveTokenReference(system.components.badge.color.border, system.palettes);
+  const alertSuccess = resolveTokenReference(system.components.alert.colors.success, system.palettes);
+  const alertWarning = resolveTokenReference(system.components.alert.colors.warning, system.palettes);
+  const alertDanger = resolveTokenReference(system.components.alert.colors.danger, system.palettes);
+  const alertInfo = resolveTokenReference(system.components.alert.colors.info, system.palettes);
+  const alertAttention = resolveTokenReference(system.components.alert.colors.attention, system.palettes);
   const defaultRadius = system.radius[system.utilities.layout.defaultRadius];
   const borderWidthMap = {
     hairline: "1px",
@@ -99,19 +146,19 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     neutral: "color-mix(in oklch, var(--preview-text-muted) 20%, white)",
   } as const;
   const buttonSecondaryBg = system.components.button.secondaryStyle === "soft"
-    ? "color-mix(in srgb, var(--preview-action-secondary) 14%, transparent)"
+    ? buttonSecondaryBackground
     : "transparent";
   const buttonSecondaryBorder = system.components.button.secondaryStyle === "soft"
-    ? "color-mix(in srgb, var(--preview-action-secondary) 35%, var(--preview-border-default))"
-    : "var(--preview-action-secondary)";
-  const badgeSoftBg = "color-mix(in srgb, var(--preview-action-primary) 12%, transparent)";
-  const badgeSolidBg = "var(--preview-action-primary)";
-  const alertStrongSuccessBg = "color-mix(in srgb, var(--preview-success) 18%, transparent)";
-  const alertSoftSuccessBg = "color-mix(in srgb, var(--preview-success) 12%, transparent)";
-  const alertStrongWarningBg = "color-mix(in srgb, var(--preview-warning) 22%, transparent)";
-  const alertSoftWarningBg = "color-mix(in srgb, var(--preview-warning) 14%, transparent)";
-  const alertStrongDangerBg = "color-mix(in srgb, var(--preview-danger) 18%, transparent)";
-  const alertSoftDangerBg = "color-mix(in srgb, var(--preview-danger) 12%, transparent)";
+    ? buttonSecondaryBorderColor
+    : buttonSecondaryBorderColor;
+  const badgeSoftBg = badgeBackground;
+  const badgeSolidBg = badgeBackground;
+  const alertStrongSuccessBg = "color-mix(in srgb, var(--preview-alert-success-color) 18%, transparent)";
+  const alertSoftSuccessBg = "color-mix(in srgb, var(--preview-alert-success-color) 12%, transparent)";
+  const alertStrongWarningBg = "color-mix(in srgb, var(--preview-alert-warning-color) 22%, transparent)";
+  const alertSoftWarningBg = "color-mix(in srgb, var(--preview-alert-warning-color) 14%, transparent)";
+  const alertStrongDangerBg = "color-mix(in srgb, var(--preview-alert-danger-color) 18%, transparent)";
+  const alertSoftDangerBg = "color-mix(in srgb, var(--preview-alert-danger-color) 12%, transparent)";
   const hoverLiftMap = {
     none: "0px",
     sm: "1px",
@@ -119,7 +166,7 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
   } as const;
   const ghostBg = system.components.button.ghostStyle === "minimal"
     ? "transparent"
-    : "color-mix(in srgb, var(--preview-surface-elevated) 88%, transparent)";
+    : buttonGhostBackground;
   const alertBorderVariant = system.components.alert.variantStyle === "outlined"
     ? "color-mix(in srgb, currentColor 40%, transparent)"
     : "transparent";
@@ -146,6 +193,11 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-success": resolved.success,
     "--preview-warning": resolved.warning,
     "--preview-danger": resolved.danger,
+    "--preview-alert-success-color": alertSuccess,
+    "--preview-alert-warning-color": alertWarning,
+    "--preview-alert-danger-color": alertDanger,
+    "--preview-alert-info-color": alertInfo,
+    "--preview-alert-attention-color": alertAttention,
     "--preview-font-heading": system.typography.headingFont,
     "--preview-font-body": system.typography.bodyFont,
     "--preview-radius-sm": system.radius.sm,
@@ -176,9 +228,15 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-button-shadow": system.shadows[system.components.button.primaryShadow],
     "--preview-button-px": system.foundations.spacing[system.components.button.paddingX],
     "--preview-button-py": system.foundations.spacing[system.components.button.paddingY],
+    "--preview-button-primary-bg": buttonPrimaryBackground,
+    "--preview-button-primary-fg": buttonPrimaryForeground,
+    "--preview-button-primary-border": buttonPrimaryBorder,
     "--preview-button-secondary-bg": buttonSecondaryBg,
+    "--preview-button-secondary-fg": buttonSecondaryForeground,
     "--preview-button-secondary-border": buttonSecondaryBorder,
     "--preview-button-ghost-bg": ghostBg,
+    "--preview-button-ghost-fg": buttonGhostForeground,
+    "--preview-button-ghost-border": buttonGhostBorder,
     "--preview-button-hover-lift": hoverLiftMap[system.components.button.hoverLift],
     "--preview-input-radius": system.radius[system.components.input.radius],
     "--preview-input-px": system.foundations.spacing[system.components.input.paddingX],
@@ -199,15 +257,16 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-badge-px": system.foundations.spacing[system.components.badge.paddingX],
     "--preview-badge-py": system.foundations.spacing[system.components.badge.paddingY],
     "--preview-badge-bg": system.components.badge.style === "solid" ? badgeSolidBg : badgeSoftBg,
-    "--preview-badge-fg": system.components.badge.style === "solid" ? "var(--preview-action-primary-foreground)" : "var(--preview-action-primary)",
+    "--preview-badge-fg": badgeForeground,
+    "--preview-badge-border": badgeBorder,
     "--preview-alert-radius": system.radius[system.components.alert.radius],
     "--preview-alert-padding": system.foundations.spacing[system.components.alert.padding],
     "--preview-alert-success-bg": system.components.alert.emphasis === "strong" ? alertStrongSuccessBg : alertSoftSuccessBg,
-    "--preview-alert-success-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-success) 26%, transparent)",
+    "--preview-alert-success-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-alert-success-color) 26%, transparent)",
     "--preview-alert-warning-bg": system.components.alert.emphasis === "strong" ? alertStrongWarningBg : alertSoftWarningBg,
-    "--preview-alert-warning-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-warning) 28%, transparent)",
+    "--preview-alert-warning-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-alert-warning-color) 28%, transparent)",
     "--preview-alert-danger-bg": system.components.alert.emphasis === "strong" ? alertStrongDangerBg : alertSoftDangerBg,
-    "--preview-alert-danger-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-danger) 24%, transparent)",
+    "--preview-alert-danger-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-alert-danger-color) 24%, transparent)",
     "--preview-table-radius": system.radius[system.components.table.radius],
     "--preview-table-px": system.foundations.spacing[system.components.table.cellPaddingX],
     "--preview-table-py": system.foundations.spacing[system.components.table.cellPaddingY],
@@ -317,8 +376,8 @@ function auditSystem(system: GeneratedSystem) {
   };
 }
 
-function tokenReferenceOptions() {
-  return PALETTE_NAMES.flatMap((paletteName) =>
+function tokenReferenceOptions(system: GeneratedSystem) {
+  return Object.keys(system.palettes).flatMap((paletteName) =>
     SCALE_STEPS.map((step) => `${paletteName}.${step}` as TokenReference),
   );
 }
@@ -330,10 +389,54 @@ function BrandInputPanel({
 }: {
   inputs: BrandInputs;
   setInputs: (updater: (current: BrandInputs) => BrandInputs) => void;
-  colorErrors: Partial<Record<"primaryColor" | "secondaryColor" | "accentColor", string>>;
+  colorErrors: Record<string, string | undefined>;
 }) {
   function handleInputChange(key: keyof BrandInputs, value: string) {
     setInputs((current) => ({ ...current, [key]: value }));
+  }
+
+  const [activeTab, setActiveTab] = useState<BrandPanelTab>("brand");
+
+  function handlePaletteOverrideChange(key: ColorInputKey, value: string) {
+    setInputs((current) => ({
+      ...current,
+      paletteOverrides: {
+        ...current.paletteOverrides,
+        [key]: value,
+      },
+    }));
+  }
+
+  function addCustomColor() {
+    setInputs((current) => ({
+      ...current,
+      customColors: [
+        ...current.customColors,
+        {
+          id: crypto.randomUUID(),
+          name: "",
+          hex: "",
+        },
+      ],
+    }));
+  }
+
+  function updateCustomColor(id: string, patch: Partial<BrandInputs["customColors"][number]>) {
+    setInputs((current) => ({
+      ...current,
+      customColors: current.customColors.map((color) => (
+        color.id === id
+          ? { ...color, ...patch }
+          : color
+      )),
+    }));
+  }
+
+  function removeCustomColor(id: string) {
+    setInputs((current) => ({
+      ...current,
+      customColors: current.customColors.filter((color) => color.id !== id),
+    }));
   }
 
   function handleLogoUpload(event: ChangeEvent<HTMLInputElement>) {
@@ -374,125 +477,319 @@ function BrandInputPanel({
         <p className="mt-2 text-sm leading-6 text-app-muted">
           Craft a shippable theme from a brand seed, preview it in context, and export Tailwind-ready files.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {([
+            ["brand", "Brand"],
+            ["colors", "Colors"],
+            ["assets", "Assets"],
+          ] as const).map(([tab, label]) => (
+            <button
+              key={tab}
+              type="button"
+              className="workspace-tab"
+              data-active={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="space-y-6 px-5 py-5">
-        <label className="block space-y-2">
-          <span className="text-sm font-medium text-app-foreground">Brand name</span>
-          <input
-            className="field"
-            value={inputs.brandName}
-            onChange={(event) => handleInputChange("brandName", event.target.value)}
-            placeholder="Enter brand name"
-          />
-        </label>
-
-        <div className="space-y-4">
-          {colorRows.map((row) => (
-            <div key={row.key} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-app-foreground">{row.label}</label>
-                <span className="text-xs text-app-muted">{row.helper}</span>
+        {activeTab === "brand" ? (
+          <>
+            <div className="workspace-card space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Brand setup</p>
+                <p className="mt-2 text-sm text-app-muted">Set the identity, direction, and neutral strategy before refining the system.</p>
               </div>
-              <div className="grid grid-cols-[56px_1fr] gap-3">
-                <input
-                  type="color"
-                  aria-label={`${row.label} color picker`}
-                  className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
-                  value={isValidHex(inputs[row.key]) ? normalizeHex(inputs[row.key], "#000000") : "#000000"}
-                  onChange={(event) => handleInputChange(row.key, event.target.value)}
-                />
+              <label className="block space-y-2">
+                <span className="text-sm font-medium text-app-foreground">Brand name</span>
                 <input
                   className="field"
-                  value={inputs[row.key]}
-                  onChange={(event) => handleInputChange(row.key, event.target.value)}
-                  placeholder="#635bff"
-                  aria-invalid={Boolean(colorErrors[row.key])}
+                  value={inputs.brandName}
+                  onChange={(event) => handleInputChange("brandName", event.target.value)}
+                  placeholder="Enter brand name"
                 />
+              </label>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+                <label className="block space-y-2">
+                  <span className="text-sm font-medium text-app-foreground">Neutral base</span>
+                  <select
+                    className="field"
+                    value={inputs.neutralBasePreference}
+                    onChange={(event) => handleInputChange("neutralBasePreference", event.target.value)}
+                  >
+                    {NEUTRAL_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="block space-y-2">
+                  <span className="text-sm font-medium text-app-foreground">Style direction</span>
+                  <select
+                    className="field"
+                    value={inputs.styleDirection}
+                    onChange={(event) => handleInputChange("styleDirection", event.target.value)}
+                  >
+                    {STYLE_DIRECTIONS.map((direction) => (
+                      <option key={direction} value={direction}>
+                        {sectionLabel(direction)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
-              {colorErrors[row.key] ? (
-                <p className="text-sm text-rose-600">{colorErrors[row.key]}</p>
+              {inputs.neutralBasePreference === "custom" ? (
+                <label className="block space-y-2">
+                  <span className="text-sm font-medium text-app-foreground">Neutral hex anchor</span>
+                  <div className="grid grid-cols-[56px_1fr] gap-3">
+                    <input
+                      type="color"
+                      aria-label="Neutral hex anchor picker"
+                      className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
+                      value={isValidHex(inputs.neutralBaseHex) ? normalizeHex(inputs.neutralBaseHex, "#7d6b5a") : "#7d6b5a"}
+                      onChange={(event) => handleInputChange("neutralBaseHex", event.target.value)}
+                    />
+                    <input
+                      className="field"
+                      value={inputs.neutralBaseHex}
+                      onChange={(event) => handleInputChange("neutralBaseHex", event.target.value)}
+                      placeholder="#7d6b5a"
+                      aria-invalid={Boolean(colorErrors.neutralBaseHex)}
+                    />
+                  </div>
+                  {colorErrors.neutralBaseHex ? (
+                    <p className="text-sm text-rose-600">{colorErrors.neutralBaseHex}</p>
+                  ) : null}
+                </label>
               ) : null}
             </div>
-          ))}
-        </div>
+          </>
+        ) : null}
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-app-foreground">Neutral base</span>
-            <select
-              className="field"
-              value={inputs.neutralBasePreference}
-              onChange={(event) => handleInputChange("neutralBasePreference", event.target.value)}
-            >
-              <option value="balanced">Balanced</option>
-              <option value="warm">Warm</option>
-              <option value="cool">Cool</option>
-              <option value="slate">Slate</option>
-            </select>
-          </label>
-
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-app-foreground">Style direction</span>
-            <select
-              className="field"
-              value={inputs.styleDirection}
-              onChange={(event) => handleInputChange("styleDirection", event.target.value)}
-            >
-              {STYLE_DIRECTIONS.map((direction) => (
-                <option key={direction} value={direction}>
-                  {sectionLabel(direction)}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-app-foreground">Heading font</span>
-            <select
-              className="field"
-              value={inputs.headingFont}
-              onChange={(event) => handleInputChange("headingFont", event.target.value)}
-            >
-              {FONT_OPTIONS.map((font) => (
-                <option key={font.id} value={font.id}>
-                  {font.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-app-foreground">Body font</span>
-            <select
-              className="field"
-              value={inputs.bodyFont}
-              onChange={(event) => handleInputChange("bodyFont", event.target.value)}
-            >
-              {FONT_OPTIONS.map((font) => (
-                <option key={font.id} value={font.id}>
-                  {font.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        <div className="space-y-2">
-          <span className="text-sm font-medium text-app-foreground">Logo upload</span>
-          <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[1.1rem] border border-dashed border-app-border bg-app-surface px-4 py-4">
-            <div>
-              <p className="font-medium text-app-foreground">PNG, SVG, or JPG</p>
-              <p className="mt-1 text-sm text-app-muted">Used inside all preview templates.</p>
+        {activeTab === "colors" ? (
+          <>
+            <div className="workspace-card space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Core palettes</p>
+                <p className="mt-2 text-sm text-app-muted">Start with your brand anchors, then decide whether you want full palette control.</p>
+              </div>
+              <div className="space-y-4">
+                {colorRows.map((row) => (
+                  <div key={row.key} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-app-foreground">{row.label}</label>
+                      <span className="text-xs text-app-muted">{row.helper}</span>
+                    </div>
+                    <div className="grid grid-cols-[56px_1fr] gap-3">
+                      <input
+                        type="color"
+                        aria-label={`${row.label} color picker`}
+                        className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
+                        value={isValidHex(inputs[row.key]) ? normalizeHex(inputs[row.key], "#000000") : "#000000"}
+                        onChange={(event) => handleInputChange(row.key, event.target.value)}
+                      />
+                      <input
+                        className="field"
+                        value={inputs[row.key]}
+                        onChange={(event) => handleInputChange(row.key, event.target.value)}
+                        placeholder="#635bff"
+                        aria-invalid={Boolean(colorErrors[row.key])}
+                      />
+                    </div>
+                    {colorErrors[row.key] ? (
+                      <p className="text-sm text-rose-600">{colorErrors[row.key]}</p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
             </div>
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-app-accent-soft text-app-accent">
-              <Upload className="h-4 w-4" />
-            </span>
-            <input type="file" className="sr-only" accept="image/*" onChange={handleLogoUpload} />
-          </label>
+
+            <div className="rounded-[1.2rem] border border-app-border bg-app-surface p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-app-foreground">Advanced color inputs</p>
+              <p className="mt-1 text-xs text-app-muted">
+                Override generated supporting palettes and add custom named colors.
+              </p>
+            </div>
+            <button
+              type="button"
+              className={`rounded-full px-3 py-2 text-xs font-semibold ${
+                inputs.advancedPaletteInputs ? "bg-app-accent text-white" : "border border-app-border text-app-muted"
+              }`}
+              onClick={() => setInputs((current) => ({ ...current, advancedPaletteInputs: !current.advancedPaletteInputs }))}
+            >
+              {inputs.advancedPaletteInputs ? "Enabled" : "Enable"}
+            </button>
+          </div>
+
+          {inputs.advancedPaletteInputs ? (
+            <div className="mt-4 space-y-4">
+              {ADVANCED_PALETTE_ROWS.map((row) => (
+                <div key={row.key} className="space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <label className="text-sm font-medium text-app-foreground">{row.label}</label>
+                    <span className="text-xs text-app-muted">{row.helper}</span>
+                  </div>
+                  <div className="grid grid-cols-[56px_1fr] gap-3">
+                    <input
+                      type="color"
+                      aria-label={`${row.label} override picker`}
+                      className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
+                      value={isValidHex(inputs.paletteOverrides[row.key] ?? "") ? normalizeHex(inputs.paletteOverrides[row.key] ?? "", "#000000") : "#000000"}
+                      onChange={(event) => handlePaletteOverrideChange(row.key, event.target.value)}
+                    />
+                    <input
+                      className="field"
+                      value={inputs.paletteOverrides[row.key] ?? ""}
+                      onChange={(event) => handlePaletteOverrideChange(row.key, event.target.value)}
+                      placeholder={`Override ${row.label.toLowerCase()} hex`}
+                      aria-invalid={Boolean(colorErrors[`paletteOverrides.${row.key}`])}
+                    />
+                  </div>
+                  {colorErrors[`paletteOverrides.${row.key}`] ? (
+                    <p className="text-sm text-rose-600">{colorErrors[`paletteOverrides.${row.key}`]}</p>
+                  ) : null}
+                </div>
+              ))}
+
+              <div className="rounded-[1rem] border border-dashed border-app-border px-3 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-app-foreground">Custom colors</p>
+                    <p className="mt-1 text-xs text-app-muted">Add named palettes that can be used later in tokens and recipes.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-full bg-app-bg px-3 py-2 text-xs font-semibold text-app-foreground"
+                    onClick={addCustomColor}
+                  >
+                    Add color
+                  </button>
+                </div>
+
+                {inputs.customColors.length ? (
+                  <div className="mt-4 space-y-4">
+                    {inputs.customColors.map((color, index) => (
+                      <div key={color.id} className="rounded-[1rem] border border-app-border/70 p-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-medium text-app-foreground">Custom color {index + 1}</p>
+                          <button
+                            type="button"
+                            className="text-xs font-medium text-rose-600"
+                            onClick={() => removeCustomColor(color.id)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="mt-3 grid gap-3">
+                          <input
+                            className="field"
+                            value={color.name}
+                            onChange={(event) => updateCustomColor(color.id, { name: event.target.value })}
+                            placeholder="Color name"
+                            aria-invalid={Boolean(colorErrors[`customColors.${color.id}.name`])}
+                          />
+                          <div className="grid grid-cols-[56px_1fr] gap-3">
+                            <input
+                              type="color"
+                              aria-label={`Custom color ${index + 1} picker`}
+                              className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
+                              value={isValidHex(color.hex) ? normalizeHex(color.hex, "#000000") : "#000000"}
+                              onChange={(event) => updateCustomColor(color.id, { hex: event.target.value })}
+                            />
+                            <input
+                              className="field"
+                              value={color.hex}
+                              onChange={(event) => updateCustomColor(color.id, { hex: event.target.value })}
+                              placeholder="#7c3aed"
+                              aria-invalid={Boolean(colorErrors[`customColors.${color.id}.hex`])}
+                            />
+                          </div>
+                          {colorErrors[`customColors.${color.id}.name`] ? (
+                            <p className="text-sm text-rose-600">{colorErrors[`customColors.${color.id}.name`]}</p>
+                          ) : null}
+                          {colorErrors[`customColors.${color.id}.hex`] ? (
+                            <p className="text-sm text-rose-600">{colorErrors[`customColors.${color.id}.hex`]}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-app-muted">No custom colors added yet.</p>
+                )}
+              </div>
+            </div>
+          ) : null}
         </div>
+          </>
+        ) : null}
+
+        {activeTab === "assets" ? (
+          <>
+            <div className="workspace-card space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Typography</p>
+                <p className="mt-2 text-sm text-app-muted">Pick the heading and body fonts that drive the live preview and export.</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+                <label className="block space-y-2">
+                  <span className="text-sm font-medium text-app-foreground">Heading font</span>
+                  <select
+                    className="field"
+                    value={inputs.headingFont}
+                    onChange={(event) => handleInputChange("headingFont", event.target.value)}
+                  >
+                    {FONT_OPTIONS.map((font) => (
+                      <option key={font.id} value={font.id}>
+                        {font.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="block space-y-2">
+                  <span className="text-sm font-medium text-app-foreground">Body font</span>
+                  <select
+                    className="field"
+                    value={inputs.bodyFont}
+                    onChange={(event) => handleInputChange("bodyFont", event.target.value)}
+                  >
+                    {FONT_OPTIONS.map((font) => (
+                      <option key={font.id} value={font.id}>
+                        {font.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div className="workspace-card space-y-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Logo</p>
+                <p className="mt-2 text-sm text-app-muted">Upload a logo used across the realistic preview screens.</p>
+              </div>
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[1.1rem] border border-dashed border-app-border bg-app-surface px-4 py-4">
+                <div>
+                  <p className="font-medium text-app-foreground">PNG, SVG, or JPG</p>
+                  <p className="mt-1 text-sm text-app-muted">Used inside all preview templates.</p>
+                </div>
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-app-accent-soft text-app-accent">
+                  <Upload className="h-4 w-4" />
+                </span>
+                <input type="file" className="sr-only" accept="image/*" onChange={handleLogoUpload} />
+              </label>
+            </div>
+          </>
+        ) : null}
       </div>
     </div>
   );
@@ -630,9 +927,10 @@ function TokenPanel({
   setSystem: Dispatch<SetStateAction<GeneratedSystem>>;
   brandName: string;
 }) {
-  const tokenOptions = useMemo(() => tokenReferenceOptions(), []);
+  const [activeTab, setActiveTab] = useState<EditorPanelTab>("foundations");
+  const tokenOptions = useMemo(() => tokenReferenceOptions(system), [system]);
 
-  function updatePaletteValue(palette: PaletteName, step: ScaleStep, value: string) {
+  function updatePaletteValue(palette: string, step: ScaleStep, value: string) {
     setSystem((current) => ({
       ...current,
       palettes: {
@@ -673,6 +971,22 @@ function TokenPanel({
 
   function updateDensity(value: Density) {
     setSystem((current) => ({ ...current, density: value }));
+  }
+
+  function updateComponent<K extends keyof GeneratedSystem["components"]>(
+    key: K,
+    patch: Partial<GeneratedSystem["components"][K]>,
+  ) {
+    setSystem((current) => ({
+      ...current,
+      components: {
+        ...current.components,
+        [key]: {
+          ...current.components[key],
+          ...patch,
+        },
+      },
+    }));
   }
 
   function updateUtilityCoverage(
@@ -785,15 +1099,59 @@ function TokenPanel({
         <p className="mt-2 text-sm leading-6 text-app-muted">
           Adjust raw scales, semantic token mappings, typography, radius, shadows, and export production-ready assets.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {([
+            ["foundations", "Foundations"],
+            ["system", "System"],
+            ["components", "Components"],
+            ["handoff", "QA & Export"],
+          ] as const).map(([tab, label]) => (
+            <button
+              key={tab}
+              type="button"
+              className="workspace-tab"
+              data-active={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="max-h-[calc(100vh-4rem)] space-y-5 overflow-auto px-5 py-5">
+        {activeTab === "foundations" ? (
+          <div className="workspace-card space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Foundations</p>
+            <p className="text-sm text-app-muted">Edit the raw scales, Tailwind namespaces, semantic mappings, and design tokens that everything else builds on.</p>
+          </div>
+        ) : null}
+        {activeTab === "system" ? (
+          <div className="workspace-card space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">System</p>
+            <p className="text-sm text-app-muted">Tune utility defaults, coverage, and screen presets that shape how the system behaves across products.</p>
+          </div>
+        ) : null}
+        {activeTab === "components" ? (
+          <div className="workspace-card space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Components</p>
+            <p className="text-sm text-app-muted">Control structural recipes and direct component colors without leaving the live workspace.</p>
+          </div>
+        ) : null}
+        {activeTab === "handoff" ? (
+          <div className="workspace-card space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">QA and handoff</p>
+            <p className="text-sm text-app-muted">Validate the system, save your session, and export production-ready assets from one place.</p>
+          </div>
+        ) : null}
+
+        {activeTab === "foundations" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><Palette className="h-4 w-4" /> Raw color scales</span>
           </summary>
           <div className="space-y-5 border-t border-app-border/70 px-4 py-4">
-            {PALETTE_NAMES.map((paletteName) => (
+            {Object.entries(system.palettes).map(([paletteName, paletteScale]) => (
               <div key={paletteName} className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-app-foreground">{sectionLabel(paletteName)}</h3>
@@ -802,7 +1160,7 @@ function TokenPanel({
                       <span
                         key={step}
                         className="h-5 w-5 rounded-full border border-white/70"
-                        style={{ background: system.palettes[paletteName][step] }}
+                        style={{ background: paletteScale[step] }}
                       />
                     ))}
                   </div>
@@ -813,7 +1171,7 @@ function TokenPanel({
                       <span>{step}</span>
                       <input
                         className="field px-3 py-2 text-sm"
-                        value={system.palettes[paletteName][step]}
+                        value={paletteScale[step]}
                         onChange={(event) => updatePaletteValue(paletteName, step, event.target.value)}
                       />
                     </label>
@@ -823,7 +1181,9 @@ function TokenPanel({
             ))}
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "foundations" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4" /> Tailwind foundations</span>
@@ -1064,7 +1424,9 @@ function TokenPanel({
             </div>
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "system" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><MonitorCog className="h-4 w-4" /> Utility settings</span>
@@ -1537,7 +1899,9 @@ function TokenPanel({
             </div>
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "system" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><MonitorCog className="h-4 w-4" /> Utility coverage</span>
@@ -1605,7 +1969,9 @@ function TokenPanel({
             ))}
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "components" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><Sparkles className="h-4 w-4" /> Component recipes</span>
@@ -1686,6 +2052,71 @@ function TokenPanel({
                   <option value="md">Medium</option>
                 </select>
               </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              {(["primary", "secondary", "ghost"] as const).map((variant) => (
+                <div key={variant} className="grid gap-2 rounded-[1rem] border border-app-border/70 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-app-muted">{sectionLabel(variant)} colors</p>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Background</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={system.components.button.colors[variant].background}
+                      onChange={(event) =>
+                        updateComponent("button", {
+                          colors: {
+                            ...system.components.button.colors,
+                            [variant]: {
+                              ...system.components.button.colors[variant],
+                              background: event.target.value as TokenReference,
+                            },
+                          },
+                        })}
+                    >
+                      {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Foreground</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={system.components.button.colors[variant].foreground}
+                      onChange={(event) =>
+                        updateComponent("button", {
+                          colors: {
+                            ...system.components.button.colors,
+                            [variant]: {
+                              ...system.components.button.colors[variant],
+                              foreground: event.target.value as TokenReference,
+                            },
+                          },
+                        })}
+                    >
+                      {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Border</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={system.components.button.colors[variant].border}
+                      onChange={(event) =>
+                        updateComponent("button", {
+                          colors: {
+                            ...system.components.button.colors,
+                            [variant]: {
+                              ...system.components.button.colors[variant],
+                              border: event.target.value as TokenReference,
+                            },
+                          },
+                        })}
+                    >
+                      {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                </div>
+              ))}
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
@@ -1833,6 +2264,48 @@ function TokenPanel({
 
             <div className="grid gap-2 sm:grid-cols-2">
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Badge background</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.components.badge.color.background}
+                  onChange={(event) =>
+                    updateComponent("badge", {
+                      color: { ...system.components.badge.color, background: event.target.value as TokenReference },
+                    })}
+                >
+                  {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Badge foreground</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.components.badge.color.foreground}
+                  onChange={(event) =>
+                    updateComponent("badge", {
+                      color: { ...system.components.badge.color, foreground: event.target.value as TokenReference },
+                    })}
+                >
+                  {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Badge border</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.components.badge.color.border}
+                  onChange={(event) =>
+                    updateComponent("badge", {
+                      color: { ...system.components.badge.color, border: event.target.value as TokenReference },
+                    })}
+                >
+                  {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Alert radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.alert.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -1874,6 +2347,27 @@ function TokenPanel({
                   {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
                 </select>
               </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              {(["success", "warning", "danger", "info", "attention"] as const).map((tone) => (
+                <label key={tone} className="space-y-1 text-xs text-app-muted">
+                  <span>{sectionLabel(tone)} alert color</span>
+                  <select
+                    className="field px-3 py-2 text-sm"
+                    value={system.components.alert.colors[tone]}
+                    onChange={(event) =>
+                      updateComponent("alert", {
+                        colors: {
+                          ...system.components.alert.colors,
+                          [tone]: event.target.value as TokenReference,
+                        },
+                      })}
+                  >
+                    {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                  </select>
+                </label>
+              ))}
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
@@ -2215,7 +2709,9 @@ function TokenPanel({
             </div>
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "system" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4" /> Screen presets</span>
@@ -2292,7 +2788,9 @@ function TokenPanel({
             ))}
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "foundations" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><SwatchBook className="h-4 w-4" /> Semantic mappings</span>
@@ -2323,7 +2821,9 @@ function TokenPanel({
             ))}
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "foundations" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><Type className="h-4 w-4" /> Typography and chrome</span>
@@ -2410,7 +2910,9 @@ function TokenPanel({
             </label>
           </div>
         </details>
+        ) : null}
 
+        {activeTab === "handoff" ? (
         <div className="rounded-[1.3rem] border border-app-border bg-app-surface p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -2446,7 +2948,9 @@ function TokenPanel({
             )}
           </div>
         </div>
+        ) : null}
 
+        {activeTab === "handoff" ? (
         <div className="rounded-[1.3rem] border border-app-border bg-app-surface p-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-app-foreground">
             <Download className="h-4 w-4" />
@@ -2472,6 +2976,7 @@ function TokenPanel({
             </button>
           </div>
         </div>
+        ) : null}
       </div>
     </div>
   );
@@ -2523,6 +3028,8 @@ function UIKitPreview({ system }: { system: GeneratedSystem }) {
               <div className="preview-alert-success px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Accessible success state with semantic green mapping.</div>
               <div className="preview-alert-warning px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Warning tokens stay warm and legible in both themes.</div>
               <div className="preview-alert-danger px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Danger surfaces carry urgency without overpowering the UI.</div>
+              <div className="preview-alert-info px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Info alerts can now be tuned independently for calmer system messaging.</div>
+              <div className="preview-alert-attention px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Attention alerts support high-visibility notices before they escalate to danger.</div>
             </div>
           </div>
 
@@ -2613,6 +3120,8 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
             <div className="preview-alert-success px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Success alert recipe</div>
             <div className="preview-alert-warning px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Warning alert recipe</div>
             <div className="preview-alert-danger px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Danger alert recipe</div>
+            <div className="preview-alert-info px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Info alert recipe</div>
+            <div className="preview-alert-attention px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Attention alert recipe</div>
           </div>
         </div>
 
@@ -3078,11 +3587,37 @@ export function DesignSystemGenerator() {
     });
   }
 
-  const colorErrors = {
-    primaryColor: isValidHex(inputs.primaryColor) ? undefined : "Use a valid hex color like #635bff.",
-    secondaryColor: inputs.secondaryColor && !isValidHex(inputs.secondaryColor) ? "Use a valid hex color or leave it blank." : undefined,
-    accentColor: inputs.accentColor && !isValidHex(inputs.accentColor) ? "Use a valid hex color or leave it blank." : undefined,
-  };
+  const colorErrors = useMemo(() => {
+    const errors: Record<string, string | undefined> = {
+      primaryColor: isValidHex(inputs.primaryColor) ? undefined : "Use a valid hex color like #635bff.",
+      secondaryColor: inputs.secondaryColor && !isValidHex(inputs.secondaryColor) ? "Use a valid hex color or leave it blank." : undefined,
+      accentColor: inputs.accentColor && !isValidHex(inputs.accentColor) ? "Use a valid hex color or leave it blank." : undefined,
+      neutralBaseHex: inputs.neutralBasePreference === "custom" && !isValidHex(inputs.neutralBaseHex)
+        ? "Use a valid hex color for the custom neutral anchor."
+        : undefined,
+    };
+
+    if (inputs.advancedPaletteInputs) {
+      for (const [key, value] of Object.entries(inputs.paletteOverrides)) {
+        errors[`paletteOverrides.${key}`] = value && !isValidHex(value)
+          ? "Use a valid hex color or leave this override blank."
+          : undefined;
+      }
+
+      for (const color of inputs.customColors) {
+        errors[`customColors.${color.id}.name`] = color.hex && !color.name.trim()
+          ? "Add a color name so the custom palette can be exported cleanly."
+          : undefined;
+        errors[`customColors.${color.id}.hex`] = color.hex && !isValidHex(color.hex)
+          ? "Use a valid hex color like #7c3aed."
+          : !color.hex && color.name.trim()
+            ? "Add a hex color for this custom palette."
+            : undefined;
+      }
+    }
+
+    return errors;
+  }, [inputs]);
 
   const qaReport = useMemo(() => auditSystem(system), [system]);
 

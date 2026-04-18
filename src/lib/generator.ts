@@ -7,6 +7,7 @@ import {
   BreakpointScale,
   ComponentRecipes,
   ContainerScale,
+  CustomPalette,
   Density,
   EasingScale,
   FontWeightScale,
@@ -63,14 +64,14 @@ function buildTypographyScale(direction: BrandInputs["styleDirection"]): Typogra
 
 function buildRadii(direction: BrandInputs["styleDirection"]): RadiusScale {
   if (direction === "minimal") {
-    return { sm: "0.45rem", md: "0.8rem", lg: "1rem", xl: "1.4rem", pill: "999px" };
+    return { none: "0rem", sm: "0.45rem", md: "0.8rem", lg: "1rem", xl: "1.4rem", pill: "999px" };
   }
 
   if (direction === "editorial") {
-    return { sm: "0.3rem", md: "0.6rem", lg: "0.95rem", xl: "1.2rem", pill: "999px" };
+    return { none: "0rem", sm: "0.3rem", md: "0.6rem", lg: "0.95rem", xl: "1.2rem", pill: "999px" };
   }
 
-  return { sm: "0.5rem", md: "0.95rem", lg: "1.2rem", xl: "1.6rem", pill: "999px" };
+  return { none: "0rem", sm: "0.5rem", md: "0.95rem", lg: "1.2rem", xl: "1.6rem", pill: "999px" };
 }
 
 function buildShadows(direction: BrandInputs["styleDirection"]): ShadowScale {
@@ -476,6 +477,23 @@ function buildComponentRecipes(
       secondaryStyle: direction === "minimal" ? "outline" : "soft",
       ghostStyle: direction === "minimal" ? "minimal" : "subtle",
       hoverLift: direction === "minimal" ? "none" : direction === "bold" ? "md" : "sm",
+      colors: {
+        primary: {
+          background: "primary.600",
+          foreground: "neutral.50",
+          border: "primary.700",
+        },
+        secondary: {
+          background: "secondary.100",
+          foreground: "secondary.700",
+          border: "secondary.300",
+        },
+        ghost: {
+          background: "neutral.50",
+          foreground: "neutral.700",
+          border: "neutral.200",
+        },
+      },
     },
     input: {
       radius: direction === "minimal" ? "md" : "lg",
@@ -495,12 +513,24 @@ function buildComponentRecipes(
       paddingX: compact ? "3" : "4",
       paddingY: compact ? "1" : "2",
       style: direction === "bold" ? "solid" : "soft",
+      color: {
+        background: direction === "bold" ? "primary.600" : "primary.100",
+        foreground: direction === "bold" ? "neutral.50" : "primary.700",
+        border: "primary.300",
+      },
     },
     alert: {
       radius: direction === "editorial" ? "md" : "lg",
       padding: compact ? "4" : "5",
       emphasis: direction === "bold" ? "strong" : "soft",
       variantStyle: direction === "minimal" ? "outlined" : "tinted",
+      colors: {
+        success: "success.600",
+        warning: "warning.600",
+        danger: "danger.600",
+        info: "info.600",
+        attention: "attention.600",
+      },
     },
     table: {
       radius: direction === "minimal" ? "md" : "lg",
@@ -631,6 +661,9 @@ function buildSemanticTokens(): { lightTokens: ThemeSemanticTokens; darkTokens: 
       success: "success.600",
       warning: "warning.600",
       danger: "danger.600",
+      info: "info.600",
+      attention: "attention.600",
+      highlight: "highlight.500",
     },
     darkTokens: {
       background: "neutral.950",
@@ -651,8 +684,52 @@ function buildSemanticTokens(): { lightTokens: ThemeSemanticTokens; darkTokens: 
       success: "success.400",
       warning: "warning.400",
       danger: "danger.400",
+      info: "info.400",
+      attention: "attention.400",
+      highlight: "highlight.400",
     },
   };
+}
+
+function slugifyPaletteName(name: string) {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    || "custom-color";
+}
+
+function resolvePaletteAnchor(
+  inputs: BrandInputs,
+  key: keyof BrandInputs["paletteOverrides"],
+  fallback: string,
+) {
+  const override = inputs.advancedPaletteInputs ? inputs.paletteOverrides[key] : undefined;
+  return normalizeHex(override ?? "", fallback);
+}
+
+function buildCustomPalettes(inputs: BrandInputs): { metadata: CustomPalette[]; collection: Record<string, ReturnType<typeof makeScaleFromAnchor>> } {
+  const metadata: CustomPalette[] = [];
+  const collection: Record<string, ReturnType<typeof makeScaleFromAnchor>> = {};
+
+  for (const color of inputs.customColors) {
+    const normalizedHex = normalizeHex(color.hex, "");
+    if (!normalizedHex || !color.name.trim()) {
+      continue;
+    }
+
+    const slug = slugifyPaletteName(color.name);
+    metadata.push({
+      id: color.id,
+      name: color.name.trim(),
+      slug,
+      hex: normalizedHex,
+    });
+    collection[slug] = makeScaleFromAnchor(normalizedHex);
+  }
+
+  return { metadata, collection };
 }
 
 function getFontCssVariable(fontId: string, fallbackId: string) {
@@ -662,19 +739,33 @@ function getFontCssVariable(fontId: string, fallbackId: string) {
 }
 
 export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
-  const primary = normalizeHex(inputs.primaryColor, "#7c5cff");
-  const secondary = normalizeHex(inputs.secondaryColor, "#c77734");
-  const accent = normalizeHex(inputs.accentColor, "#16a34a");
-  const neutralAnchor = makeNeutralAnchor(primary, inputs.neutralBasePreference);
+  const primary = resolvePaletteAnchor(inputs, "primary", normalizeHex(inputs.primaryColor, "#7c5cff"));
+  const secondary = resolvePaletteAnchor(inputs, "secondary", normalizeHex(inputs.secondaryColor, "#c77734"));
+  const accent = resolvePaletteAnchor(inputs, "accent", normalizeHex(inputs.accentColor, "#16a34a"));
+  const neutralSource = inputs.neutralBasePreference === "custom"
+    ? normalizeHex(inputs.neutralBaseHex, primary)
+    : makeNeutralAnchor(primary, inputs.neutralBasePreference);
+  const neutralAnchor = resolvePaletteAnchor(inputs, "neutral", neutralSource);
+  const success = resolvePaletteAnchor(inputs, "success", "#16a34a");
+  const warning = resolvePaletteAnchor(inputs, "warning", "#d97706");
+  const danger = resolvePaletteAnchor(inputs, "danger", "#dc2626");
+  const info = resolvePaletteAnchor(inputs, "info", "#0284c7");
+  const attention = resolvePaletteAnchor(inputs, "attention", "#ea580c");
+  const highlight = resolvePaletteAnchor(inputs, "highlight", "#eab308");
+  const { metadata: customPalettes, collection: customPaletteCollection } = buildCustomPalettes(inputs);
 
   const palettes: PaletteCollection = {
     primary: makeScaleFromAnchor(primary),
     secondary: makeScaleFromAnchor(secondary),
     accent: makeScaleFromAnchor(accent),
     neutral: makeScaleFromAnchor(neutralAnchor, true),
-    success: makeScaleFromAnchor("#16a34a"),
-    warning: makeScaleFromAnchor("#d97706"),
-    danger: makeScaleFromAnchor("#dc2626"),
+    success: makeScaleFromAnchor(success),
+    warning: makeScaleFromAnchor(warning),
+    danger: makeScaleFromAnchor(danger),
+    info: makeScaleFromAnchor(info),
+    attention: makeScaleFromAnchor(attention),
+    highlight: makeScaleFromAnchor(highlight),
+    ...customPaletteCollection,
   };
 
   const { lightTokens, darkTokens } = buildSemanticTokens();
@@ -686,6 +777,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
 
   return {
     palettes,
+    customPalettes,
     lightTokens,
     darkTokens,
     typography: {

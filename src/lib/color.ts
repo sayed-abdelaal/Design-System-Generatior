@@ -77,6 +77,13 @@ export function makeNeutralAnchor(baseHex: string, preference: NeutralBasePrefer
     warm: -18,
     cool: 22,
     slate: 48,
+    stone: 8,
+    sand: -8,
+    zinc: 34,
+    graphite: 58,
+    moss: 96,
+    cocoa: -28,
+    custom: 0,
   };
 
   return preserveGamut(0.63, 0.028, hue + offsets[preference]);

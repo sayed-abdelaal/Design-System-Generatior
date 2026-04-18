@@ -20,6 +20,9 @@ export const PALETTE_NAMES = [
   "success",
   "warning",
   "danger",
+  "info",
+  "attention",
+  "highlight",
 ] as const;
 
 export const SEMANTIC_TOKEN_NAMES = [
@@ -41,6 +44,9 @@ export const SEMANTIC_TOKEN_NAMES = [
   "success",
   "warning",
   "danger",
+  "info",
+  "attention",
+  "highlight",
 ] as const;
 
 export type ScaleStep = (typeof SCALE_STEPS)[number];
@@ -48,11 +54,22 @@ export type PaletteName = (typeof PALETTE_NAMES)[number];
 export type SemanticTokenName = (typeof SEMANTIC_TOKEN_NAMES)[number];
 
 export type ColorScale = Record<ScaleStep, string>;
-export type PaletteCollection = Record<PaletteName, ColorScale>;
-export type TokenReference = `${PaletteName}.${ScaleStep}`;
+export type PaletteCollection = Record<string, ColorScale>;
+export type TokenReference = `${string}.${ScaleStep}`;
 export type ThemeSemanticTokens = Record<SemanticTokenName, TokenReference>;
 
-export type NeutralBasePreference = "balanced" | "warm" | "cool" | "slate";
+export type NeutralBasePreference =
+  | "balanced"
+  | "warm"
+  | "cool"
+  | "slate"
+  | "stone"
+  | "sand"
+  | "zinc"
+  | "graphite"
+  | "moss"
+  | "cocoa"
+  | "custom";
 export type StyleDirection =
   | "fintech"
   | "minimal"
@@ -94,7 +111,25 @@ export type TypographyTokens = {
   scale: TypographyScale;
 };
 
+export type ColorInputKey = PaletteName;
+
+export type PaletteOverrideMap = Partial<Record<ColorInputKey, string>>;
+
+export type CustomColorInput = {
+  id: string;
+  name: string;
+  hex: string;
+};
+
+export type CustomPalette = {
+  id: string;
+  name: string;
+  slug: string;
+  hex: string;
+};
+
 export type RadiusScale = {
+  none: string;
   sm: string;
   md: string;
   lg: string;
@@ -295,6 +330,23 @@ export type ButtonRecipe = {
   secondaryStyle: "outline" | "soft";
   ghostStyle: "subtle" | "minimal";
   hoverLift: "none" | "sm" | "md";
+  colors: {
+    primary: {
+      background: TokenReference;
+      foreground: TokenReference;
+      border: TokenReference;
+    };
+    secondary: {
+      background: TokenReference;
+      foreground: TokenReference;
+      border: TokenReference;
+    };
+    ghost: {
+      background: TokenReference;
+      foreground: TokenReference;
+      border: TokenReference;
+    };
+  };
 };
 
 export type InputRecipe = {
@@ -317,6 +369,11 @@ export type BadgeRecipe = {
   paddingX: keyof SpacingScale;
   paddingY: keyof SpacingScale;
   style: "soft" | "solid";
+  color: {
+    background: TokenReference;
+    foreground: TokenReference;
+    border: TokenReference;
+  };
 };
 
 export type AlertRecipe = {
@@ -324,6 +381,13 @@ export type AlertRecipe = {
   padding: keyof SpacingScale;
   emphasis: "soft" | "strong";
   variantStyle: "tinted" | "outlined";
+  colors: {
+    success: TokenReference;
+    warning: TokenReference;
+    danger: TokenReference;
+    info: TokenReference;
+    attention: TokenReference;
+  };
 };
 
 export type TableRecipe = {
@@ -496,6 +560,10 @@ export type BrandInputs = {
   secondaryColor: string;
   accentColor: string;
   neutralBasePreference: NeutralBasePreference;
+  neutralBaseHex: string;
+  advancedPaletteInputs: boolean;
+  paletteOverrides: PaletteOverrideMap;
+  customColors: CustomColorInput[];
   headingFont: string;
   bodyFont: string;
   styleDirection: StyleDirection;
@@ -504,6 +572,7 @@ export type BrandInputs = {
 
 export type GeneratedSystem = {
   palettes: PaletteCollection;
+  customPalettes: CustomPalette[];
   lightTokens: ThemeSemanticTokens;
   darkTokens: ThemeSemanticTokens;
   typography: TypographyTokens;
