@@ -325,12 +325,16 @@ function buildComponentRecipes(
       paddingY: compact ? "3" : "4",
       primaryShadow: direction === "bold" ? "md" : "sm",
       secondaryStyle: direction === "minimal" ? "outline" : "soft",
+      ghostStyle: direction === "minimal" ? "minimal" : "subtle",
+      hoverLift: direction === "minimal" ? "none" : direction === "bold" ? "md" : "sm",
     },
     input: {
       radius: direction === "minimal" ? "md" : "lg",
       paddingX: compact ? "4" : "5",
       paddingY: compact ? "3" : "4",
       borderStyle: direction === "bold" ? "strong" : "soft",
+      validationStyle: direction === "bold" ? "strong" : "soft",
+      showHelperText: true,
     },
     textarea: {
       radius: direction === "minimal" ? "md" : "lg",
@@ -347,18 +351,112 @@ function buildComponentRecipes(
       radius: direction === "editorial" ? "md" : "lg",
       padding: compact ? "4" : "5",
       emphasis: direction === "bold" ? "strong" : "soft",
+      variantStyle: direction === "minimal" ? "outlined" : "tinted",
     },
     table: {
       radius: direction === "minimal" ? "md" : "lg",
       cellPaddingX: compact ? "3" : "4",
       cellPaddingY: compact ? "3" : "4",
       headerStyle: direction === "editorial" ? "elevated" : "muted",
+      density: compact ? "compact" : "comfortable",
+      zebraStripes: direction !== "minimal",
+    },
+    sidebar: {
+      width: airy ? "md" : "sm",
+      itemGap: compact ? "3" : "4",
+      itemRadius: direction === "minimal" ? "md" : "lg",
+    },
+    checkbox: {
+      size: compact ? "4" : "5",
+      radius: direction === "minimal" ? "sm" : "md",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    combobox: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      shadow: direction === "bold" ? "md" : "sm",
+    },
+    radioGroup: {
+      gap: compact ? "3" : "4",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    switch: {
+      trackWidth: compact ? "8" : "10",
+      trackHeight: compact ? "4" : "5",
+      thumbSize: compact ? "3" : "4",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    descriptionList: {
+      gap: compact ? "3" : "4",
+      termWidth: "sm",
     },
     dialog: {
       radius: direction === "editorial" ? "lg" : "xl",
       width: airy ? "lg" : "md",
       padding: compact ? "5" : "6",
       shadow: direction === "bold" ? "lg" : "md",
+      overlayBlur: direction === "minimal" ? "sm" : "md",
+      overlayTone: direction === "bold" ? "strong" : "soft",
+    },
+    listbox: {
+      radius: direction === "minimal" ? "md" : "lg",
+      optionPadding: compact ? "3" : "4",
+      maxHeight: "sm",
+    },
+    pagination: {
+      radius: direction === "minimal" ? "md" : "pill",
+      gap: compact ? "2" : "3",
+    },
+    dropdown: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      shadow: direction === "bold" ? "md" : "sm",
+    },
+    navbar: {
+      height: compact ? "10" : "12",
+      paddingX: compact ? "4" : "6",
+      blur: direction === "minimal" ? "sm" : "md",
+    },
+    avatar: {
+      size: compact ? "8" : "10",
+      radius: "pill",
+      ring: direction === "minimal" ? "none" : direction === "bold" ? "strong" : "soft",
+    },
+    divider: {
+      thickness: direction === "bold" ? "2px" : "1px",
+      inset: compact ? "3" : "4",
+    },
+    heading: {
+      scale: "h3",
+      weight: direction === "bold" ? "bold" : "semibold",
+      tracking: direction === "editorial" ? "tight" : "normal",
+    },
+    text: {
+      scale: "body",
+      leading: airy ? "relaxed" : "normal",
+      tone: "secondary",
+    },
+    fieldset: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      legendStyle: direction === "editorial" ? "stacked" : "inline",
+    },
+    sidebarLayout: {
+      contentWidth: "xl",
+      sidebarWidth: airy ? "md" : "sm",
+      headerHeight: compact ? "10" : "12",
+      pageGap: compact ? "4" : "6",
+    },
+    stackedLayout: {
+      contentWidth: "xl",
+      sidebarWidth: "sm",
+      headerHeight: compact ? "10" : "12",
+      pageGap: compact ? "4" : "6",
+    },
+    authLayout: {
+      cardWidth: airy ? "md" : "sm",
+      cardRadius: direction === "minimal" ? "lg" : "xl",
+      cardPadding: compact ? "5" : "6",
     },
   };
 }

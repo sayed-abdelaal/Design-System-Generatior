@@ -99,6 +99,7 @@ select {
   font-family: var(--preview-font-body), sans-serif;
   animation: var(--preview-animate-fade-in);
   cursor: var(--preview-control-cursor);
+  position: relative;
 }
 
 .preview-surface {
@@ -143,7 +144,7 @@ select {
 
 .preview-button-primary:hover {
   background: var(--preview-action-primary-hover);
-  transform: translateY(-1px);
+  transform: translateY(calc(var(--preview-button-hover-lift) * -1));
 }
 
 .preview-button-secondary {
@@ -156,11 +157,34 @@ select {
     transform 160ms var(--preview-transition-ease);
 }
 
+.preview-button-ghost {
+  background: var(--preview-button-ghost-bg);
+  color: var(--preview-text-secondary);
+  border-radius: var(--preview-button-radius);
+  transition:
+    background-color 160ms var(--preview-transition-ease),
+    transform 160ms var(--preview-transition-ease);
+}
+
+.preview-button-ghost:hover {
+  transform: translateY(calc(var(--preview-button-hover-lift) * -1));
+}
+
 .preview-input {
   border: var(--preview-input-border-width) solid var(--preview-border-default);
   background: var(--preview-surface-elevated);
   color: var(--preview-text-primary);
   border-radius: var(--preview-input-radius);
+}
+
+.preview-input[data-state="error"] {
+  border-color: var(--preview-input-error-border);
+  background: var(--preview-input-error-bg);
+}
+
+.preview-input[data-state="success"] {
+  border-color: var(--preview-input-success-border);
+  background: var(--preview-input-success-bg);
 }
 
 .preview-input:focus-visible {
@@ -212,4 +236,13 @@ select {
 
 .preview-table-row + .preview-table-row {
   border-top: 1px solid var(--preview-border-default);
+}
+
+.preview-table-row[data-zebra="true"]:nth-child(odd) {
+  background: color-mix(in srgb, var(--preview-surface-elevated) 72%, transparent);
+}
+
+.preview-overlay {
+  background: var(--preview-dialog-overlay);
+  backdrop-filter: blur(var(--preview-dialog-overlay-blur));
 }

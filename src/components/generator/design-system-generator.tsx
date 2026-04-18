@@ -19,6 +19,7 @@ import {
 import { FONT_OPTIONS } from "@/data/fonts";
 import { getContrastRatio, isValidHex, normalizeHex } from "@/lib/color";
 import {
+  buildComponentsJson,
   buildReadme,
   buildTailwindThemeCss,
   buildThemeCss,
@@ -62,7 +63,7 @@ const INITIAL_INPUTS: BrandInputs = {
   logoDataUrl: null,
 };
 
-const PREVIEW_MODES = ["ui-kit", "dashboard", "marketing"] as const;
+const PREVIEW_MODES = ["ui-kit", "components", "dashboard", "marketing"] as const;
 type PreviewMode = (typeof PREVIEW_MODES)[number];
 type ActiveTheme = "light" | "dark";
 
@@ -107,6 +108,20 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
   const alertSoftWarningBg = "color-mix(in srgb, var(--preview-warning) 14%, transparent)";
   const alertStrongDangerBg = "color-mix(in srgb, var(--preview-danger) 18%, transparent)";
   const alertSoftDangerBg = "color-mix(in srgb, var(--preview-danger) 12%, transparent)";
+  const hoverLiftMap = {
+    none: "0px",
+    sm: "1px",
+    md: "2px",
+  } as const;
+  const ghostBg = system.components.button.ghostStyle === "minimal"
+    ? "transparent"
+    : "color-mix(in srgb, var(--preview-surface-elevated) 88%, transparent)";
+  const alertBorderVariant = system.components.alert.variantStyle === "outlined"
+    ? "color-mix(in srgb, currentColor 40%, transparent)"
+    : "transparent";
+  const dialogOverlay = system.components.dialog.overlayTone === "strong"
+    ? "color-mix(in srgb, var(--preview-foreground) 34%, transparent)"
+    : "color-mix(in srgb, var(--preview-foreground) 18%, transparent)";
 
   return {
     "--preview-background": resolved.background,
@@ -159,10 +174,20 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-button-py": system.foundations.spacing[system.components.button.paddingY],
     "--preview-button-secondary-bg": buttonSecondaryBg,
     "--preview-button-secondary-border": buttonSecondaryBorder,
+    "--preview-button-ghost-bg": ghostBg,
+    "--preview-button-hover-lift": hoverLiftMap[system.components.button.hoverLift],
     "--preview-input-radius": system.radius[system.components.input.radius],
     "--preview-input-px": system.foundations.spacing[system.components.input.paddingX],
     "--preview-input-py": system.foundations.spacing[system.components.input.paddingY],
     "--preview-input-border-width": system.components.input.borderStyle === "strong" ? "2px" : "1px",
+    "--preview-input-error-border": "var(--preview-danger)",
+    "--preview-input-error-bg": system.components.input.validationStyle === "strong"
+      ? "color-mix(in srgb, var(--preview-danger) 12%, transparent)"
+      : "color-mix(in srgb, var(--preview-danger) 6%, transparent)",
+    "--preview-input-success-border": "var(--preview-success)",
+    "--preview-input-success-bg": system.components.input.validationStyle === "strong"
+      ? "color-mix(in srgb, var(--preview-success) 12%, transparent)"
+      : "color-mix(in srgb, var(--preview-success) 6%, transparent)",
     "--preview-textarea-radius": system.radius[system.components.textarea.radius],
     "--preview-textarea-padding": system.foundations.spacing[system.components.textarea.padding],
     "--preview-textarea-min-height": system.foundations.spacing[system.components.textarea.minHeight],
@@ -174,11 +199,11 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-alert-radius": system.radius[system.components.alert.radius],
     "--preview-alert-padding": system.foundations.spacing[system.components.alert.padding],
     "--preview-alert-success-bg": system.components.alert.emphasis === "strong" ? alertStrongSuccessBg : alertSoftSuccessBg,
-    "--preview-alert-success-border": "color-mix(in srgb, var(--preview-success) 26%, transparent)",
+    "--preview-alert-success-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-success) 26%, transparent)",
     "--preview-alert-warning-bg": system.components.alert.emphasis === "strong" ? alertStrongWarningBg : alertSoftWarningBg,
-    "--preview-alert-warning-border": "color-mix(in srgb, var(--preview-warning) 28%, transparent)",
+    "--preview-alert-warning-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-warning) 28%, transparent)",
     "--preview-alert-danger-bg": system.components.alert.emphasis === "strong" ? alertStrongDangerBg : alertSoftDangerBg,
-    "--preview-alert-danger-border": "color-mix(in srgb, var(--preview-danger) 24%, transparent)",
+    "--preview-alert-danger-border": system.components.alert.variantStyle === "outlined" ? alertBorderVariant : "color-mix(in srgb, var(--preview-danger) 24%, transparent)",
     "--preview-table-radius": system.radius[system.components.table.radius],
     "--preview-table-px": system.foundations.spacing[system.components.table.cellPaddingX],
     "--preview-table-py": system.foundations.spacing[system.components.table.cellPaddingY],
@@ -186,6 +211,8 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-dialog-width": system.foundations.containers[system.components.dialog.width],
     "--preview-dialog-padding": system.foundations.spacing[system.components.dialog.padding],
     "--preview-dialog-shadow": system.shadows[system.components.dialog.shadow],
+    "--preview-dialog-overlay": dialogOverlay,
+    "--preview-dialog-overlay-blur": system.foundations.blur[system.components.dialog.overlayBlur],
   } as CSSProperties;
 }
 
@@ -466,13 +493,15 @@ function PreviewPanel({
 
         <div className="max-h-[calc(100vh-15rem)] overflow-auto p-6">
           <div style={{ maxWidth: previewContentWidth }}>
-          {previewMode === "ui-kit" ? (
-            <UIKitPreview />
-          ) : previewMode === "dashboard" ? (
-            <DashboardPreview brandName={brandName} system={system} />
-          ) : (
-            <MarketingPreview brandName={brandName} />
-          )}
+            {previewMode === "ui-kit" ? (
+              <UIKitPreview system={system} />
+            ) : previewMode === "components" ? (
+              <ComponentsPreview system={system} />
+            ) : previewMode === "dashboard" ? (
+              <DashboardPreview brandName={brandName} system={system} />
+            ) : (
+              <MarketingPreview brandName={brandName} />
+            )}
           </div>
         </div>
       </div>
@@ -481,10 +510,14 @@ function PreviewPanel({
 }
 
 function TokenPanel({
+  inputs,
+  setInputs,
   system,
   setSystem,
   brandName,
 }: {
+  inputs: BrandInputs;
+  setInputs: Dispatch<SetStateAction<BrandInputs>>;
   system: GeneratedSystem;
   setSystem: Dispatch<SetStateAction<GeneratedSystem>>;
   brandName: string;
@@ -534,9 +567,14 @@ function TokenPanel({
     setSystem((current) => ({ ...current, density: value }));
   }
 
-  function exportFile(type: "tokens" | "theme" | "tailwind" | "readme") {
+  function exportFile(type: "tokens" | "components" | "theme" | "tailwind" | "readme" | "session") {
     if (type === "tokens") {
       downloadTextFile("tokens.json", buildTokensJson(system, brandName), "application/json");
+      return;
+    }
+
+    if (type === "components") {
+      downloadTextFile("components.json", buildComponentsJson(system, brandName), "application/json");
       return;
     }
 
@@ -550,7 +588,46 @@ function TokenPanel({
       return;
     }
 
+    if (type === "session") {
+      downloadTextFile(
+        "design-system-session.json",
+        JSON.stringify({ version: 1, inputs, system }, null, 2),
+        "application/json",
+      );
+      return;
+    }
+
     downloadTextFile("README.md", buildReadme(brandName), "text/markdown");
+  }
+
+  function importSession(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(reader.result) as { inputs?: BrandInputs; system?: GeneratedSystem };
+
+        if (parsed.inputs) {
+          setInputs(parsed.inputs);
+        }
+
+        if (parsed.system) {
+          setSystem(parsed.system);
+        }
+      } catch {
+        // Keep MVP simple; invalid files are ignored.
+      }
+    };
+    reader.readAsText(file);
   }
 
   async function exportZip() {
@@ -1376,6 +1453,29 @@ function TokenPanel({
                   <option value="soft">Soft</option>
                 </select>
               </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Ghost button style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.button.ghostStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, button: { ...current.components.button, ghostStyle: event.target.value as typeof current.components.button.ghostStyle } },
+                  }))}>
+                  <option value="subtle">Subtle</option>
+                  <option value="minimal">Minimal</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Button hover lift</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.button.hoverLift}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, button: { ...current.components.button, hoverLift: event.target.value as typeof current.components.button.hoverLift } },
+                  }))}>
+                  <option value="none">None</option>
+                  <option value="sm">Small</option>
+                  <option value="md">Medium</option>
+                </select>
+              </label>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
@@ -1401,6 +1501,17 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Validation style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.validationStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, validationStyle: event.target.value as typeof current.components.input.validationStyle } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Input padding X</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.input.paddingX}
                   onChange={(event) => setSystem((current) => ({
@@ -1418,6 +1529,17 @@ function TokenPanel({
                     components: { ...current.components, input: { ...current.components.input, paddingY: event.target.value as typeof current.components.input.paddingY } },
                   }))}>
                   {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Show helper text</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.showHelperText ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, showHelperText: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </label>
             </div>
@@ -1522,6 +1644,17 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Alert variant style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.alert.variantStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, alert: { ...current.components.alert, variantStyle: event.target.value as typeof current.components.alert.variantStyle } },
+                  }))}>
+                  <option value="tinted">Tinted</option>
+                  <option value="outlined">Outlined</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Alert padding</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.alert.padding}
                   onChange={(event) => setSystem((current) => ({
@@ -1556,6 +1689,17 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Table density</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.table.density}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, table: { ...current.components.table, density: event.target.value as typeof current.components.table.density } },
+                  }))}>
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Cell padding X</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.table.cellPaddingX}
                   onChange={(event) => setSystem((current) => ({
@@ -1573,6 +1717,17 @@ function TokenPanel({
                     components: { ...current.components, table: { ...current.components.table, cellPaddingY: event.target.value as typeof current.components.table.cellPaddingY } },
                   }))}>
                   {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Zebra stripes</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.table.zebraStripes ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, table: { ...current.components.table, zebraStripes: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </label>
             </div>
@@ -1616,6 +1771,235 @@ function TokenPanel({
                     components: { ...current.components, dialog: { ...current.components.dialog, shadow: event.target.value as typeof current.components.dialog.shadow } },
                   }))}>
                   {Object.keys(system.shadows).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Overlay blur</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.overlayBlur}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, overlayBlur: event.target.value as typeof current.components.dialog.overlayBlur } },
+                  }))}>
+                  {Object.keys(system.foundations.blur).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Overlay tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.overlayTone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, overlayTone: event.target.value as typeof current.components.dialog.overlayTone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Checkbox size</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.checkbox.size}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, checkbox: { ...current.components.checkbox, size: event.target.value as typeof current.components.checkbox.size } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Checkbox tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.checkbox.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, checkbox: { ...current.components.checkbox, tone: event.target.value as typeof current.components.checkbox.tone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Switch track width</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.switch.trackWidth}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, switch: { ...current.components.switch, trackWidth: event.target.value as typeof current.components.switch.trackWidth } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Switch tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.switch.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, switch: { ...current.components.switch, tone: event.target.value as typeof current.components.switch.tone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dropdown radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dropdown.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dropdown: { ...current.components.dropdown, radius: event.target.value as typeof current.components.dropdown.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Combobox radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.combobox.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, combobox: { ...current.components.combobox, radius: event.target.value as typeof current.components.combobox.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Listbox radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.listbox.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, listbox: { ...current.components.listbox, radius: event.target.value as typeof current.components.listbox.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Pagination radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.pagination.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, pagination: { ...current.components.pagination, radius: event.target.value as typeof current.components.pagination.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Navbar height</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.navbar.height}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, navbar: { ...current.components.navbar, height: event.target.value as typeof current.components.navbar.height } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Sidebar width</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.sidebar.width}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, sidebar: { ...current.components.sidebar, width: event.target.value as typeof current.components.sidebar.width } },
+                  }))}>
+                  {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Avatar size</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.avatar.size}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, avatar: { ...current.components.avatar, size: event.target.value as typeof current.components.avatar.size } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Divider thickness</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.divider.thickness}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, divider: { ...current.components.divider, thickness: event.target.value as typeof current.components.divider.thickness } },
+                  }))}>
+                  <option value="1px">1px</option>
+                  <option value="2px">2px</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Heading scale</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.heading.scale}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, heading: { ...current.components.heading, scale: event.target.value as typeof current.components.heading.scale } },
+                  }))}>
+                  {Object.keys(system.typography.scale).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Text scale</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.text.scale}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, text: { ...current.components.text, scale: event.target.value as typeof current.components.text.scale } },
+                  }))}>
+                  {Object.keys(system.typography.scale).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Fieldset radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.fieldset.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, fieldset: { ...current.components.fieldset, radius: event.target.value as typeof current.components.fieldset.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Description list gap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.descriptionList.gap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, descriptionList: { ...current.components.descriptionList, gap: event.target.value as typeof current.components.descriptionList.gap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Sidebar layout width</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.sidebarLayout.sidebarWidth}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, sidebarLayout: { ...current.components.sidebarLayout, sidebarWidth: event.target.value as typeof current.components.sidebarLayout.sidebarWidth } },
+                  }))}>
+                  {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stacked layout header</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.stackedLayout.headerHeight}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, stackedLayout: { ...current.components.stackedLayout, headerHeight: event.target.value as typeof current.components.stackedLayout.headerHeight } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Auth card width</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.authLayout.cardWidth}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, authLayout: { ...current.components.authLayout, cardWidth: event.target.value as typeof current.components.authLayout.cardWidth } },
+                  }))}>
+                  {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
                 </select>
               </label>
             </div>
@@ -1747,9 +2131,15 @@ function TokenPanel({
           </div>
           <div className="mt-4 grid gap-2">
             <button type="button" className="field text-left" onClick={() => exportFile("tokens")}>Download `tokens.json`</button>
+            <button type="button" className="field text-left" onClick={() => exportFile("components")}>Download `components.json`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("theme")}>Download `theme.css`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("tailwind")}>Download `tailwind-theme.css`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("readme")}>Download `README.md`</button>
+            <button type="button" className="field text-left" onClick={() => exportFile("session")}>Save session JSON</button>
+            <label className="field cursor-pointer text-left">
+              Load session JSON
+              <input type="file" className="sr-only" accept="application/json" onChange={importSession} />
+            </label>
             <button
               type="button"
               className="mt-2 rounded-[1rem] bg-app-accent px-4 py-3 text-sm font-semibold text-white"
@@ -1764,7 +2154,7 @@ function TokenPanel({
   );
 }
 
-function UIKitPreview() {
+function UIKitPreview({ system }: { system: GeneratedSystem }) {
   return (
     <div className="preview-stack flex flex-col">
       <section className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr]">
@@ -1779,9 +2169,20 @@ function UIKitPreview() {
           <div className="flex flex-wrap gap-3">
             <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Primary button</button>
             <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Secondary action</button>
+            <button className="preview-button-ghost px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Ghost action</button>
           </div>
           <div className="grid gap-3">
             <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Workspace name" readOnly />
+            <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="success" value="Brand color validated" readOnly />
+            <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="error" value="Accent color needs contrast help" readOnly />
+            {system.components.input.showHelperText ? (
+              <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>
+                {`Helper text ${" "}`}
+                <span style={{ display: "inline-block" }}>
+                  stays attached to control recipes.
+                </span>
+              </p>
+            ) : null}
             <textarea className="preview-input min-h-[var(--preview-textarea-min-height)] rounded-[var(--preview-textarea-radius)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Supporting notes that explain how tokens should feel in the product surface." readOnly />
             <select className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" defaultValue="comfortable">
               <option value="comfortable">Comfortable density</option>
@@ -1822,6 +2223,338 @@ function UIKitPreview() {
                   <p className="mt-1 text-xs" style={{ color: "var(--preview-text-secondary)" }}>Radius, shadow, and surface color all draw from the editable system.</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function ComponentsPreview({ system }: { system: GeneratedSystem }) {
+  return (
+    <div className="preview-stack flex flex-col">
+      <section className="preview-surface p-5">
+        <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "var(--preview-text-muted)" }}>Component lab</p>
+        <h3 className="preview-heading mt-3 text-3xl font-semibold">Inspect variants, states, and system recipes in one place.</h3>
+        <p className="mt-3 max-w-2xl text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+          Every example below is using the same component recipe layer you edit in the right panel.
+        </p>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-2">
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Buttons</h4>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Primary</button>
+            <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Secondary</button>
+            <button className="preview-button-ghost px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Ghost</button>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium opacity-65">Disabled</button>
+            <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Quiet action</button>
+            <button className="preview-button-ghost px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Icon slot</button>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Inputs</h4>
+          <div className="mt-4 space-y-3">
+            <div>
+              <input className="preview-input w-full px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Default input" readOnly />
+              {system.components.input.showHelperText ? (
+                <p className="mt-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>Helper text follows the component recipe toggle.</p>
+              ) : null}
+            </div>
+            <div>
+              <input className="preview-input w-full px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="success" value="Success state" readOnly />
+              <p className="mt-2 text-xs" style={{ color: "var(--preview-success)" }}>Everything checks out.</p>
+            </div>
+            <div>
+              <input className="preview-input w-full px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="error" value="Error state" readOnly />
+              <p className="mt-2 text-xs" style={{ color: "var(--preview-danger)" }}>Needs a more accessible accent value.</p>
+            </div>
+            <textarea className="preview-input w-full min-h-[var(--preview-textarea-min-height)] rounded-[var(--preview-textarea-radius)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Textarea recipe uses its own min-height and padding settings." readOnly />
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[0.95fr_1.05fr]">
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Badges and Alerts</h4>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Default badge</span>
+            <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">System label</span>
+          </div>
+          <div className="mt-5 space-y-3">
+            <div className="preview-alert-success px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Success alert recipe</div>
+            <div className="preview-alert-warning px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Warning alert recipe</div>
+            <div className="preview-alert-danger px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Danger alert recipe</div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Table and Dialog</h4>
+          <div className="mt-4 overflow-hidden border rounded-[var(--preview-table-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
+            <div
+              className="grid grid-cols-[1.3fr_0.8fr_0.9fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-xs uppercase tracking-[0.16em]"
+              style={{
+                color: "var(--preview-text-muted)",
+                background: system.components.table.headerStyle === "elevated" ? "var(--preview-surface-elevated)" : "color-mix(in srgb, var(--preview-border-default) 24%, transparent)",
+              }}
+            >
+              <span>Component</span>
+              <span>Density</span>
+              <span>Status</span>
+            </div>
+            {[
+              ["Button", system.components.table.density, "Ready"],
+              ["Input", system.components.table.density, "Ready"],
+              ["Dialog", system.components.table.density, "Ready"],
+            ].map((row) => (
+              <div
+                key={row[0]}
+                data-zebra={system.components.table.zebraStripes ? "true" : "false"}
+                className="preview-table-row grid grid-cols-[1.3fr_0.8fr_0.9fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-sm"
+              >
+                {row.map((cell) => (
+                  <span key={cell}>{cell}</span>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="preview-overlay mt-5 rounded-[var(--preview-dialog-radius)] p-3">
+            <div className="preview-elevated" style={{ maxWidth: "var(--preview-dialog-width)", borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
+              <div className="px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)]">
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Dialog recipe</p>
+                <h5 className="preview-heading mt-2 text-lg font-semibold">Review export package</h5>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                  Overlay tone, blur, radius, width, and shadow are all recipe-driven.
+                </p>
+                <div className="mt-4 flex gap-3">
+                  <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Cancel</button>
+                  <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Export now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-2">
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Selection controls</h4>
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-flex items-center justify-center border"
+                style={{
+                  width: system.foundations.spacing[system.components.checkbox.size],
+                  height: system.foundations.spacing[system.components.checkbox.size],
+                  borderRadius: system.radius[system.components.checkbox.radius],
+                  borderColor: "var(--preview-action-primary)",
+                  background: system.components.checkbox.tone === "strong" ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-action-primary) 12%, transparent)",
+                }}
+              >
+                <span className="text-xs" style={{ color: system.components.checkbox.tone === "strong" ? "var(--preview-action-primary-foreground)" : "var(--preview-action-primary)" }}>✓</span>
+              </span>
+              <span className="text-sm">Checkbox</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-flex items-center rounded-full"
+                style={{
+                  width: system.foundations.spacing[system.components.switch.trackWidth],
+                  height: system.foundations.spacing[system.components.switch.trackHeight],
+                  background: system.components.switch.tone === "strong" ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-action-primary) 18%, transparent)",
+                  padding: "2px",
+                }}
+              >
+                <span
+                  className="rounded-full bg-white"
+                  style={{
+                    width: system.foundations.spacing[system.components.switch.thumbSize],
+                    height: system.foundations.spacing[system.components.switch.thumbSize],
+                    marginInlineStart: "auto",
+                  }}
+                />
+              </span>
+              <span className="text-sm">Switch</span>
+            </div>
+            <div className="grid gap-2" style={{ gap: system.foundations.spacing[system.components.radioGroup.gap] }}>
+              {["Option one", "Option two", "Option three"].map((option, index) => (
+                <div key={option} className="flex items-center gap-3">
+                  <span
+                    className="inline-flex h-4 w-4 items-center justify-center rounded-full border"
+                    style={{
+                      borderColor: "var(--preview-action-primary)",
+                      background: index === 0 && system.components.radioGroup.tone === "strong" ? "var(--preview-action-primary)" : "transparent",
+                    }}
+                  >
+                    {index === 0 ? <span className="h-2 w-2 rounded-full bg-white" /> : null}
+                  </span>
+                  <span className="text-sm">{option}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Menus and selection</h4>
+          <div className="mt-4 space-y-4">
+            <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.dropdown.radius], boxShadow: system.shadows[system.components.dropdown.shadow] }}>
+              <div className="px-4 py-3 text-sm font-medium">Dropdown menu</div>
+              <div className="border-t" style={{ borderColor: "var(--preview-border-default)" }}>
+                {["View profile", "Team settings", "Sign out"].map((item) => (
+                  <div key={item} className="px-4 py-3 text-sm">{item}</div>
+                ))}
+              </div>
+            </div>
+            <div className="preview-input flex items-center justify-between" style={{ borderRadius: system.radius[system.components.combobox.radius], padding: system.foundations.spacing[system.components.combobox.padding] }}>
+              <span className="text-sm">Combobox</span>
+              <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>⌄</span>
+            </div>
+            <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.listbox.radius], maxWidth: system.foundations.containers[system.components.listbox.maxHeight] }}>
+              {["Listbox option A", "Listbox option B", "Listbox option C"].map((item, index) => (
+                <div key={item} className="text-sm" style={{ padding: system.foundations.spacing[system.components.listbox.optionPadding], background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>{item}</div>
+              ))}
+            </div>
+            <div className="flex items-center" style={{ gap: system.foundations.spacing[system.components.pagination.gap] }}>
+              {["Prev", "1", "2", "3", "Next"].map((item, index) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center justify-center border text-sm"
+                  style={{
+                    minWidth: "2.25rem",
+                    padding: "0.5rem 0.75rem",
+                    borderRadius: system.radius[system.components.pagination.radius],
+                    borderColor: "var(--preview-border-default)",
+                    background: index === 2 ? "var(--preview-action-primary)" : "transparent",
+                    color: index === 2 ? "var(--preview-action-primary-foreground)" : "var(--preview-text-primary)",
+                  }}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-2">
+        <div className="preview-surface p-5">
+          <div className="flex items-center justify-between" style={{ minHeight: system.foundations.spacing[system.components.navbar.height], paddingInline: system.foundations.spacing[system.components.navbar.paddingX], backdropFilter: `blur(${system.foundations.blur[system.components.navbar.blur]})` }}>
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-flex items-center justify-center"
+                style={{
+                  width: system.foundations.spacing[system.components.avatar.size],
+                  height: system.foundations.spacing[system.components.avatar.size],
+                  borderRadius: system.radius[system.components.avatar.radius],
+                  background: "var(--preview-action-primary)",
+                  boxShadow: system.components.avatar.ring === "none" ? "none" : system.components.avatar.ring === "soft" ? "0 0 0 2px color-mix(in srgb, var(--preview-action-primary) 18%, transparent)" : "0 0 0 3px color-mix(in srgb, var(--preview-action-primary) 32%, transparent)",
+                  color: "var(--preview-action-primary-foreground)",
+                }}
+              >
+                NS
+              </span>
+              <span className="preview-heading text-lg font-semibold">Navbar</span>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <span>Docs</span>
+              <span>Components</span>
+              <span>Export</span>
+            </div>
+          </div>
+
+          <div className="mt-5 grid" style={{ gridTemplateColumns: `${system.foundations.containers[system.components.sidebar.width]} 1fr`, gap: system.foundations.spacing[system.components.sidebar.itemGap] }}>
+            <aside className="preview-elevated p-4">
+              {["Overview", "Theme", "Components", "Sessions"].map((item, index) => (
+                <div key={item} className="text-sm" style={{ padding: "0.75rem 1rem", borderRadius: system.radius[system.components.sidebar.itemRadius], background: index === 1 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>
+                  {item}
+                </div>
+              ))}
+            </aside>
+            <div className="preview-surface p-4">
+              <p className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>Sidebar recipe controls width, gap, and item radius.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Content primitives</h4>
+          <div className="mt-4 space-y-4">
+            <div>
+              <p
+                className="preview-heading font-semibold"
+                style={{
+                  fontSize: system.typography.scale[system.components.heading.scale].size,
+                  letterSpacing: system.foundations.tracking[system.components.heading.tracking],
+                  fontWeight: system.foundations.fontWeights[system.components.heading.weight],
+                }}
+              >
+                Heading primitive
+              </p>
+              <p
+                className="mt-2"
+                style={{
+                  fontSize: system.typography.scale[system.components.text.scale].size,
+                  lineHeight: system.foundations.leading[system.components.text.leading],
+                  color: system.components.text.tone === "primary" ? "var(--preview-text-primary)" : system.components.text.tone === "secondary" ? "var(--preview-text-secondary)" : "var(--preview-text-muted)",
+                }}
+              >
+                Text primitive follows its own scale, leading, and tone recipe.
+              </p>
+            </div>
+            <div className="border" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.fieldset.radius], padding: system.foundations.spacing[system.components.fieldset.padding] }}>
+              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Fieldset</p>
+              <div className="mt-3 grid gap-3">
+                <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Field one" readOnly />
+                <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Field two" readOnly />
+              </div>
+            </div>
+            <div className="grid" style={{ gap: system.foundations.spacing[system.components.descriptionList.gap], gridTemplateColumns: `${system.foundations.containers[system.components.descriptionList.termWidth]} 1fr` }}>
+              {[
+                ["Brand", "Northstar Labs"],
+                ["Theme", "Fintech / Balanced"],
+                ["Export", "Tailwind v4 ready"],
+              ].map(([term, value]) => (
+                <div key={term} className="contents">
+                  <span className="text-sm font-medium">{term}</span>
+                  <span className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{value}</span>
+                </div>
+              ))}
+            </div>
+            <div className="border-t" style={{ borderColor: "var(--preview-border-default)", borderTopWidth: system.components.divider.thickness, marginInline: system.foundations.spacing[system.components.divider.inset] }} />
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-3">
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Sidebar layout</h4>
+          <div className="mt-4 grid" style={{ gridTemplateColumns: `${system.foundations.containers[system.components.sidebarLayout.sidebarWidth]} 1fr`, gap: system.foundations.spacing[system.components.sidebarLayout.pageGap] }}>
+            <div className="preview-elevated p-4">Sidebar</div>
+            <div className="preview-elevated p-4">Content</div>
+          </div>
+        </div>
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Stacked layout</h4>
+          <div className="preview-elevated p-4" style={{ minHeight: system.foundations.spacing[system.components.stackedLayout.headerHeight] }}>Header</div>
+          <div className="preview-elevated mt-4 p-4">Page content</div>
+        </div>
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Auth layout</h4>
+          <div className="preview-overlay rounded-[var(--preview-dialog-radius)] p-3">
+            <div className="preview-elevated" style={{ maxWidth: system.foundations.containers[system.components.authLayout.cardWidth], borderRadius: system.radius[system.components.authLayout.cardRadius], padding: system.foundations.spacing[system.components.authLayout.cardPadding] }}>
+              <p className="preview-heading text-lg font-semibold">Sign in</p>
+              <div className="mt-3 grid gap-3">
+                <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Email address" readOnly />
+                <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Password" readOnly />
+                <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Continue</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1903,7 +2636,7 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                 ["Aurelian Studio", "Editorial", "Review", "CL"],
                 ["Vector Health", "Minimal", "Healthy", "JN"],
               ].map((row) => (
-                <div key={row[0]} className="preview-table-row grid grid-cols-[1.3fr_0.9fr_0.9fr_0.7fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-sm">
+                <div key={row[0]} data-zebra={system.components.table.zebraStripes ? "true" : "false"} className="preview-table-row grid grid-cols-[1.3fr_0.9fr_0.9fr_0.7fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-sm">
                   {row.map((cell) => (
                     <span key={cell}>{cell}</span>
                   ))}
@@ -1922,14 +2655,16 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
               </div>
             </div>
 
-            <div className="preview-elevated p-5" style={{ maxWidth: "var(--preview-dialog-width)", borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
-              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Drawer preview</p>
-              <h4 className="preview-heading mt-2 text-xl font-semibold">Export package</h4>
-              <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
-                Includes theme CSS, Tailwind v4 theme layer, JSON tokens, and a handoff README.
-              </p>
-              <div className="mt-4 border px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)] text-sm rounded-[var(--preview-dialog-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
-                Ready for ZIP download
+            <div className="preview-overlay rounded-[var(--preview-dialog-radius)] p-3">
+              <div className="preview-elevated p-5" style={{ maxWidth: "var(--preview-dialog-width)", borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Drawer preview</p>
+                <h4 className="preview-heading mt-2 text-xl font-semibold">Export package</h4>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                  Includes theme CSS, Tailwind v4 theme layer, JSON tokens, and a handoff README.
+                </p>
+                <div className="mt-4 border px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)] text-sm rounded-[var(--preview-dialog-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
+                  Ready for ZIP download
+                </div>
               </div>
             </div>
           </section>
@@ -2084,7 +2819,7 @@ export function DesignSystemGenerator() {
           />
         </div>
 
-        <TokenPanel system={system} setSystem={setSystem} brandName={inputs.brandName} />
+        <TokenPanel inputs={inputs} setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
       </section>
     </main>
   );

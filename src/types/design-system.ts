@@ -266,6 +266,8 @@ export type ButtonRecipe = {
   paddingY: keyof SpacingScale;
   primaryShadow: keyof ShadowScale;
   secondaryStyle: "outline" | "soft";
+  ghostStyle: "subtle" | "minimal";
+  hoverLift: "none" | "sm" | "md";
 };
 
 export type InputRecipe = {
@@ -273,6 +275,8 @@ export type InputRecipe = {
   paddingX: keyof SpacingScale;
   paddingY: keyof SpacingScale;
   borderStyle: "soft" | "strong";
+  validationStyle: "soft" | "strong";
+  showHelperText: boolean;
 };
 
 export type TextareaRecipe = {
@@ -292,6 +296,7 @@ export type AlertRecipe = {
   radius: keyof RadiusScale;
   padding: keyof SpacingScale;
   emphasis: "soft" | "strong";
+  variantStyle: "tinted" | "outlined";
 };
 
 export type TableRecipe = {
@@ -299,6 +304,8 @@ export type TableRecipe = {
   cellPaddingX: keyof SpacingScale;
   cellPaddingY: keyof SpacingScale;
   headerStyle: "muted" | "elevated";
+  density: "compact" | "comfortable";
+  zebraStripes: boolean;
 };
 
 export type DialogRecipe = {
@@ -306,16 +313,136 @@ export type DialogRecipe = {
   width: keyof ContainerScale;
   padding: keyof SpacingScale;
   shadow: keyof ShadowScale;
+  overlayBlur: keyof BlurScale;
+  overlayTone: "soft" | "strong";
+};
+
+export type CheckboxRecipe = {
+  size: keyof SpacingScale;
+  radius: keyof RadiusScale;
+  tone: "soft" | "strong";
+};
+
+export type ComboboxRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  shadow: keyof ShadowScale;
+};
+
+export type RadioGroupRecipe = {
+  gap: keyof SpacingScale;
+  tone: "soft" | "strong";
+};
+
+export type SwitchRecipe = {
+  trackWidth: keyof SpacingScale;
+  trackHeight: keyof SpacingScale;
+  thumbSize: keyof SpacingScale;
+  tone: "soft" | "strong";
+};
+
+export type DescriptionListRecipe = {
+  gap: keyof SpacingScale;
+  termWidth: keyof ContainerScale;
+};
+
+export type ListboxRecipe = {
+  radius: keyof RadiusScale;
+  optionPadding: keyof SpacingScale;
+  maxHeight: keyof ContainerScale;
+};
+
+export type PaginationRecipe = {
+  radius: keyof RadiusScale;
+  gap: keyof SpacingScale;
+};
+
+export type DropdownRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  shadow: keyof ShadowScale;
+};
+
+export type NavbarRecipe = {
+  height: keyof SpacingScale;
+  paddingX: keyof SpacingScale;
+  blur: keyof BlurScale;
+};
+
+export type SidebarRecipe = {
+  width: keyof ContainerScale;
+  itemGap: keyof SpacingScale;
+  itemRadius: keyof RadiusScale;
+};
+
+export type AvatarRecipe = {
+  size: keyof SpacingScale;
+  radius: keyof RadiusScale;
+  ring: "none" | "soft" | "strong";
+};
+
+export type DividerRecipe = {
+  thickness: "1px" | "2px";
+  inset: keyof SpacingScale;
+};
+
+export type HeadingRecipe = {
+  scale: keyof TypographyScale;
+  weight: keyof FontWeightScale;
+  tracking: keyof TrackingScale;
+};
+
+export type TextRecipe = {
+  scale: keyof TypographyScale;
+  leading: keyof LeadingScale;
+  tone: "primary" | "secondary" | "muted";
+};
+
+export type FieldsetRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  legendStyle: "inline" | "stacked";
+};
+
+export type LayoutShellRecipe = {
+  contentWidth: keyof ContainerScale;
+  sidebarWidth: keyof ContainerScale;
+  headerHeight: keyof SpacingScale;
+  pageGap: keyof SpacingScale;
+};
+
+export type AuthLayoutRecipe = {
+  cardWidth: keyof ContainerScale;
+  cardRadius: keyof RadiusScale;
+  cardPadding: keyof SpacingScale;
 };
 
 export type ComponentRecipes = {
   button: ButtonRecipe;
   input: InputRecipe;
-  textarea: TextareaRecipe;
-  badge: BadgeRecipe;
-  alert: AlertRecipe;
   table: TableRecipe;
+  sidebar: SidebarRecipe;
+  checkbox: CheckboxRecipe;
+  combobox: ComboboxRecipe;
+  radioGroup: RadioGroupRecipe;
+  switch: SwitchRecipe;
+  descriptionList: DescriptionListRecipe;
+  badge: BadgeRecipe;
+  listbox: ListboxRecipe;
+  pagination: PaginationRecipe;
+  dropdown: DropdownRecipe;
+  alert: AlertRecipe;
+  navbar: NavbarRecipe;
+  avatar: AvatarRecipe;
+  divider: DividerRecipe;
+  textarea: TextareaRecipe;
+  heading: HeadingRecipe;
+  text: TextRecipe;
+  fieldset: FieldsetRecipe;
   dialog: DialogRecipe;
+  sidebarLayout: LayoutShellRecipe;
+  stackedLayout: LayoutShellRecipe;
+  authLayout: AuthLayoutRecipe;
 };
 
 export type Density = "compact" | "comfortable" | "airy";
