@@ -72,15 +72,34 @@ select {
 
 .field {
   width: 100%;
-  border-radius: 1rem;
+  min-height: 2.875rem;
+  border-radius: 0.85rem;
   border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
   background: color-mix(in oklch, var(--app-surface) 96%, white);
-  padding: 0.8rem 0.95rem;
+  padding: 0.78rem 0.95rem;
   color: var(--app-foreground);
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease,
     background-color 160ms ease;
+}
+
+textarea.field {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+select.field {
+  appearance: none;
+  padding-right: 2.85rem !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in oklch, var(--app-muted) 88%, white) 50%),
+    linear-gradient(135deg, color-mix(in oklch, var(--app-muted) 88%, white) 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.1rem) calc(50% - 0.14rem),
+    calc(100% - 0.8rem) calc(50% - 0.14rem);
+  background-size: 0.4rem 0.4rem, 0.4rem 0.4rem;
+  background-repeat: no-repeat;
 }
 
 .field:focus-visible {
@@ -121,7 +140,7 @@ select {
 
 .workspace-card {
   border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
-  border-radius: 1.2rem;
+  border-radius: 1rem;
   background: color-mix(in oklch, var(--app-surface) 98%, white);
   padding: 1rem;
 }
@@ -172,12 +191,16 @@ select {
   border-radius: var(--preview-button-radius);
   transition:
     background-color 160ms var(--preview-transition-ease),
+    color 160ms var(--preview-transition-ease),
+    border-color 160ms var(--preview-transition-ease),
     transform 160ms var(--preview-transition-ease),
     box-shadow 160ms var(--preview-transition-ease);
 }
 
 .preview-button-primary:hover {
-  background: var(--preview-action-primary-hover);
+  background: var(--preview-button-primary-hover-bg);
+  color: var(--preview-button-primary-hover-fg);
+  border-color: var(--preview-button-primary-hover-border);
   transform: translateY(calc(var(--preview-button-hover-lift) * -1));
 }
 
@@ -188,7 +211,16 @@ select {
   border-radius: var(--preview-button-radius);
   transition:
     background-color 160ms var(--preview-transition-ease),
+    color 160ms var(--preview-transition-ease),
+    border-color 160ms var(--preview-transition-ease),
     transform 160ms var(--preview-transition-ease);
+}
+
+.preview-button-secondary:hover {
+  background: var(--preview-button-secondary-hover-bg);
+  color: var(--preview-button-secondary-hover-fg);
+  border-color: var(--preview-button-secondary-hover-border);
+  transform: translateY(calc(var(--preview-button-hover-lift) * -1));
 }
 
 .preview-button-ghost {
@@ -198,10 +230,15 @@ select {
   border-radius: var(--preview-button-radius);
   transition:
     background-color 160ms var(--preview-transition-ease),
+    color 160ms var(--preview-transition-ease),
+    border-color 160ms var(--preview-transition-ease),
     transform 160ms var(--preview-transition-ease);
 }
 
 .preview-button-ghost:hover {
+  background: var(--preview-button-ghost-hover-bg);
+  color: var(--preview-button-ghost-hover-fg);
+  border-color: var(--preview-button-ghost-hover-border);
   transform: translateY(calc(var(--preview-button-hover-lift) * -1));
 }
 
@@ -295,4 +332,85 @@ select {
 .preview-overlay {
   background: var(--preview-dialog-overlay);
   backdrop-filter: blur(var(--preview-dialog-overlay-blur));
+}
+
+.token-picker {
+  position: relative;
+}
+
+.token-picker[open] {
+  z-index: 20;
+}
+
+.token-picker summary {
+  list-style: none;
+}
+
+.token-picker summary::-webkit-details-marker {
+  display: none;
+}
+
+.token-picker-trigger {
+  display: flex;
+  min-height: 2.875rem;
+  width: 100%;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
+  background: color-mix(in oklch, var(--app-surface) 96%, white);
+  padding: 0.78rem 0.95rem;
+  color: var(--app-foreground);
+  cursor: pointer;
+}
+
+.token-picker-caret {
+  width: 0.65rem;
+  height: 0.65rem;
+  flex: 0 0 auto;
+  border-right: 1.5px solid color-mix(in oklch, var(--app-muted) 88%, white);
+  border-bottom: 1.5px solid color-mix(in oklch, var(--app-muted) 88%, white);
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.token-picker-chip {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+}
+
+.token-picker-menu {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 0;
+  right: 0;
+  max-height: 18rem;
+  overflow: auto;
+  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
+  border-radius: 0.95rem;
+  background: color-mix(in oklch, var(--app-surface) 99%, white);
+  box-shadow:
+    0 16px 32px -24px rgba(62, 34, 12, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  padding: 0.35rem;
+}
+
+.token-picker-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: transparent;
+  padding: 0.65rem 0.7rem;
+  color: var(--app-foreground);
+}
+
+.token-picker-option:hover,
+.token-picker-option[data-active="true"] {
+  background: color-mix(in oklch, var(--app-accent) 10%, white);
 }

@@ -97,6 +97,7 @@ type PreviewMode = (typeof PREVIEW_MODES)[number];
 type ActiveTheme = "light" | "dark";
 type BrandPanelTab = "brand" | "colors" | "assets";
 type EditorPanelTab = "foundations" | "system" | "components" | "handoff";
+type ControlPanelView = "inputs" | "editor";
 type QualityFinding = {
   label: string;
   severity: "info" | "warning" | "critical";
@@ -122,12 +123,21 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
   const buttonPrimaryBackground = resolveTokenReference(system.components.button.colors.primary.background, system.palettes);
   const buttonPrimaryForeground = resolveTokenReference(system.components.button.colors.primary.foreground, system.palettes);
   const buttonPrimaryBorder = resolveTokenReference(system.components.button.colors.primary.border, system.palettes);
+  const buttonPrimaryHoverBackground = resolveTokenReference(system.components.button.colors.primary.hoverBackground, system.palettes);
+  const buttonPrimaryHoverForeground = resolveTokenReference(system.components.button.colors.primary.hoverForeground, system.palettes);
+  const buttonPrimaryHoverBorder = resolveTokenReference(system.components.button.colors.primary.hoverBorder, system.palettes);
   const buttonSecondaryBackground = resolveTokenReference(system.components.button.colors.secondary.background, system.palettes);
   const buttonSecondaryForeground = resolveTokenReference(system.components.button.colors.secondary.foreground, system.palettes);
   const buttonSecondaryBorderColor = resolveTokenReference(system.components.button.colors.secondary.border, system.palettes);
+  const buttonSecondaryHoverBackground = resolveTokenReference(system.components.button.colors.secondary.hoverBackground, system.palettes);
+  const buttonSecondaryHoverForeground = resolveTokenReference(system.components.button.colors.secondary.hoverForeground, system.palettes);
+  const buttonSecondaryHoverBorder = resolveTokenReference(system.components.button.colors.secondary.hoverBorder, system.palettes);
   const buttonGhostBackground = resolveTokenReference(system.components.button.colors.ghost.background, system.palettes);
   const buttonGhostForeground = resolveTokenReference(system.components.button.colors.ghost.foreground, system.palettes);
   const buttonGhostBorder = resolveTokenReference(system.components.button.colors.ghost.border, system.palettes);
+  const buttonGhostHoverBackground = resolveTokenReference(system.components.button.colors.ghost.hoverBackground, system.palettes);
+  const buttonGhostHoverForeground = resolveTokenReference(system.components.button.colors.ghost.hoverForeground, system.palettes);
+  const buttonGhostHoverBorder = resolveTokenReference(system.components.button.colors.ghost.hoverBorder, system.palettes);
   const badgeBackground = resolveTokenReference(system.components.badge.color.background, system.palettes);
   const badgeForeground = resolveTokenReference(system.components.badge.color.foreground, system.palettes);
   const badgeBorder = resolveTokenReference(system.components.badge.color.border, system.palettes);
@@ -232,12 +242,21 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-button-primary-bg": buttonPrimaryBackground,
     "--preview-button-primary-fg": buttonPrimaryForeground,
     "--preview-button-primary-border": buttonPrimaryBorder,
+    "--preview-button-primary-hover-bg": buttonPrimaryHoverBackground,
+    "--preview-button-primary-hover-fg": buttonPrimaryHoverForeground,
+    "--preview-button-primary-hover-border": buttonPrimaryHoverBorder,
     "--preview-button-secondary-bg": buttonSecondaryBg,
     "--preview-button-secondary-fg": buttonSecondaryForeground,
     "--preview-button-secondary-border": buttonSecondaryBorder,
+    "--preview-button-secondary-hover-bg": buttonSecondaryHoverBackground,
+    "--preview-button-secondary-hover-fg": buttonSecondaryHoverForeground,
+    "--preview-button-secondary-hover-border": buttonSecondaryHoverBorder,
     "--preview-button-ghost-bg": ghostBg,
     "--preview-button-ghost-fg": buttonGhostForeground,
     "--preview-button-ghost-border": buttonGhostBorder,
+    "--preview-button-ghost-hover-bg": buttonGhostHoverBackground,
+    "--preview-button-ghost-hover-fg": buttonGhostHoverForeground,
+    "--preview-button-ghost-hover-border": buttonGhostHoverBorder,
     "--preview-button-hover-lift": hoverLiftMap[system.components.button.hoverLift],
     "--preview-input-radius": system.radius[system.components.input.radius],
     "--preview-input-px": system.foundations.spacing[system.components.input.paddingX],
@@ -398,6 +417,54 @@ function getSystemMetrics(system: GeneratedSystem) {
   };
 }
 
+function getTokenSwatchColor(option: TokenReference, palettes: GeneratedSystem["palettes"]) {
+  return resolveTokenReference(option, palettes);
+}
+
+function TokenReferencePicker({
+  options,
+  value,
+  palettes,
+  onChange,
+}: {
+  options: TokenReference[];
+  value: TokenReference;
+  palettes: GeneratedSystem["palettes"];
+  onChange: (value: TokenReference) => void;
+}) {
+  const selectedColor = getTokenSwatchColor(value, palettes);
+
+  return (
+    <details className="token-picker">
+      <summary className="token-picker-trigger">
+        <span className="token-picker-chip" style={{ background: selectedColor }} />
+        <span className="min-w-0 flex-1 truncate">{value}</span>
+        <span className="token-picker-caret" aria-hidden="true" />
+      </summary>
+      <div className="token-picker-menu">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            className="token-picker-option"
+            data-active={option === value}
+            onClick={(event) => {
+              onChange(option);
+              const details = event.currentTarget.closest("details");
+              if (details instanceof HTMLDetailsElement) {
+                details.open = false;
+              }
+            }}
+          >
+            <span className="token-picker-chip" style={{ background: getTokenSwatchColor(option, palettes) }} />
+            <span className="min-w-0 flex-1 truncate text-left">{option}</span>
+          </button>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 function BrandInputPanel({
   inputs,
   setInputs,
@@ -484,7 +551,7 @@ function BrandInputPanel({
   ];
 
   return (
-    <div className="panel subtle-grid sticky top-5 overflow-hidden rounded-[1.6rem]">
+    <div className="panel subtle-grid sticky top-5 overflow-hidden rounded-[1.25rem]">
       <div className="border-b border-app-border/70 px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Brand Inputs</p>
         <h1 className="mt-3 max-w-xs text-2xl font-semibold tracking-[-0.04em] text-app-foreground">
@@ -567,7 +634,7 @@ function BrandInputPanel({
                     <input
                       type="color"
                       aria-label="Neutral hex anchor picker"
-                      className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
+                      className="h-12 w-14 cursor-pointer rounded-[0.9rem] border border-app-border bg-transparent p-1"
                       value={isValidHex(inputs.neutralBaseHex) ? normalizeHex(inputs.neutralBaseHex, "#7d6b5a") : "#7d6b5a"}
                       onChange={(event) => handleInputChange("neutralBaseHex", event.target.value)}
                     />
@@ -606,7 +673,7 @@ function BrandInputPanel({
                       <input
                         type="color"
                         aria-label={`${row.label} color picker`}
-                        className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
+                        className="h-12 w-14 cursor-pointer rounded-[0.9rem] border border-app-border bg-transparent p-1"
                         value={isValidHex(inputs[row.key]) ? normalizeHex(inputs[row.key], "#000000") : "#000000"}
                         onChange={(event) => handleInputChange(row.key, event.target.value)}
                       />
@@ -626,7 +693,7 @@ function BrandInputPanel({
               </div>
             </div>
 
-            <div className="rounded-[1.2rem] border border-app-border bg-app-surface p-4">
+            <div className="rounded-[1rem] border border-app-border bg-app-surface p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-app-foreground">Advanced color inputs</p>
@@ -675,7 +742,7 @@ function BrandInputPanel({
                 </div>
               ))}
 
-              <div className="rounded-[1rem] border border-dashed border-app-border px-3 py-3">
+              <div className="rounded-[0.95rem] border border-dashed border-app-border px-3 py-3">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium text-app-foreground">Custom colors</p>
@@ -693,7 +760,7 @@ function BrandInputPanel({
                 {inputs.customColors.length ? (
                   <div className="mt-4 space-y-4">
                     {inputs.customColors.map((color, index) => (
-                      <div key={color.id} className="rounded-[1rem] border border-app-border/70 p-3">
+                      <div key={color.id} className="rounded-[0.95rem] border border-app-border/70 p-3">
                         <div className="flex items-center justify-between gap-3">
                           <p className="text-sm font-medium text-app-foreground">Custom color {index + 1}</p>
                           <button
@@ -716,7 +783,7 @@ function BrandInputPanel({
                             <input
                               type="color"
                               aria-label={`Custom color ${index + 1} picker`}
-                              className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
+                              className="h-12 w-14 cursor-pointer rounded-[0.9rem] border border-app-border bg-transparent p-1"
                               value={isValidHex(color.hex) ? normalizeHex(color.hex, "#000000") : "#000000"}
                               onChange={(event) => updateCustomColor(color.id, { hex: event.target.value })}
                             />
@@ -793,7 +860,7 @@ function BrandInputPanel({
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Logo</p>
                 <p className="mt-2 text-sm text-app-muted">Upload a logo used across the realistic preview screens.</p>
               </div>
-              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[1.1rem] border border-dashed border-app-border bg-app-surface px-4 py-4">
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[0.95rem] border border-dashed border-app-border bg-app-surface px-4 py-4">
                 <div>
                   <p className="font-medium text-app-foreground">PNG, SVG, or JPG</p>
                   <p className="mt-1 text-sm text-app-muted">Used inside all preview templates.</p>
@@ -839,7 +906,7 @@ function PreviewPanel({
 
   return (
     <div className="space-y-4">
-      <div className="panel rounded-[1.6rem] p-4">
+      <div className="panel rounded-[1.25rem] p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Live Preview</p>
@@ -891,7 +958,7 @@ function PreviewPanel({
         ) : null}
       </div>
 
-      <div className="preview-shell panel overflow-hidden rounded-[2rem]" style={previewStyle}>
+      <div className="preview-shell panel overflow-hidden rounded-[1.5rem]" style={previewStyle}>
         <div className="flex items-center justify-between border-b px-6 py-5" style={{ borderColor: "var(--preview-border-default)" }}>
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-[var(--preview-surface-elevated)]">
@@ -1106,7 +1173,7 @@ function TokenPanel({
   const qaReport = useMemo(() => auditSystem(system), [system]);
 
   return (
-    <div className="panel sticky top-5 rounded-[1.6rem]">
+    <div className="panel sticky top-5 rounded-[1.25rem]">
       <div className="border-b border-app-border/70 px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Editable Tokens</p>
         <h2 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-app-foreground">Tune before export</h2>
@@ -2129,6 +2196,63 @@ function TokenPanel({
                       {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
                     </select>
                   </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Hover background</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={system.components.button.colors[variant].hoverBackground}
+                      onChange={(event) =>
+                        updateComponent("button", {
+                          colors: {
+                            ...system.components.button.colors,
+                            [variant]: {
+                              ...system.components.button.colors[variant],
+                              hoverBackground: event.target.value as TokenReference,
+                            },
+                          },
+                        })}
+                    >
+                      {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Hover foreground</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={system.components.button.colors[variant].hoverForeground}
+                      onChange={(event) =>
+                        updateComponent("button", {
+                          colors: {
+                            ...system.components.button.colors,
+                            [variant]: {
+                              ...system.components.button.colors[variant],
+                              hoverForeground: event.target.value as TokenReference,
+                            },
+                          },
+                        })}
+                    >
+                      {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Hover border</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={system.components.button.colors[variant].hoverBorder}
+                      onChange={(event) =>
+                        updateComponent("button", {
+                          colors: {
+                            ...system.components.button.colors,
+                            [variant]: {
+                              ...system.components.button.colors[variant],
+                              hoverBorder: event.target.value as TokenReference,
+                            },
+                          },
+                        })}
+                    >
+                      {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
                 </div>
               ))}
             </div>
@@ -2817,17 +2941,12 @@ function TokenPanel({
                   {SEMANTIC_TOKEN_NAMES.map((token) => (
                     <label key={`${themeName}-${token}`} className="grid grid-cols-[1fr_1fr] items-center gap-2 text-sm">
                       <span className="text-app-muted">{sectionLabel(token)}</span>
-                      <select
-                        className="field px-3 py-2"
+                      <TokenReferencePicker
+                        options={tokenOptions}
                         value={system[themeName][token]}
-                        onChange={(event) => updateThemeToken(themeName, token, event.target.value as TokenReference)}
-                      >
-                        {tokenOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
+                        palettes={system.palettes}
+                        onChange={(nextValue) => updateThemeToken(themeName, token, nextValue)}
+                      />
                     </label>
                   ))}
                 </div>
@@ -2843,6 +2962,12 @@ function TokenPanel({
             <span className="inline-flex items-center gap-2"><Type className="h-4 w-4" /> Typography and chrome</span>
           </summary>
           <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
+            <div className="rounded-[0.95rem] border border-app-border/70 bg-app-bg/70 px-3 py-3">
+              <p className="text-sm font-semibold text-app-foreground">Radius scale</p>
+              <p className="mt-1 text-xs text-app-muted">
+                Utility settings and component recipes reference these radius tokens. Edit the values here to change what `none`, `sm`, `md`, `lg`, `xl`, and `pill` actually mean.
+              </p>
+            </div>
             <div className="grid gap-3">
               <label className="space-y-2">
                 <span className="text-sm text-app-muted">Heading font</span>
@@ -3606,6 +3731,7 @@ export function DesignSystemGenerator() {
   const [system, setSystem] = useState(() => createGeneratedSystem(INITIAL_INPUTS));
   const [previewMode, setPreviewMode] = useState<PreviewMode>("dashboard");
   const [activeTheme, setActiveTheme] = useState<ActiveTheme>("light");
+  const [controlView, setControlView] = useState<ControlPanelView>("inputs");
 
   function updateInputs(updater: (current: BrandInputs) => BrandInputs) {
     setInputs((current) => {
@@ -3651,7 +3777,7 @@ export function DesignSystemGenerator() {
 
   return (
     <main className="mx-auto w-full max-w-[1880px] px-4 py-5 sm:px-6 lg:px-8">
-      <section className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-[1.8rem] border border-app-border/70 bg-app-surface/80 px-5 py-4 backdrop-blur-sm">
+      <section className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-[1.45rem] border border-app-border/70 bg-app-surface/80 px-5 py-4 backdrop-blur-sm">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Generator Workspace</p>
           <h1 className="mt-2 text-2xl font-semibold tracking-[-0.045em] text-app-foreground">
@@ -3664,14 +3790,39 @@ export function DesignSystemGenerator() {
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[340px_minmax(0,1fr)_370px] 2xl:grid-cols-[360px_minmax(0,1fr)_390px]">
-        <BrandInputPanel inputs={inputs} setInputs={updateInputs} colorErrors={colorErrors} />
+      <section className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)] 2xl:grid-cols-[390px_minmax(0,1fr)]">
+        <div className="space-y-4">
+          <div className="panel rounded-[1.25rem] p-3">
+            <div className="flex flex-wrap gap-2">
+              {([
+                ["inputs", "Brand inputs"],
+                ["editor", "Editable tokens"],
+              ] as const).map(([view, label]) => (
+                <button
+                  key={view}
+                  type="button"
+                  className="workspace-tab"
+                  data-active={controlView === view}
+                  onClick={() => setControlView(view)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {controlView === "inputs" ? (
+            <BrandInputPanel inputs={inputs} setInputs={updateInputs} colorErrors={colorErrors} />
+          ) : (
+            <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
+          )}
+        </div>
 
         <div className="space-y-4">
-          <div className="panel rounded-[1.5rem] p-4">
+          <div className="panel rounded-[1.25rem] p-4">
             <p className="text-sm font-semibold text-app-foreground">Live generation is active</p>
             <p className="mt-1 text-sm text-app-muted">
-              Brand inputs regenerate palettes and semantics instantly. The editor on the right lets you make final overrides before export.
+              Brand inputs regenerate palettes and semantics instantly. Use the unified control sidebar to switch between setup and token editing without shrinking the live preview.
             </p>
           </div>
 
@@ -3688,8 +3839,6 @@ export function DesignSystemGenerator() {
             exportReadiness={qaReport.exportReadiness}
           />
         </div>
-
-        <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
       </section>
     </main>
   );

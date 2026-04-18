@@ -335,16 +335,25 @@ export type ButtonRecipe = {
       background: TokenReference;
       foreground: TokenReference;
       border: TokenReference;
+      hoverBackground: TokenReference;
+      hoverForeground: TokenReference;
+      hoverBorder: TokenReference;
     };
     secondary: {
       background: TokenReference;
       foreground: TokenReference;
       border: TokenReference;
+      hoverBackground: TokenReference;
+      hoverForeground: TokenReference;
+      hoverBorder: TokenReference;
     };
     ghost: {
       background: TokenReference;
       foreground: TokenReference;
       border: TokenReference;
+      hoverBackground: TokenReference;
+      hoverForeground: TokenReference;
+      hoverBorder: TokenReference;
     };
   };
 };
