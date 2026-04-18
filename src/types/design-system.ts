@@ -260,6 +260,33 @@ export type UtilitySettings = {
   interactivity: InteractivityUtilitySettings;
 };
 
+export type UtilityFamilyMode = "token" | "preset" | "mixed";
+
+export type UtilityFamilyCoverage = {
+  mode: UtilityFamilyMode;
+  enabled: boolean;
+  densityAware: boolean;
+  notes: string;
+};
+
+export type UtilityCoverageMatrix = {
+  layout: UtilityFamilyCoverage;
+  flexboxGrid: UtilityFamilyCoverage;
+  spacing: UtilityFamilyCoverage;
+  sizing: UtilityFamilyCoverage;
+  typography: UtilityFamilyCoverage;
+  backgrounds: UtilityFamilyCoverage;
+  borders: UtilityFamilyCoverage;
+  effects: UtilityFamilyCoverage;
+  filters: UtilityFamilyCoverage;
+  tables: UtilityFamilyCoverage;
+  transitionsAnimation: UtilityFamilyCoverage;
+  transforms: UtilityFamilyCoverage;
+  interactivity: UtilityFamilyCoverage;
+  svg: UtilityFamilyCoverage;
+  accessibility: UtilityFamilyCoverage;
+};
+
 export type ButtonRecipe = {
   radius: keyof RadiusScale;
   paddingX: keyof SpacingScale;
@@ -417,6 +444,22 @@ export type AuthLayoutRecipe = {
   cardPadding: keyof SpacingScale;
 };
 
+export type ScreenPreset = {
+  maxWidth: keyof ContainerScale;
+  sectionGap: keyof SpacingScale;
+  chromePadding: keyof SpacingScale;
+  density: Density;
+};
+
+export type ScreenPresets = {
+  dashboard: ScreenPreset;
+  settings: ScreenPreset;
+  auth: ScreenPreset;
+  marketing: ScreenPreset;
+  dataTable: ScreenPreset;
+  formPage: ScreenPreset;
+};
+
 export type ComponentRecipes = {
   button: ButtonRecipe;
   input: InputRecipe;
@@ -468,6 +511,8 @@ export type GeneratedSystem = {
   shadows: ShadowScale;
   foundations: FoundationTokens;
   utilities: UtilitySettings;
+  utilityCoverage: UtilityCoverageMatrix;
   components: ComponentRecipes;
+  screens: ScreenPresets;
   density: Density;
 };

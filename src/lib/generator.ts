@@ -18,11 +18,13 @@ import {
   LeadingScale,
   PaletteCollection,
   RadiusScale,
+  ScreenPresets,
   ShadowScale,
   SpacingScale,
   TrackingScale,
   ThemeSemanticTokens,
   TypographyScale,
+  UtilityCoverageMatrix,
   UtilitySettings,
 } from "@/types/design-system";
 
@@ -311,6 +313,153 @@ function buildUtilitySettings(
   };
 }
 
+function buildUtilityCoverage(
+  density: Density,
+  direction: BrandInputs["styleDirection"],
+): UtilityCoverageMatrix {
+  const expressive = direction === "bold" || direction === "studio";
+  const editorial = direction === "editorial";
+
+  return {
+    layout: {
+      mode: "mixed",
+      enabled: true,
+      densityAware: true,
+      notes: "Content width, overflow posture, positioning, and shell defaults.",
+    },
+    flexboxGrid: {
+      mode: "preset",
+      enabled: true,
+      densityAware: true,
+      notes: "Grid and flex recipes stay preset-driven to keep structure predictable.",
+    },
+    spacing: {
+      mode: "token",
+      enabled: true,
+      densityAware: true,
+      notes: density === "compact"
+        ? "Compact spacing scale drives stack, inset, and control rhythm."
+        : "Spacing scale remains editable and feeds all layout rhythm decisions.",
+    },
+    sizing: {
+      mode: "mixed",
+      enabled: true,
+      densityAware: true,
+      notes: "Sizing combines spacing tokens with control and shell presets.",
+    },
+    typography: {
+      mode: "token",
+      enabled: true,
+      densityAware: editorial,
+      notes: "Font, tracking, leading, and weights flow directly from theme tokens.",
+    },
+    backgrounds: {
+      mode: "mixed",
+      enabled: true,
+      densityAware: false,
+      notes: "Backgrounds use semantic surfaces plus preset gradient and tint behavior.",
+    },
+    borders: {
+      mode: "mixed",
+      enabled: true,
+      densityAware: true,
+      notes: "Radius is token-driven; outline weight and treatment use utility presets.",
+    },
+    effects: {
+      mode: expressive ? "token" : "mixed",
+      enabled: true,
+      densityAware: false,
+      notes: "Shadows, opacity, and surface depth are adjustable before export.",
+    },
+    filters: {
+      mode: "preset",
+      enabled: true,
+      densityAware: false,
+      notes: "Filters stay intentionally narrow so exported systems remain practical.",
+    },
+    tables: {
+      mode: "mixed",
+      enabled: true,
+      densityAware: true,
+      notes: "Density, striping, and header posture map to table recipes.",
+    },
+    transitionsAnimation: {
+      mode: "token",
+      enabled: true,
+      densityAware: false,
+      notes: "Motion tokens drive transitions, easing, and entrance behavior.",
+    },
+    transforms: {
+      mode: "preset",
+      enabled: true,
+      densityAware: false,
+      notes: "Transforms remain preset-oriented for hover lift and staged reveals.",
+    },
+    interactivity: {
+      mode: "mixed",
+      enabled: true,
+      densityAware: true,
+      notes: "Focus, selection, cursor, and control affordances are system-tunable.",
+    },
+    svg: {
+      mode: "token",
+      enabled: true,
+      densityAware: false,
+      notes: "SVG fill and stroke inherit semantic color tokens.",
+    },
+    accessibility: {
+      mode: "preset",
+      enabled: true,
+      densityAware: false,
+      notes: "Contrast warnings, focus posture, and high-contrast fallbacks stay enforced.",
+    },
+  };
+}
+
+function buildScreenPresets(density: Density): ScreenPresets {
+  const dashboardGap = density === "airy" ? "12" : density === "compact" ? "6" : "8";
+  const dashboardPadding = density === "airy" ? "8" : "6";
+
+  return {
+    dashboard: {
+      maxWidth: "2xl",
+      sectionGap: dashboardGap,
+      chromePadding: dashboardPadding,
+      density,
+    },
+    settings: {
+      maxWidth: "xl",
+      sectionGap: density === "compact" ? "6" : "8",
+      chromePadding: density === "airy" ? "6" : "5",
+      density,
+    },
+    auth: {
+      maxWidth: "sm",
+      sectionGap: density === "airy" ? "6" : "5",
+      chromePadding: density === "compact" ? "4" : "5",
+      density: density === "airy" ? "comfortable" : density,
+    },
+    marketing: {
+      maxWidth: "2xl",
+      sectionGap: density === "compact" ? "8" : "12",
+      chromePadding: density === "airy" ? "10" : "8",
+      density: density === "compact" ? "comfortable" : density,
+    },
+    dataTable: {
+      maxWidth: "2xl",
+      sectionGap: density === "compact" ? "6" : "8",
+      chromePadding: density === "compact" ? "5" : "6",
+      density,
+    },
+    formPage: {
+      maxWidth: "lg",
+      sectionGap: density === "airy" ? "8" : "6",
+      chromePadding: density === "compact" ? "4" : "5",
+      density,
+    },
+  };
+}
+
 function buildComponentRecipes(
   density: Density,
   direction: BrandInputs["styleDirection"],
@@ -531,7 +680,9 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
   const { lightTokens, darkTokens } = buildSemanticTokens();
   const { foundations, density } = buildFoundations(inputs.styleDirection);
   const utilities = buildUtilitySettings(density, inputs.styleDirection);
+  const utilityCoverage = buildUtilityCoverage(density, inputs.styleDirection);
   const components = buildComponentRecipes(density, inputs.styleDirection);
+  const screens = buildScreenPresets(density);
 
   return {
     palettes,
@@ -546,7 +697,9 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
     shadows: buildShadows(inputs.styleDirection),
     foundations,
     utilities,
+    utilityCoverage,
     components,
+    screens,
     density,
   };
 }

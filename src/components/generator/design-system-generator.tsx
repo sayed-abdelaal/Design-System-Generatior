@@ -66,6 +66,10 @@ const INITIAL_INPUTS: BrandInputs = {
 const PREVIEW_MODES = ["ui-kit", "components", "dashboard", "marketing"] as const;
 type PreviewMode = (typeof PREVIEW_MODES)[number];
 type ActiveTheme = "light" | "dark";
+type QualityFinding = {
+  label: string;
+  severity: "info" | "warning" | "critical";
+};
 
 function sectionLabel(token: string) {
   return token.replace(/([A-Z])/g, " $1").replace(/^./, (value) => value.toUpperCase());
@@ -214,6 +218,103 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-dialog-overlay": dialogOverlay,
     "--preview-dialog-overlay-blur": system.foundations.blur[system.components.dialog.overlayBlur],
   } as CSSProperties;
+}
+
+function getScreenPresetKey(previewMode: PreviewMode) {
+  if (previewMode === "dashboard") {
+    return "dashboard" as const;
+  }
+
+  if (previewMode === "marketing") {
+    return "marketing" as const;
+  }
+
+  if (previewMode === "components") {
+    return "settings" as const;
+  }
+
+  return "formPage" as const;
+}
+
+function getPreviewMetrics(system: GeneratedSystem, previewMode: PreviewMode) {
+  const preset = system.screens[getScreenPresetKey(previewMode)];
+
+  return {
+    preset,
+    maxWidth: system.foundations.containers[preset.maxWidth],
+    sectionGap: system.foundations.spacing[preset.sectionGap],
+    chromePadding: system.foundations.spacing[preset.chromePadding],
+  };
+}
+
+function auditSystem(system: GeneratedSystem) {
+  const lightValues = resolveThemeValues(system, "light");
+  const darkValues = resolveThemeValues(system, "dark");
+  const findings: QualityFinding[] = [];
+  let score = 100;
+
+  if (getContrastRatio(lightValues.textPrimary, lightValues.background) < 4.5) {
+    findings.push({ label: "Light theme primary text contrast is below 4.5:1.", severity: "critical" });
+    score -= 22;
+  }
+
+  if (getContrastRatio(darkValues.textPrimary, darkValues.background) < 4.5) {
+    findings.push({ label: "Dark theme primary text contrast is below 4.5:1.", severity: "critical" });
+    score -= 22;
+  }
+
+  if (getContrastRatio(lightValues.actionPrimaryForeground, lightValues.actionPrimary) < 4.5) {
+    findings.push({ label: "Primary action contrast in the light theme needs improvement.", severity: "warning" });
+    score -= 12;
+  }
+
+  if (getContrastRatio(darkValues.actionPrimaryForeground, darkValues.actionPrimary) < 4.5) {
+    findings.push({ label: "Primary action contrast in the dark theme needs improvement.", severity: "warning" });
+    score -= 12;
+  }
+
+  if (!system.utilityCoverage.accessibility.enabled) {
+    findings.push({ label: "Accessibility utility coverage is disabled, so exports may miss enforced fallbacks.", severity: "critical" });
+    score -= 18;
+  }
+
+  if (!system.utilityCoverage.transitionsAnimation.enabled && system.utilities.motion.motionLevel !== "calm") {
+    findings.push({ label: "Motion is expressive but transition coverage is disabled, which can create drift at export time.", severity: "warning" });
+    score -= 10;
+  }
+
+  const disabledFamilies = Object.entries(system.utilityCoverage).filter(([, value]) => !value.enabled).length;
+  if (disabledFamilies > 2) {
+    findings.push({ label: "Several Tailwind utility families are disabled, so exported system coverage is intentionally partial.", severity: "warning" });
+    score -= 8;
+  }
+
+  if (system.components.input.validationStyle === "strong" && !system.components.input.showHelperText) {
+    findings.push({ label: "Inputs use strong validation styling without helper text, which may reduce clarity.", severity: "info" });
+    score -= 5;
+  }
+
+  if (system.screens.dashboard.density === "compact" && system.components.table.density === "comfortable") {
+    findings.push({ label: "Dashboard density and table density are out of sync.", severity: "info" });
+    score -= 4;
+  }
+
+  if (system.utilities.borders.outlineStyle === "soft" && system.utilities.interactivity.focusRingWidth === "2px") {
+    findings.push({ label: "Focus styling is subtle; consider a stronger ring for keyboard-heavy products.", severity: "info" });
+    score -= 4;
+  }
+
+  const exportReadiness: "ready" | "review" | "risky" =
+    score >= 88 ? "ready" : score >= 72 ? "review" : "risky";
+
+  return {
+    score: Math.max(28, Math.round(score)),
+    exportReadiness,
+    findings,
+    contrastWarnings: findings
+      .filter((finding) => finding.severity !== "info")
+      .map((finding) => finding.label),
+  };
 }
 
 function tokenReferenceOptions() {
@@ -406,6 +507,8 @@ function PreviewPanel({
   activeTheme,
   setActiveTheme,
   contrastWarnings,
+  qualityScore,
+  exportReadiness,
 }: {
   brandName: string;
   logoDataUrl: string | null;
@@ -415,9 +518,11 @@ function PreviewPanel({
   activeTheme: ActiveTheme;
   setActiveTheme: Dispatch<SetStateAction<ActiveTheme>>;
   contrastWarnings: string[];
+  qualityScore: number;
+  exportReadiness: "ready" | "review" | "risky";
 }) {
   const previewStyle = useMemo(() => createPreviewStyle(system, activeTheme), [system, activeTheme]);
-  const previewContentWidth = system.foundations.containers[system.utilities.layout.contentWidth];
+  const previewMetrics = getPreviewMetrics(system, previewMode);
 
   return (
     <div className="space-y-4">
@@ -426,6 +531,9 @@ function PreviewPanel({
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Live Preview</p>
             <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-app-foreground">Preview the full product system</h2>
+            <p className="mt-2 text-sm text-app-muted">
+              QA score {qualityScore}/100 - export posture {exportReadiness}
+            </p>
           </div>
 
           <div className="flex items-center gap-2 rounded-full border border-app-border bg-app-surface p-1">
@@ -491,8 +599,8 @@ function PreviewPanel({
           <div className="rounded-full px-3 py-1 text-xs preview-badge">{sectionLabel(previewMode)}</div>
         </div>
 
-        <div className="max-h-[calc(100vh-15rem)] overflow-auto p-6">
-          <div style={{ maxWidth: previewContentWidth }}>
+        <div className="max-h-[calc(100vh-15rem)] overflow-auto" style={{ padding: previewMetrics.chromePadding }}>
+          <div style={{ maxWidth: previewMetrics.maxWidth }}>
             {previewMode === "ui-kit" ? (
               <UIKitPreview system={system} />
             ) : previewMode === "components" ? (
@@ -567,6 +675,38 @@ function TokenPanel({
     setSystem((current) => ({ ...current, density: value }));
   }
 
+  function updateUtilityCoverage(
+    family: keyof GeneratedSystem["utilityCoverage"],
+    patch: Partial<GeneratedSystem["utilityCoverage"][keyof GeneratedSystem["utilityCoverage"]]>,
+  ) {
+    setSystem((current) => ({
+      ...current,
+      utilityCoverage: {
+        ...current.utilityCoverage,
+        [family]: {
+          ...current.utilityCoverage[family],
+          ...patch,
+        },
+      },
+    }));
+  }
+
+  function updateScreenPreset(
+    preset: keyof GeneratedSystem["screens"],
+    patch: Partial<GeneratedSystem["screens"][keyof GeneratedSystem["screens"]]>,
+  ) {
+    setSystem((current) => ({
+      ...current,
+      screens: {
+        ...current.screens,
+        [preset]: {
+          ...current.screens[preset],
+          ...patch,
+        },
+      },
+    }));
+  }
+
   function exportFile(type: "tokens" | "components" | "theme" | "tailwind" | "readme" | "session") {
     if (type === "tokens") {
       downloadTextFile("tokens.json", buildTokensJson(system, brandName), "application/json");
@@ -634,6 +774,8 @@ function TokenPanel({
     const blob = await buildZip(system, brandName);
     downloadBlob(`${brandName.toLowerCase().replace(/\s+/g, "-") || "design-system"}-tokens.zip`, blob);
   }
+
+  const qaReport = useMemo(() => auditSystem(system), [system]);
 
   return (
     <div className="panel sticky top-5 rounded-[1.6rem]">
@@ -1398,6 +1540,74 @@ function TokenPanel({
 
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
+            <span className="inline-flex items-center gap-2"><MonitorCog className="h-4 w-4" /> Utility coverage</span>
+          </summary>
+          <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
+            {Object.entries(system.utilityCoverage).map(([family, config]) => (
+              <div key={family} className="rounded-[1rem] border border-app-border/70 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-app-foreground">{sectionLabel(family)}</p>
+                    <p className="mt-1 text-xs text-app-muted">{config.notes}</p>
+                  </div>
+                  <label className="flex items-center gap-2 text-xs text-app-muted">
+                    <input
+                      type="checkbox"
+                      checked={config.enabled}
+                      onChange={(event) => updateUtilityCoverage(family as keyof GeneratedSystem["utilityCoverage"], { enabled: event.target.checked })}
+                    />
+                    Enabled
+                  </label>
+                </div>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Coverage mode</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={config.mode}
+                      onChange={(event) =>
+                        updateUtilityCoverage(family as keyof GeneratedSystem["utilityCoverage"], {
+                          mode: event.target.value as typeof config.mode,
+                        })}
+                    >
+                      <option value="token">Token</option>
+                      <option value="preset">Preset</option>
+                      <option value="mixed">Mixed</option>
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Density-aware</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={config.densityAware ? "yes" : "no"}
+                      onChange={(event) =>
+                        updateUtilityCoverage(family as keyof GeneratedSystem["utilityCoverage"], {
+                          densityAware: event.target.value === "yes",
+                        })}
+                    >
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </label>
+                </div>
+                <label className="mt-3 block space-y-1 text-xs text-app-muted">
+                  <span>Notes</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={config.notes}
+                    onChange={(event) =>
+                      updateUtilityCoverage(family as keyof GeneratedSystem["utilityCoverage"], {
+                        notes: event.target.value,
+                      })}
+                  />
+                </label>
+              </div>
+            ))}
+          </div>
+        </details>
+
+        <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><Sparkles className="h-4 w-4" /> Component recipes</span>
           </summary>
           <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
@@ -2008,6 +2218,83 @@ function TokenPanel({
 
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
+            <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4" /> Screen presets</span>
+          </summary>
+          <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
+            {Object.entries(system.screens).map(([preset, config]) => (
+              <div key={preset} className="rounded-[1rem] border border-app-border/70 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-app-foreground">{sectionLabel(preset)}</p>
+                    <p className="mt-1 text-xs text-app-muted">Controls page width, chrome spacing, and density posture for this preview/export surface.</p>
+                  </div>
+                  <span className="rounded-full bg-app-bg px-3 py-1 text-xs font-medium text-app-muted">
+                    {sectionLabel(config.density)}
+                  </span>
+                </div>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Max width</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={config.maxWidth}
+                      onChange={(event) =>
+                        updateScreenPreset(preset as keyof GeneratedSystem["screens"], {
+                          maxWidth: event.target.value as typeof config.maxWidth,
+                        })}
+                    >
+                      {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Density</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={config.density}
+                      onChange={(event) =>
+                        updateScreenPreset(preset as keyof GeneratedSystem["screens"], {
+                          density: event.target.value as Density,
+                        })}
+                    >
+                      <option value="compact">Compact</option>
+                      <option value="comfortable">Comfortable</option>
+                      <option value="airy">Airy</option>
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Section gap</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={config.sectionGap}
+                      onChange={(event) =>
+                        updateScreenPreset(preset as keyof GeneratedSystem["screens"], {
+                          sectionGap: event.target.value as typeof config.sectionGap,
+                        })}
+                    >
+                      {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-xs text-app-muted">
+                    <span>Chrome padding</span>
+                    <select
+                      className="field px-3 py-2 text-sm"
+                      value={config.chromePadding}
+                      onChange={(event) =>
+                        updateScreenPreset(preset as keyof GeneratedSystem["screens"], {
+                          chromePadding: event.target.value as typeof config.chromePadding,
+                        })}
+                    >
+                      {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                    </select>
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+        </details>
+
+        <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><SwatchBook className="h-4 w-4" /> Semantic mappings</span>
           </summary>
           <div className="grid gap-4 border-t border-app-border/70 px-4 py-4">
@@ -2123,6 +2410,42 @@ function TokenPanel({
             </label>
           </div>
         </details>
+
+        <div className="rounded-[1.3rem] border border-app-border bg-app-surface p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-app-foreground">System QA</p>
+              <p className="mt-1 text-xs text-app-muted">Contrast, coverage, state consistency, and export-safety checks.</p>
+            </div>
+            <div className="rounded-full bg-app-bg px-3 py-2 text-sm font-semibold text-app-foreground">
+              {qaReport.score}/100
+            </div>
+          </div>
+          <div className="mt-3 rounded-[1rem] border border-app-border/70 bg-app-bg px-3 py-3 text-sm text-app-muted">
+            Export posture: <span className="font-semibold text-app-foreground">{sectionLabel(qaReport.exportReadiness)}</span>
+          </div>
+          <div className="mt-3 space-y-2">
+            {qaReport.findings.length ? qaReport.findings.map((finding) => (
+              <div
+                key={finding.label}
+                className="rounded-[1rem] px-3 py-3 text-sm"
+                style={{
+                  background: finding.severity === "critical"
+                    ? "color-mix(in oklch, #fb7185 12%, white)"
+                    : finding.severity === "warning"
+                      ? "color-mix(in oklch, #f59e0b 14%, white)"
+                      : "color-mix(in oklch, var(--app-accent) 8%, white)",
+                }}
+              >
+                <span className="font-semibold">{sectionLabel(finding.severity)}:</span> {finding.label}
+              </div>
+            )) : (
+              <div className="rounded-[1rem] bg-emerald-50 px-3 py-3 text-sm text-emerald-900">
+                The current system passes the built-in MVP QA checks.
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className="rounded-[1.3rem] border border-app-border bg-app-surface p-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-app-foreground">
@@ -2761,25 +3084,7 @@ export function DesignSystemGenerator() {
     accentColor: inputs.accentColor && !isValidHex(inputs.accentColor) ? "Use a valid hex color or leave it blank." : undefined,
   };
 
-  const contrastWarnings = useMemo(() => {
-    const lightValues = resolveThemeValues(system, "light");
-    const darkValues = resolveThemeValues(system, "dark");
-    const warnings: string[] = [];
-
-    if (getContrastRatio(lightValues.textPrimary, lightValues.background) < 4.5) {
-      warnings.push("Light theme body copy is below the recommended contrast threshold.");
-    }
-
-    if (getContrastRatio(darkValues.textPrimary, darkValues.background) < 4.5) {
-      warnings.push("Dark theme body copy is below the recommended contrast threshold.");
-    }
-
-    if (getContrastRatio(lightValues.actionPrimaryForeground, lightValues.actionPrimary) < 4.5) {
-      warnings.push("Primary button contrast is weak in the light theme.");
-    }
-
-    return warnings;
-  }, [system]);
+  const qaReport = useMemo(() => auditSystem(system), [system]);
 
   return (
     <main className="mx-auto w-full max-w-[1880px] px-4 py-5 sm:px-6 lg:px-8">
@@ -2815,7 +3120,9 @@ export function DesignSystemGenerator() {
             setPreviewMode={setPreviewMode}
             activeTheme={activeTheme}
             setActiveTheme={setActiveTheme}
-            contrastWarnings={contrastWarnings}
+            contrastWarnings={qaReport.contrastWarnings}
+            qualityScore={qaReport.score}
+            exportReadiness={qaReport.exportReadiness}
           />
         </div>
 
