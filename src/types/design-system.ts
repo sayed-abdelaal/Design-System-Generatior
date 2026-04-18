@@ -82,7 +82,7 @@ export type FontOption = {
   label: string;
   family: string;
   cssVariable: string;
-  category: "sans" | "serif";
+  category: "sans" | "serif" | "display";
 };
 
 export type TypographyScaleToken = {
@@ -116,6 +116,7 @@ export type TypographyScale = Record<
 >;
 
 export type TypographyTokens = {
+  displayFont: string;
   headingFont: string;
   bodyFont: string;
   scale: TypographyScale;
@@ -583,6 +584,7 @@ export type BrandInputs = {
   advancedPaletteInputs: boolean;
   paletteOverrides: PaletteOverrideMap;
   customColors: CustomColorInput[];
+  displayFont: string;
   headingFont: string;
   bodyFont: string;
   styleDirection: StyleDirection;

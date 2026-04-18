@@ -804,6 +804,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
     lightTokens,
     darkTokens,
     typography: {
+      displayFont: getFontCssVariable(inputs.displayFont, "fraunces"),
       headingFont: getFontCssVariable(inputs.headingFont, "fraunces"),
       bodyFont: getFontCssVariable(inputs.bodyFont, "manrope"),
       scale: buildTypographyScale(inputs.styleDirection),

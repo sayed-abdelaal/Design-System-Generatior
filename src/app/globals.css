@@ -178,7 +178,10 @@ select.field {
     transform 220ms var(--preview-transition-ease);
 }
 
-.preview-display,
+.preview-display {
+  font-family: var(--preview-font-display), serif;
+}
+
 .preview-heading {
   font-family: var(--preview-font-heading), serif;
 }

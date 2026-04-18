@@ -86,6 +86,7 @@ const INITIAL_INPUTS: BrandInputs = {
   advancedPaletteInputs: false,
   paletteOverrides: {},
   customColors: [],
+  displayFont: "fraunces",
   headingFont: "fraunces",
   bodyFont: "manrope",
   styleDirection: "fintech",
@@ -230,6 +231,7 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-alert-danger-color": alertDanger,
     "--preview-alert-info-color": alertInfo,
     "--preview-alert-attention-color": alertAttention,
+    "--preview-font-display": system.typography.displayFont,
     "--preview-font-heading": system.typography.headingFont,
     "--preview-font-body": system.typography.bodyFont,
     "--preview-radius-sm": system.radius.sm,
@@ -841,9 +843,23 @@ function BrandInputPanel({
             <div className="workspace-card space-y-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Typography</p>
-                <p className="mt-2 text-sm text-app-muted">Pick the heading and body fonts that drive the live preview and export.</p>
+                <p className="mt-2 text-sm text-app-muted">Pick display, heading, and body fonts that drive the live preview and export.</p>
               </div>
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+                <label className="block space-y-2">
+                  <span className="text-sm font-medium text-app-foreground">Display font</span>
+                  <select
+                    className="field"
+                    value={inputs.displayFont}
+                    onChange={(event) => handleInputChange("displayFont", event.target.value)}
+                  >
+                    {FONT_OPTIONS.map((font) => (
+                      <option key={font.id} value={font.id}>
+                        {font.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <label className="block space-y-2">
                   <span className="text-sm font-medium text-app-foreground">Heading font</span>
                   <select
@@ -1001,7 +1017,7 @@ function PreviewPanel({
         </div>
 
         <div className="max-h-[calc(100vh-15rem)] overflow-auto" style={{ padding: previewMetrics.chromePadding }}>
-          <div style={{ maxWidth: previewMetrics.maxWidth }}>
+          <div style={{ maxWidth: previewMetrics.maxWidth, marginInline: "auto", width: "100%" }}>
             {previewMode === "ui-kit" ? (
               <UIKitPreview system={system} />
             ) : previewMode === "components" ? (
@@ -2945,15 +2961,17 @@ function TokenPanel({
                       <div>
                         <p className="text-sm font-semibold text-app-foreground">{sectionLabel(key)}</p>
                         <p className="mt-1 text-xs text-app-muted">
-                          {key.startsWith("display") || key.startsWith("h")
-                            ? "Uses the heading font family from Brand Inputs."
+                          {key.startsWith("display")
+                            ? "Uses the display font family from Brand Inputs."
+                            : key.startsWith("h")
+                              ? "Uses the heading font family from Brand Inputs."
                             : key.startsWith("code")
                               ? "Uses the body font family as a practical code-style baseline for this MVP."
                               : "Uses the body font family from Brand Inputs."}
                         </p>
                       </div>
                       <span className="rounded-full bg-app-bg px-3 py-1 text-xs font-medium text-app-muted">
-                        {key.startsWith("display") || key.startsWith("h") ? "Heading family" : "Body family"}
+                        {key.startsWith("display") ? "Display family" : key.startsWith("h") ? "Heading family" : "Body family"}
                       </span>
                     </div>
                     <div className="grid gap-2 sm:grid-cols-2">

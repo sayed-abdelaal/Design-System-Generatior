@@ -2,6 +2,13 @@ import { FontOption } from "@/types/design-system";
 
 export const FONT_OPTIONS: FontOption[] = [
   {
+    id: "inter",
+    label: "Inter",
+    family: "Inter",
+    cssVariable: "var(--font-inter)",
+    category: "sans",
+  },
+  {
     id: "manrope",
     label: "Manrope",
     family: "Manrope",
@@ -13,6 +20,13 @@ export const FONT_OPTIONS: FontOption[] = [
     label: "DM Sans",
     family: "DM Sans",
     cssVariable: "var(--font-dm-sans)",
+    category: "sans",
+  },
+  {
+    id: "plus-jakarta-sans",
+    label: "Plus Jakarta Sans",
+    family: "Plus Jakarta Sans",
+    cssVariable: "var(--font-plus-jakarta-sans)",
     category: "sans",
   },
   {
@@ -30,6 +44,41 @@ export const FONT_OPTIONS: FontOption[] = [
     category: "sans",
   },
   {
+    id: "poppins",
+    label: "Poppins",
+    family: "Poppins",
+    cssVariable: "var(--font-poppins)",
+    category: "sans",
+  },
+  {
+    id: "roboto",
+    label: "Roboto",
+    family: "Roboto",
+    cssVariable: "var(--font-roboto)",
+    category: "sans",
+  },
+  {
+    id: "montserrat",
+    label: "Montserrat",
+    family: "Montserrat",
+    cssVariable: "var(--font-montserrat)",
+    category: "sans",
+  },
+  {
+    id: "work-sans",
+    label: "Work Sans",
+    family: "Work Sans",
+    cssVariable: "var(--font-work-sans)",
+    category: "sans",
+  },
+  {
+    id: "outfit",
+    label: "Outfit",
+    family: "Outfit",
+    cssVariable: "var(--font-outfit)",
+    category: "sans",
+  },
+  {
     id: "fraunces",
     label: "Fraunces",
     family: "Fraunces",
@@ -42,5 +91,12 @@ export const FONT_OPTIONS: FontOption[] = [
     family: "Playfair Display",
     cssVariable: "var(--font-playfair)",
     category: "serif",
+  },
+  {
+    id: "bebas-neue",
+    label: "Bebas Neue",
+    family: "Bebas Neue",
+    cssVariable: "var(--font-bebas-neue)",
+    category: "display",
   },
 ];
