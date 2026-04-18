@@ -21,6 +21,7 @@ import { getContrastRatio, isValidHex, normalizeHex } from "@/lib/color";
 import {
   buildComponentsJson,
   buildReadme,
+  buildSessionJson,
   buildTailwindThemeCss,
   buildThemeCss,
   buildTokensJson,
@@ -380,6 +381,21 @@ function tokenReferenceOptions(system: GeneratedSystem) {
   return Object.keys(system.palettes).flatMap((paletteName) =>
     SCALE_STEPS.map((step) => `${paletteName}.${step}` as TokenReference),
   );
+}
+
+function getSystemMetrics(system: GeneratedSystem) {
+  const rawScaleCount = Object.keys(system.palettes).length * SCALE_STEPS.length;
+  const semanticCount = SEMANTIC_TOKEN_NAMES.length * 2;
+  const customPaletteCount = system.customPalettes.length;
+  const componentFamilyCount = Object.keys(system.components).length;
+
+  return {
+    tokenCount: rawScaleCount + semanticCount,
+    paletteCount: Object.keys(system.palettes).length,
+    customPaletteCount,
+    componentFamilyCount,
+    exportFileCount: 6,
+  };
 }
 
 function BrandInputPanel({
@@ -905,7 +921,7 @@ function PreviewPanel({
             ) : previewMode === "dashboard" ? (
               <DashboardPreview brandName={brandName} system={system} />
             ) : (
-              <MarketingPreview brandName={brandName} />
+              <MarketingPreview brandName={brandName} system={system} />
             )}
           </div>
         </div>
@@ -915,13 +931,11 @@ function PreviewPanel({
 }
 
 function TokenPanel({
-  inputs,
   setInputs,
   system,
   setSystem,
   brandName,
 }: {
-  inputs: BrandInputs;
   setInputs: Dispatch<SetStateAction<BrandInputs>>;
   system: GeneratedSystem;
   setSystem: Dispatch<SetStateAction<GeneratedSystem>>;
@@ -1045,13 +1059,13 @@ function TokenPanel({
     if (type === "session") {
       downloadTextFile(
         "design-system-session.json",
-        JSON.stringify({ version: 1, inputs, system }, null, 2),
+        buildSessionJson(system, brandName),
         "application/json",
       );
       return;
     }
 
-    downloadTextFile("README.md", buildReadme(brandName), "text/markdown");
+    downloadTextFile("README.md", buildReadme(system, brandName), "text/markdown");
   }
 
   function importSession(event: ChangeEvent<HTMLInputElement>) {
@@ -3062,6 +3076,8 @@ function UIKitPreview({ system }: { system: GeneratedSystem }) {
 }
 
 function ComponentsPreview({ system }: { system: GeneratedSystem }) {
+  const metrics = getSystemMetrics(system);
+
   return (
     <div className="preview-stack flex flex-col">
       <section className="preview-surface p-5">
@@ -3070,6 +3086,11 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         <p className="mt-3 max-w-2xl text-sm" style={{ color: "var(--preview-text-secondary)" }}>
           Every example below is using the same component recipe layer you edit in the right panel.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{metrics.paletteCount} palettes</span>
+          <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{metrics.componentFamilyCount} component families</span>
+          <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{metrics.exportFileCount} export files</span>
+        </div>
       </section>
 
       <section className="preview-grid-gap grid xl:grid-cols-2">
@@ -3396,6 +3417,8 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
 }
 
 function DashboardPreview({ brandName, system }: { brandName: string; system: GeneratedSystem }) {
+  const metrics = getSystemMetrics(system);
+
   return (
     <div className="preview-grid-gap grid xl:grid-cols-[220px_1fr]">
       <aside className="preview-surface space-y-4 p-4">
@@ -3428,9 +3451,9 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
 
         <div className="preview-grid-gap grid lg:grid-cols-3">
           {[
-            { label: "Tokens generated", value: "168" },
-            { label: "Contrast checks", value: "14" },
-            { label: "Font pairs", value: "6" },
+            { label: "Tokens generated", value: String(metrics.tokenCount) },
+            { label: "Custom palettes", value: String(metrics.customPaletteCount) },
+            { label: "Export files", value: String(metrics.exportFileCount) },
           ].map((card) => (
             <div key={card.label} className="preview-elevated p-5">
               <p className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{card.label}</p>
@@ -3492,10 +3515,10 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                 <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Drawer preview</p>
                 <h4 className="preview-heading mt-2 text-xl font-semibold">Export package</h4>
                 <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
-                  Includes theme CSS, Tailwind v4 theme layer, JSON tokens, and a handoff README.
+                  Includes theme CSS, Tailwind v4 theme layer, JSON tokens, component recipes, README, and a reusable session file.
                 </p>
                 <div className="mt-4 border px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)] text-sm rounded-[var(--preview-dialog-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
-                  Ready for ZIP download
+                  {metrics.exportFileCount} files ready for ZIP download
                 </div>
               </div>
             </div>
@@ -3506,7 +3529,9 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
   );
 }
 
-function MarketingPreview({ brandName }: { brandName: string }) {
+function MarketingPreview({ brandName, system }: { brandName: string; system: GeneratedSystem }) {
+  const metrics = getSystemMetrics(system);
+
   return (
     <div className="preview-stack flex flex-col">
       <section className="preview-surface overflow-hidden p-6">
@@ -3518,6 +3543,9 @@ function MarketingPreview({ brandName }: { brandName: string }) {
             </h2>
             <p className="mt-4 max-w-xl text-base" style={{ color: "var(--preview-text-secondary)" }}>
               {brandName} teams can shape palettes, semantic roles, typography, and export artifacts without hand-authoring every token by hand.
+            </p>
+            <p className="mt-3 text-sm" style={{ color: "var(--preview-text-muted)" }}>
+              {metrics.paletteCount} palettes, {metrics.customPaletteCount} custom palettes, and {metrics.exportFileCount} production-ready files.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Generate theme</button>
@@ -3661,7 +3689,7 @@ export function DesignSystemGenerator() {
           />
         </div>
 
-        <TokenPanel inputs={inputs} setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
+        <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
       </section>
     </main>
   );
