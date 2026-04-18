@@ -31,31 +31,45 @@ import {
 
 function buildTypographyScale(direction: BrandInputs["styleDirection"]): TypographyScale {
   const base = {
-    display: { size: "clamp(2.85rem, 5vw, 4.8rem)", lineHeight: "0.95", weight: "650", letterSpacing: "-0.04em" },
+    display1: { size: "clamp(3.6rem, 6vw, 5.8rem)", lineHeight: "0.92", weight: "700", letterSpacing: "-0.05em" },
+    display2: { size: "clamp(3rem, 5vw, 4.8rem)", lineHeight: "0.94", weight: "680", letterSpacing: "-0.045em" },
+    display3: { size: "clamp(2.55rem, 4vw, 4rem)", lineHeight: "0.97", weight: "660", letterSpacing: "-0.04em" },
+    display4: { size: "clamp(2.15rem, 3vw, 3.2rem)", lineHeight: "1", weight: "640", letterSpacing: "-0.03em" },
     h1: { size: "clamp(2.1rem, 3vw, 3.4rem)", lineHeight: "1.02", weight: "650", letterSpacing: "-0.035em" },
     h2: { size: "clamp(1.7rem, 2.2vw, 2.5rem)", lineHeight: "1.08", weight: "620", letterSpacing: "-0.03em" },
     h3: { size: "1.45rem", lineHeight: "1.12", weight: "620", letterSpacing: "-0.02em" },
     h4: { size: "1.14rem", lineHeight: "1.2", weight: "600", letterSpacing: "-0.015em" },
+    h5: { size: "1rem", lineHeight: "1.28", weight: "600", letterSpacing: "-0.01em" },
+    h6: { size: "0.9rem", lineHeight: "1.34", weight: "600", letterSpacing: "-0.005em" },
     bodyLg: { size: "1.05rem", lineHeight: "1.7", weight: "500" },
     body: { size: "0.96rem", lineHeight: "1.65", weight: "450" },
     bodySm: { size: "0.875rem", lineHeight: "1.55", weight: "450" },
     caption: { size: "0.75rem", lineHeight: "1.4", weight: "600", letterSpacing: "0.04em" },
+    overline: { size: "0.72rem", lineHeight: "1.3", weight: "650", letterSpacing: "0.12em" },
+    label: { size: "0.86rem", lineHeight: "1.4", weight: "600", letterSpacing: "0.01em" },
+    helper: { size: "0.8rem", lineHeight: "1.45", weight: "450" },
+    code: { size: "0.92rem", lineHeight: "1.6", weight: "500", letterSpacing: "-0.01em" },
+    codeSm: { size: "0.78rem", lineHeight: "1.5", weight: "500", letterSpacing: "-0.005em" },
   } satisfies TypographyScale;
 
   if (direction === "editorial") {
     return {
       ...base,
-      display: { ...base.display, size: "clamp(3rem, 5.5vw, 5.3rem)", lineHeight: "0.92", weight: "700" },
+      display1: { ...base.display1, size: "clamp(4rem, 6.4vw, 6.4rem)", lineHeight: "0.9", weight: "720" },
+      display2: { ...base.display2, size: "clamp(3.35rem, 5.3vw, 5.2rem)", lineHeight: "0.92", weight: "700" },
       bodyLg: { ...base.bodyLg, size: "1.08rem", lineHeight: "1.8" },
+      overline: { ...base.overline, letterSpacing: "0.16em" },
     };
   }
 
   if (direction === "bold") {
     return {
       ...base,
-      display: { ...base.display, weight: "760" },
+      display1: { ...base.display1, weight: "760" },
+      display2: { ...base.display2, weight: "740" },
       h1: { ...base.h1, weight: "720" },
       h2: { ...base.h2, weight: "700" },
+      label: { ...base.label, weight: "650" },
     };
   }
 

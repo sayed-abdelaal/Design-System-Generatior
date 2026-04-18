@@ -93,15 +93,25 @@ export type TypographyScaleToken = {
 };
 
 export type TypographyScale = Record<
-  | "display"
+  | "display1"
+  | "display2"
+  | "display3"
+  | "display4"
   | "h1"
   | "h2"
   | "h3"
   | "h4"
+  | "h5"
+  | "h6"
   | "bodyLg"
   | "body"
   | "bodySm"
-  | "caption",
+  | "caption"
+  | "overline"
+  | "label"
+  | "helper"
+  | "code"
+  | "codeSm",
   TypographyScaleToken
 >;
 

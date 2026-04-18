@@ -93,6 +93,27 @@ const INITIAL_INPUTS: BrandInputs = {
 };
 
 const PREVIEW_MODES = ["ui-kit", "components", "dashboard", "marketing"] as const;
+const TYPOGRAPHY_SCALE_ORDER = [
+  "display1",
+  "display2",
+  "display3",
+  "display4",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "bodyLg",
+  "body",
+  "bodySm",
+  "caption",
+  "overline",
+  "label",
+  "helper",
+  "code",
+  "codeSm",
+] as const;
 type PreviewMode = (typeof PREVIEW_MODES)[number];
 type ActiveTheme = "light" | "dark";
 type BrandPanelTab = "brand" | "colors" | "assets";
@@ -1034,26 +1055,6 @@ function TokenPanel({
     }));
   }
 
-  function updateTypographyValue(key: "headingFont" | "bodyFont", value: string) {
-    const font = FONT_OPTIONS.find((item) => item.id === value);
-
-    if (!font) {
-      return;
-    }
-
-    setSystem((current) => ({
-      ...current,
-      typography: {
-        ...current.typography,
-        [key]: font.cssVariable,
-      },
-    }));
-  }
-
-  function updateDensity(value: Density) {
-    setSystem((current) => ({ ...current, density: value }));
-  }
-
   function updateComponent<K extends keyof GeneratedSystem["components"]>(
     key: K,
     patch: Partial<GeneratedSystem["components"][K]>,
@@ -1270,238 +1271,204 @@ function TokenPanel({
             <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4" /> Tailwind foundations</span>
           </summary>
           <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
-            <div className="grid gap-2 sm:grid-cols-2">
-              {Object.entries(system.foundations.spacing).map(([key, value]) => (
-                <label key={`spacing-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Spacing {key}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          spacing: { ...current.foundations.spacing, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
+            <div className="workspace-card space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-app-foreground">Spacing and radius</p>
+                <p className="mt-1 text-xs text-app-muted">These core primitives feed utility settings, component recipes, and exported theme variables.</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {Object.entries(system.foundations.spacing).map(([key, value]) => (
+                  <label key={`spacing-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Spacing {key}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        spacing: { ...current.foundations.spacing, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {Object.entries(system.radius).map(([key, value]) => (
+                  <label key={`radius-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Radius {key.toUpperCase()}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      radius: { ...current.radius, [key]: event.target.value },
+                    }))} />
+                  </label>
+                ))}
+              </div>
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2">
-              {Object.entries(system.foundations.fontWeights).map(([key, value]) => (
-                <label key={`weight-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Weight {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          fontWeights: { ...current.foundations.fontWeights, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-              {Object.entries(system.foundations.tracking).map(([key, value]) => (
-                <label key={`tracking-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Tracking {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          tracking: { ...current.foundations.tracking, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-              {Object.entries(system.foundations.leading).map(([key, value]) => (
-                <label key={`leading-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Leading {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          leading: { ...current.foundations.leading, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
+            <div className="workspace-card space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-app-foreground">Typography primitives</p>
+                <p className="mt-1 text-xs text-app-muted">Weights, tracking, and leading are shared by typography scale tokens and component primitives.</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {Object.entries(system.foundations.fontWeights).map(([key, value]) => (
+                  <label key={`weight-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Weight {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        fontWeights: { ...current.foundations.fontWeights, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.tracking).map(([key, value]) => (
+                  <label key={`tracking-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Tracking {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        tracking: { ...current.foundations.tracking, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.leading).map(([key, value]) => (
+                  <label key={`leading-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Leading {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        leading: { ...current.foundations.leading, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+              </div>
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2">
-              {Object.entries(system.foundations.breakpoints).map(([key, value]) => (
-                <label key={`breakpoint-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Breakpoint {key}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          breakpoints: { ...current.foundations.breakpoints, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-              {Object.entries(system.foundations.containers).map(([key, value]) => (
-                <label key={`container-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Container {key}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          containers: { ...current.foundations.containers, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
+            <div className="workspace-card space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-app-foreground">Layout and containers</p>
+                <p className="mt-1 text-xs text-app-muted">Tailwind breakpoints, max-widths, and aspect ratios define how previews and exports scale across layouts.</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {Object.entries(system.foundations.breakpoints).map(([key, value]) => (
+                  <label key={`breakpoint-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Breakpoint {key}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        breakpoints: { ...current.foundations.breakpoints, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.containers).map(([key, value]) => (
+                  <label key={`container-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Container {key}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        containers: { ...current.foundations.containers, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.aspectRatios).map(([key, value]) => (
+                  <label key={`aspect-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Aspect {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        aspectRatios: { ...current.foundations.aspectRatios, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+              </div>
             </div>
 
-            <div className="grid gap-2">
-              {Object.entries(system.foundations.blur).map(([key, value]) => (
-                <label key={`blur-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Blur {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          blur: { ...current.foundations.blur, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-            </div>
-
-            <div className="grid gap-2">
-              {Object.entries(system.foundations.easing).map(([key, value]) => (
-                <label key={`ease-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Easing {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          easing: { ...current.foundations.easing, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-              {Object.entries(system.foundations.animations).map(([key, value]) => (
-                <label key={`animation-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Animation {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          animations: { ...current.foundations.animations, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-            </div>
-
-            <div className="grid gap-2 sm:grid-cols-2">
-              {Object.entries(system.foundations.insetShadows).map(([key, value]) => (
-                <label key={`inset-shadow-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Inset shadow {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          insetShadows: { ...current.foundations.insetShadows, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-              {Object.entries(system.foundations.dropShadows).map(([key, value]) => (
-                <label key={`drop-shadow-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Drop shadow {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          dropShadows: { ...current.foundations.dropShadows, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-              {Object.entries(system.foundations.aspectRatios).map(([key, value]) => (
-                <label key={`aspect-${key}`} className="space-y-1 text-xs text-app-muted">
-                  <span>Aspect {sectionLabel(key)}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        foundations: {
-                          ...current.foundations,
-                          aspectRatios: { ...current.foundations.aspectRatios, [key]: event.target.value },
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
+            <div className="workspace-card space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-app-foreground">Depth and motion</p>
+                <p className="mt-1 text-xs text-app-muted">Shadows, blur, easing, and animations shape the app feel before component-level adjustments.</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {Object.entries(system.shadows).map(([key, value]) => (
+                  <label key={`shadow-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Shadow {key.toUpperCase()}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      shadows: { ...current.shadows, [key]: event.target.value },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.insetShadows).map(([key, value]) => (
+                  <label key={`inset-shadow-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Inset shadow {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        insetShadows: { ...current.foundations.insetShadows, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.dropShadows).map(([key, value]) => (
+                  <label key={`drop-shadow-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Drop shadow {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        dropShadows: { ...current.foundations.dropShadows, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.blur).map(([key, value]) => (
+                  <label key={`blur-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Blur {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        blur: { ...current.foundations.blur, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.easing).map(([key, value]) => (
+                  <label key={`ease-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Easing {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        easing: { ...current.foundations.easing, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.animations).map(([key, value]) => (
+                  <label key={`animation-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Animation {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        animations: { ...current.foundations.animations, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
         </details>
@@ -2959,94 +2926,114 @@ function TokenPanel({
         {activeTab === "foundations" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
-            <span className="inline-flex items-center gap-2"><Type className="h-4 w-4" /> Typography and chrome</span>
+            <span className="inline-flex items-center gap-2"><Type className="h-4 w-4" /> Typography scale</span>
           </summary>
           <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
             <div className="rounded-[0.95rem] border border-app-border/70 bg-app-bg/70 px-3 py-3">
-              <p className="text-sm font-semibold text-app-foreground">Radius scale</p>
+              <p className="text-sm font-semibold text-app-foreground">Families come from Brand Inputs</p>
               <p className="mt-1 text-xs text-app-muted">
-                Utility settings and component recipes reference these radius tokens. Edit the values here to change what `none`, `sm`, `md`, `lg`, `xl`, and `pill` actually mean.
+                Heading and body font families are set in the Assets tab. Edit the scale here to control size, line-height, tracking, and weight for every text role.
               </p>
             </div>
+
             <div className="grid gap-3">
-              <label className="space-y-2">
-                <span className="text-sm text-app-muted">Heading font</span>
-                <select
-                  className="field"
-                  value={FONT_OPTIONS.find((font) => font.cssVariable === system.typography.headingFont)?.id}
-                  onChange={(event) => updateTypographyValue("headingFont", event.target.value)}
-                >
-                  {FONT_OPTIONS.map((font) => (
-                    <option key={font.id} value={font.id}>
-                      {font.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="space-y-2">
-                <span className="text-sm text-app-muted">Body font</span>
-                <select
-                  className="field"
-                  value={FONT_OPTIONS.find((font) => font.cssVariable === system.typography.bodyFont)?.id}
-                  onChange={(event) => updateTypographyValue("bodyFont", event.target.value)}
-                >
-                  {FONT_OPTIONS.map((font) => (
-                    <option key={font.id} value={font.id}>
-                      {font.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              {TYPOGRAPHY_SCALE_ORDER.map((key) => {
+                const token = system.typography.scale[key];
+                return (
+                  <div key={key} className="workspace-card space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-app-foreground">{sectionLabel(key)}</p>
+                        <p className="mt-1 text-xs text-app-muted">
+                          {key.startsWith("display") || key.startsWith("h")
+                            ? "Uses the heading font family from Brand Inputs."
+                            : key.startsWith("code")
+                              ? "Uses the body font family as a practical code-style baseline for this MVP."
+                              : "Uses the body font family from Brand Inputs."}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-app-bg px-3 py-1 text-xs font-medium text-app-muted">
+                        {key.startsWith("display") || key.startsWith("h") ? "Heading family" : "Body family"}
+                      </span>
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <label className="space-y-1 text-xs text-app-muted">
+                        <span>Font size</span>
+                        <input
+                          className="field px-3 py-2 text-sm"
+                          value={token.size}
+                          onChange={(event) => setSystem((current) => ({
+                            ...current,
+                            typography: {
+                              ...current.typography,
+                              scale: {
+                                ...current.typography.scale,
+                                [key]: { ...current.typography.scale[key], size: event.target.value },
+                              },
+                            },
+                          }))}
+                        />
+                      </label>
+                      <label className="space-y-1 text-xs text-app-muted">
+                        <span>Line height</span>
+                        <input
+                          className="field px-3 py-2 text-sm"
+                          value={token.lineHeight}
+                          onChange={(event) => setSystem((current) => ({
+                            ...current,
+                            typography: {
+                              ...current.typography,
+                              scale: {
+                                ...current.typography.scale,
+                                [key]: { ...current.typography.scale[key], lineHeight: event.target.value },
+                              },
+                            },
+                          }))}
+                        />
+                      </label>
+                      <label className="space-y-1 text-xs text-app-muted">
+                        <span>Font weight</span>
+                        <input
+                          className="field px-3 py-2 text-sm"
+                          value={token.weight}
+                          onChange={(event) => setSystem((current) => ({
+                            ...current,
+                            typography: {
+                              ...current.typography,
+                              scale: {
+                                ...current.typography.scale,
+                                [key]: { ...current.typography.scale[key], weight: event.target.value },
+                              },
+                            },
+                          }))}
+                        />
+                      </label>
+                      <label className="space-y-1 text-xs text-app-muted">
+                        <span>Letter spacing</span>
+                        <input
+                          className="field px-3 py-2 text-sm"
+                          value={token.letterSpacing ?? ""}
+                          placeholder="0em"
+                          onChange={(event) => setSystem((current) => ({
+                            ...current,
+                            typography: {
+                              ...current.typography,
+                              scale: {
+                                ...current.typography.scale,
+                                [key]: {
+                                  ...current.typography.scale[key],
+                                  letterSpacing: event.target.value || undefined,
+                                },
+                              },
+                            },
+                          }))}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-
-            <div className="grid gap-2 sm:grid-cols-2">
-              {Object.entries(system.radius).map(([key, value]) => (
-                <label key={key} className="space-y-1 text-xs text-app-muted">
-                  <span>Radius {key.toUpperCase()}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        radius: { ...current.radius, [key]: event.target.value },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-            </div>
-
-            <div className="grid gap-2">
-              {Object.entries(system.shadows).map(([key, value]) => (
-                <label key={key} className="space-y-1 text-xs text-app-muted">
-                  <span>Shadow {key.toUpperCase()}</span>
-                  <input
-                    className="field px-3 py-2 text-sm"
-                    value={value}
-                    onChange={(event) =>
-                      setSystem((current) => ({
-                        ...current,
-                        shadows: { ...current.shadows, [key]: event.target.value },
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-            </div>
-
-            <label className="space-y-2">
-              <span className="text-sm text-app-muted">Density</span>
-              <select
-                className="field"
-                value={system.density}
-                onChange={(event) => updateDensity(event.target.value as Density)}
-              >
-                <option value="compact">Compact</option>
-                <option value="comfortable">Comfortable</option>
-                <option value="airy">Airy</option>
-              </select>
-            </label>
           </div>
         </details>
         ) : null}
