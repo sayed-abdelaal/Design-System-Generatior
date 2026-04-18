@@ -198,6 +198,126 @@ export type FoundationTokens = {
   aspectRatios: AspectRatioScale;
 };
 
+export type LayoutUtilitySettings = {
+  contentWidth: keyof ContainerScale;
+  sectionGap: keyof SpacingScale;
+  cardGap: keyof SpacingScale;
+  defaultRadius: keyof RadiusScale;
+};
+
+export type SpacingUtilitySettings = {
+  densityMode: Density;
+  stackGap: keyof SpacingScale;
+  inlineGap: keyof SpacingScale;
+  insetPadding: keyof SpacingScale;
+};
+
+export type SizingUtilitySettings = {
+  controlHeight: keyof SpacingScale;
+  sidebarWidth: keyof ContainerScale;
+  modalWidth: keyof ContainerScale;
+};
+
+export type TypographyUtilitySettings = {
+  headingWeight: keyof FontWeightScale;
+  bodyWeight: keyof FontWeightScale;
+  bodyLeading: keyof LeadingScale;
+  headingTracking: keyof TrackingScale;
+};
+
+export type BorderUtilitySettings = {
+  borderRadius: keyof RadiusScale;
+  borderWidth: "hairline" | "default" | "strong";
+  outlineStyle: "soft" | "brand" | "high-contrast";
+};
+
+export type EffectUtilitySettings = {
+  surfaceShadow: keyof ShadowScale;
+  elevatedShadow: keyof ShadowScale;
+  surfaceBlur: keyof BlurScale;
+};
+
+export type MotionUtilitySettings = {
+  motionLevel: "calm" | "balanced" | "expressive";
+  transitionEase: keyof EasingScale;
+  entranceAnimation: keyof AnimationScale;
+};
+
+export type InteractivityUtilitySettings = {
+  focusRingWidth: "2px" | "3px" | "4px";
+  controlCursor: "pointer" | "default";
+  selectionStyle: "brand" | "neutral";
+};
+
+export type UtilitySettings = {
+  layout: LayoutUtilitySettings;
+  spacing: SpacingUtilitySettings;
+  sizing: SizingUtilitySettings;
+  typography: TypographyUtilitySettings;
+  borders: BorderUtilitySettings;
+  effects: EffectUtilitySettings;
+  motion: MotionUtilitySettings;
+  interactivity: InteractivityUtilitySettings;
+};
+
+export type ButtonRecipe = {
+  radius: keyof RadiusScale;
+  paddingX: keyof SpacingScale;
+  paddingY: keyof SpacingScale;
+  primaryShadow: keyof ShadowScale;
+  secondaryStyle: "outline" | "soft";
+};
+
+export type InputRecipe = {
+  radius: keyof RadiusScale;
+  paddingX: keyof SpacingScale;
+  paddingY: keyof SpacingScale;
+  borderStyle: "soft" | "strong";
+};
+
+export type TextareaRecipe = {
+  radius: keyof RadiusScale;
+  minHeight: keyof SpacingScale;
+  padding: keyof SpacingScale;
+};
+
+export type BadgeRecipe = {
+  radius: keyof RadiusScale;
+  paddingX: keyof SpacingScale;
+  paddingY: keyof SpacingScale;
+  style: "soft" | "solid";
+};
+
+export type AlertRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  emphasis: "soft" | "strong";
+};
+
+export type TableRecipe = {
+  radius: keyof RadiusScale;
+  cellPaddingX: keyof SpacingScale;
+  cellPaddingY: keyof SpacingScale;
+  headerStyle: "muted" | "elevated";
+};
+
+export type DialogRecipe = {
+  radius: keyof RadiusScale;
+  width: keyof ContainerScale;
+  padding: keyof SpacingScale;
+  shadow: keyof ShadowScale;
+};
+
+export type ComponentRecipes = {
+  button: ButtonRecipe;
+  input: InputRecipe;
+  textarea: TextareaRecipe;
+  badge: BadgeRecipe;
+  alert: AlertRecipe;
+  table: TableRecipe;
+  dialog: DialogRecipe;
+};
+
 export type Density = "compact" | "comfortable" | "airy";
 
 export type BrandInputs = {
@@ -220,5 +340,7 @@ export type GeneratedSystem = {
   radius: RadiusScale;
   shadows: ShadowScale;
   foundations: FoundationTokens;
+  utilities: UtilitySettings;
+  components: ComponentRecipes;
   density: Density;
 };

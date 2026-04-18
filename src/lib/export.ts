@@ -87,6 +87,8 @@ export function buildTokensJson(system: GeneratedSystem, brandName: string) {
         scale: system.typography.scale,
       },
       foundations: system.foundations,
+      utilities: system.utilities,
+      components: system.components,
       radius: system.radius,
       shadows: system.shadows,
       density: system.density,

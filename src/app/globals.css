@@ -51,6 +51,10 @@ select {
   background: color-mix(in oklch, var(--app-accent) 24%, white);
 }
 
+.preview-shell ::selection {
+  background: var(--preview-selection-bg);
+}
+
 .panel {
   border: 1px solid color-mix(in oklch, var(--app-border) 84%, white);
   background: color-mix(in oklch, var(--app-surface) 96%, white);
@@ -94,30 +98,31 @@ select {
   background: var(--preview-background);
   font-family: var(--preview-font-body), sans-serif;
   animation: var(--preview-animate-fade-in);
+  cursor: var(--preview-control-cursor);
 }
 
 .preview-surface {
   background: var(--preview-surface);
   color: var(--preview-text-primary);
-  border: 1px solid var(--preview-border-default);
-  border-radius: var(--preview-radius-lg);
-  box-shadow: var(--preview-shadow-md);
+  border: var(--preview-border-width) solid var(--preview-border-default);
+  border-radius: var(--preview-default-radius);
+  box-shadow: var(--preview-surface-shadow);
   backdrop-filter: blur(var(--preview-blur-sm));
   transition:
-    background-color 180ms var(--preview-ease-standard),
-    border-color 180ms var(--preview-ease-standard),
-    transform 180ms var(--preview-ease-standard);
+    background-color 180ms var(--preview-transition-ease),
+    border-color 180ms var(--preview-transition-ease),
+    transform 180ms var(--preview-transition-ease);
 }
 
 .preview-elevated {
   background: var(--preview-surface-elevated);
-  border: 1px solid var(--preview-border-default);
-  border-radius: var(--preview-radius-lg);
-  box-shadow: var(--preview-shadow-lg);
+  border: var(--preview-border-width) solid var(--preview-border-default);
+  border-radius: var(--preview-default-radius);
+  box-shadow: var(--preview-elevated-shadow);
   transition:
-    background-color 180ms var(--preview-ease-standard),
-    border-color 180ms var(--preview-ease-standard),
-    transform 220ms var(--preview-ease-emphasized);
+    background-color 180ms var(--preview-transition-ease),
+    border-color 180ms var(--preview-transition-ease),
+    transform 220ms var(--preview-transition-ease);
 }
 
 .preview-display,
@@ -128,11 +133,12 @@ select {
 .preview-button-primary {
   background: var(--preview-action-primary);
   color: var(--preview-action-primary-foreground);
-  box-shadow: var(--preview-shadow-sm);
+  box-shadow: var(--preview-button-shadow);
+  border-radius: var(--preview-button-radius);
   transition:
-    background-color 160ms var(--preview-ease-standard),
-    transform 160ms var(--preview-ease-standard),
-    box-shadow 160ms var(--preview-ease-standard);
+    background-color 160ms var(--preview-transition-ease),
+    transform 160ms var(--preview-transition-ease),
+    box-shadow 160ms var(--preview-transition-ease);
 }
 
 .preview-button-primary:hover {
@@ -141,47 +147,53 @@ select {
 }
 
 .preview-button-secondary {
-  background: color-mix(in srgb, var(--preview-action-secondary) 14%, transparent);
+  background: var(--preview-button-secondary-bg);
   color: var(--preview-action-secondary);
-  border: 1px solid color-mix(in srgb, var(--preview-action-secondary) 35%, var(--preview-border-default));
+  border: 1px solid var(--preview-button-secondary-border);
+  border-radius: var(--preview-button-radius);
   transition:
-    background-color 160ms var(--preview-ease-standard),
-    transform 160ms var(--preview-ease-standard);
+    background-color 160ms var(--preview-transition-ease),
+    transform 160ms var(--preview-transition-ease);
 }
 
 .preview-input {
-  border: 1px solid var(--preview-border-default);
+  border: var(--preview-input-border-width) solid var(--preview-border-default);
   background: var(--preview-surface-elevated);
   color: var(--preview-text-primary);
+  border-radius: var(--preview-input-radius);
 }
 
 .preview-input:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--preview-focus-ring) 18%, transparent);
+  box-shadow: 0 0 0 var(--preview-focus-ring-width) color-mix(in srgb, var(--preview-focus-ring) 18%, transparent);
   border-color: var(--preview-focus-ring);
 }
 
 .preview-badge {
-  background: color-mix(in srgb, var(--preview-action-primary) 12%, transparent);
-  color: var(--preview-action-primary);
+  background: var(--preview-badge-bg);
+  color: var(--preview-badge-fg);
+  border-radius: var(--preview-badge-radius);
 }
 
 .preview-alert-success {
-  background: color-mix(in srgb, var(--preview-success) 12%, transparent);
+  background: var(--preview-alert-success-bg);
   color: var(--preview-success);
-  border: 1px solid color-mix(in srgb, var(--preview-success) 26%, transparent);
+  border: 1px solid var(--preview-alert-success-border);
+  border-radius: var(--preview-alert-radius);
 }
 
 .preview-alert-warning {
-  background: color-mix(in srgb, var(--preview-warning) 14%, transparent);
+  background: var(--preview-alert-warning-bg);
   color: var(--preview-warning);
-  border: 1px solid color-mix(in srgb, var(--preview-warning) 28%, transparent);
+  border: 1px solid var(--preview-alert-warning-border);
+  border-radius: var(--preview-alert-radius);
 }
 
 .preview-alert-danger {
-  background: color-mix(in srgb, var(--preview-danger) 12%, transparent);
+  background: var(--preview-alert-danger-bg);
   color: var(--preview-danger);
-  border: 1px solid color-mix(in srgb, var(--preview-danger) 24%, transparent);
+  border: 1px solid var(--preview-alert-danger-border);
+  border-radius: var(--preview-alert-radius);
 }
 
 .preview-tab[data-active="true"] {
@@ -191,11 +203,11 @@ select {
 }
 
 .preview-stack {
-  gap: var(--preview-space-6);
+  gap: var(--preview-stack-gap);
 }
 
 .preview-grid-gap {
-  gap: var(--preview-space-4);
+  gap: var(--preview-card-gap);
 }
 
 .preview-table-row + .preview-table-row {

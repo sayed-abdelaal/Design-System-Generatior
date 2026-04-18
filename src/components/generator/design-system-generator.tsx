@@ -83,6 +83,30 @@ function resolveThemeValues(system: GeneratedSystem, activeTheme: ActiveTheme) {
 
 function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
   const resolved = resolveThemeValues(system, activeTheme);
+  const defaultRadius = system.radius[system.utilities.layout.defaultRadius];
+  const borderWidthMap = {
+    hairline: "1px",
+    default: "1.5px",
+    strong: "2px",
+  } as const;
+  const selectionMap = {
+    brand: "color-mix(in oklch, var(--preview-action-primary) 22%, white)",
+    neutral: "color-mix(in oklch, var(--preview-text-muted) 20%, white)",
+  } as const;
+  const buttonSecondaryBg = system.components.button.secondaryStyle === "soft"
+    ? "color-mix(in srgb, var(--preview-action-secondary) 14%, transparent)"
+    : "transparent";
+  const buttonSecondaryBorder = system.components.button.secondaryStyle === "soft"
+    ? "color-mix(in srgb, var(--preview-action-secondary) 35%, var(--preview-border-default))"
+    : "var(--preview-action-secondary)";
+  const badgeSoftBg = "color-mix(in srgb, var(--preview-action-primary) 12%, transparent)";
+  const badgeSolidBg = "var(--preview-action-primary)";
+  const alertStrongSuccessBg = "color-mix(in srgb, var(--preview-success) 18%, transparent)";
+  const alertSoftSuccessBg = "color-mix(in srgb, var(--preview-success) 12%, transparent)";
+  const alertStrongWarningBg = "color-mix(in srgb, var(--preview-warning) 22%, transparent)";
+  const alertSoftWarningBg = "color-mix(in srgb, var(--preview-warning) 14%, transparent)";
+  const alertStrongDangerBg = "color-mix(in srgb, var(--preview-danger) 18%, transparent)";
+  const alertSoftDangerBg = "color-mix(in srgb, var(--preview-danger) 12%, transparent)";
 
   return {
     "--preview-background": resolved.background,
@@ -118,7 +142,50 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-space-6": system.foundations.spacing["6"],
     "--preview-ease-standard": system.foundations.easing.standard,
     "--preview-ease-emphasized": system.foundations.easing.emphasized,
-    "--preview-animate-fade-in": system.foundations.animations.fadeIn,
+    "--preview-animate-fade-in": system.foundations.animations[system.utilities.motion.entranceAnimation],
+    "--preview-default-radius": defaultRadius,
+    "--preview-border-width": borderWidthMap[system.utilities.borders.borderWidth],
+    "--preview-surface-shadow": system.shadows[system.utilities.effects.surfaceShadow],
+    "--preview-elevated-shadow": system.shadows[system.utilities.effects.elevatedShadow],
+    "--preview-transition-ease": system.foundations.easing[system.utilities.motion.transitionEase],
+    "--preview-stack-gap": system.foundations.spacing[system.utilities.spacing.stackGap],
+    "--preview-card-gap": system.foundations.spacing[system.utilities.layout.cardGap],
+    "--preview-focus-ring-width": system.utilities.interactivity.focusRingWidth,
+    "--preview-control-cursor": system.utilities.interactivity.controlCursor,
+    "--preview-selection-bg": selectionMap[system.utilities.interactivity.selectionStyle],
+    "--preview-button-radius": system.radius[system.components.button.radius],
+    "--preview-button-shadow": system.shadows[system.components.button.primaryShadow],
+    "--preview-button-px": system.foundations.spacing[system.components.button.paddingX],
+    "--preview-button-py": system.foundations.spacing[system.components.button.paddingY],
+    "--preview-button-secondary-bg": buttonSecondaryBg,
+    "--preview-button-secondary-border": buttonSecondaryBorder,
+    "--preview-input-radius": system.radius[system.components.input.radius],
+    "--preview-input-px": system.foundations.spacing[system.components.input.paddingX],
+    "--preview-input-py": system.foundations.spacing[system.components.input.paddingY],
+    "--preview-input-border-width": system.components.input.borderStyle === "strong" ? "2px" : "1px",
+    "--preview-textarea-radius": system.radius[system.components.textarea.radius],
+    "--preview-textarea-padding": system.foundations.spacing[system.components.textarea.padding],
+    "--preview-textarea-min-height": system.foundations.spacing[system.components.textarea.minHeight],
+    "--preview-badge-radius": system.radius[system.components.badge.radius],
+    "--preview-badge-px": system.foundations.spacing[system.components.badge.paddingX],
+    "--preview-badge-py": system.foundations.spacing[system.components.badge.paddingY],
+    "--preview-badge-bg": system.components.badge.style === "solid" ? badgeSolidBg : badgeSoftBg,
+    "--preview-badge-fg": system.components.badge.style === "solid" ? "var(--preview-action-primary-foreground)" : "var(--preview-action-primary)",
+    "--preview-alert-radius": system.radius[system.components.alert.radius],
+    "--preview-alert-padding": system.foundations.spacing[system.components.alert.padding],
+    "--preview-alert-success-bg": system.components.alert.emphasis === "strong" ? alertStrongSuccessBg : alertSoftSuccessBg,
+    "--preview-alert-success-border": "color-mix(in srgb, var(--preview-success) 26%, transparent)",
+    "--preview-alert-warning-bg": system.components.alert.emphasis === "strong" ? alertStrongWarningBg : alertSoftWarningBg,
+    "--preview-alert-warning-border": "color-mix(in srgb, var(--preview-warning) 28%, transparent)",
+    "--preview-alert-danger-bg": system.components.alert.emphasis === "strong" ? alertStrongDangerBg : alertSoftDangerBg,
+    "--preview-alert-danger-border": "color-mix(in srgb, var(--preview-danger) 24%, transparent)",
+    "--preview-table-radius": system.radius[system.components.table.radius],
+    "--preview-table-px": system.foundations.spacing[system.components.table.cellPaddingX],
+    "--preview-table-py": system.foundations.spacing[system.components.table.cellPaddingY],
+    "--preview-dialog-radius": system.radius[system.components.dialog.radius],
+    "--preview-dialog-width": system.foundations.containers[system.components.dialog.width],
+    "--preview-dialog-padding": system.foundations.spacing[system.components.dialog.padding],
+    "--preview-dialog-shadow": system.shadows[system.components.dialog.shadow],
   } as CSSProperties;
 }
 
@@ -323,6 +390,7 @@ function PreviewPanel({
   contrastWarnings: string[];
 }) {
   const previewStyle = useMemo(() => createPreviewStyle(system, activeTheme), [system, activeTheme]);
+  const previewContentWidth = system.foundations.containers[system.utilities.layout.contentWidth];
 
   return (
     <div className="space-y-4">
@@ -397,13 +465,15 @@ function PreviewPanel({
         </div>
 
         <div className="max-h-[calc(100vh-15rem)] overflow-auto p-6">
+          <div style={{ maxWidth: previewContentWidth }}>
           {previewMode === "ui-kit" ? (
             <UIKitPreview />
           ) : previewMode === "dashboard" ? (
-            <DashboardPreview brandName={brandName} />
+            <DashboardPreview brandName={brandName} system={system} />
           ) : (
             <MarketingPreview brandName={brandName} />
           )}
+          </div>
         </div>
       </div>
     </div>
@@ -778,6 +848,782 @@ function TokenPanel({
 
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
+            <span className="inline-flex items-center gap-2"><MonitorCog className="h-4 w-4" /> Utility settings</span>
+          </summary>
+          <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Content width</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.layout.contentWidth}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        layout: { ...current.utilities.layout, contentWidth: event.target.value as typeof current.utilities.layout.contentWidth },
+                      },
+                    }))
+                  }
+                >
+                  {Object.keys(system.foundations.containers).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Default radius</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.layout.defaultRadius}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        layout: { ...current.utilities.layout, defaultRadius: event.target.value as typeof current.utilities.layout.defaultRadius },
+                      },
+                    }))
+                  }
+                >
+                  {Object.keys(system.radius).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Section gap</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.layout.sectionGap}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        layout: { ...current.utilities.layout, sectionGap: event.target.value as typeof current.utilities.layout.sectionGap },
+                      },
+                    }))
+                  }
+                >
+                  {Object.keys(system.foundations.spacing).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Card gap</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.layout.cardGap}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        layout: { ...current.utilities.layout, cardGap: event.target.value as typeof current.utilities.layout.cardGap },
+                      },
+                    }))
+                  }
+                >
+                  {Object.keys(system.foundations.spacing).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Density mode</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.spacing.densityMode}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        spacing: { ...current.utilities.spacing, densityMode: event.target.value as Density },
+                      },
+                    }))
+                  }
+                >
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
+                  <option value="airy">Airy</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Inset padding</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.spacing.insetPadding}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        spacing: { ...current.utilities.spacing, insetPadding: event.target.value as typeof current.utilities.spacing.insetPadding },
+                      },
+                    }))
+                  }
+                >
+                  {Object.keys(system.foundations.spacing).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stack gap</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.spacing.stackGap}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        spacing: { ...current.utilities.spacing, stackGap: event.target.value as typeof current.utilities.spacing.stackGap },
+                      },
+                    }))
+                  }
+                >
+                  {Object.keys(system.foundations.spacing).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Inline gap</span>
+                <select
+                  className="field px-3 py-2 text-sm"
+                  value={system.utilities.spacing.inlineGap}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        spacing: { ...current.utilities.spacing, inlineGap: event.target.value as typeof current.utilities.spacing.inlineGap },
+                      },
+                    }))
+                  }
+                >
+                  {Object.keys(system.foundations.spacing).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Control height</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.sizing.controlHeight}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        sizing: { ...current.utilities.sizing, controlHeight: event.target.value as typeof current.utilities.sizing.controlHeight },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.spacing).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Sidebar width</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.sizing.sidebarWidth}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        sizing: { ...current.utilities.sizing, sidebarWidth: event.target.value as typeof current.utilities.sizing.sidebarWidth },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.containers).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Modal width</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.sizing.modalWidth}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        sizing: { ...current.utilities.sizing, modalWidth: event.target.value as typeof current.utilities.sizing.modalWidth },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.containers).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Heading weight</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.typography.headingWeight}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        typography: { ...current.utilities.typography, headingWeight: event.target.value as typeof current.utilities.typography.headingWeight },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.fontWeights).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Body weight</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.typography.bodyWeight}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        typography: { ...current.utilities.typography, bodyWeight: event.target.value as typeof current.utilities.typography.bodyWeight },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.fontWeights).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Body leading</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.typography.bodyLeading}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        typography: { ...current.utilities.typography, bodyLeading: event.target.value as typeof current.utilities.typography.bodyLeading },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.leading).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Heading tracking</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.typography.headingTracking}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        typography: { ...current.utilities.typography, headingTracking: event.target.value as typeof current.utilities.typography.headingTracking },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.tracking).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Border width</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.borders.borderWidth}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        borders: { ...current.utilities.borders, borderWidth: event.target.value as typeof current.utilities.borders.borderWidth },
+                      },
+                    }))
+                  }>
+                  <option value="hairline">Hairline</option>
+                  <option value="default">Default</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Outline style</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.borders.outlineStyle}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        borders: { ...current.utilities.borders, outlineStyle: event.target.value as typeof current.utilities.borders.outlineStyle },
+                      },
+                    }))
+                  }>
+                  <option value="soft">Soft</option>
+                  <option value="brand">Brand</option>
+                  <option value="high-contrast">High contrast</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Surface shadow</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.effects.surfaceShadow}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        effects: { ...current.utilities.effects, surfaceShadow: event.target.value as typeof current.utilities.effects.surfaceShadow },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.shadows).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Elevated shadow</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.effects.elevatedShadow}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        effects: { ...current.utilities.effects, elevatedShadow: event.target.value as typeof current.utilities.effects.elevatedShadow },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.shadows).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Surface blur</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.effects.surfaceBlur}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        effects: { ...current.utilities.effects, surfaceBlur: event.target.value as typeof current.utilities.effects.surfaceBlur },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.blur).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Motion level</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.motion.motionLevel}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        motion: { ...current.utilities.motion, motionLevel: event.target.value as typeof current.utilities.motion.motionLevel },
+                      },
+                    }))
+                  }>
+                  <option value="calm">Calm</option>
+                  <option value="balanced">Balanced</option>
+                  <option value="expressive">Expressive</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Transition ease</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.motion.transitionEase}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        motion: { ...current.utilities.motion, transitionEase: event.target.value as typeof current.utilities.motion.transitionEase },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.easing).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Entrance animation</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.motion.entranceAnimation}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        motion: { ...current.utilities.motion, entranceAnimation: event.target.value as typeof current.utilities.motion.entranceAnimation },
+                      },
+                    }))
+                  }>
+                  {Object.keys(system.foundations.animations).map((key) => (
+                    <option key={key} value={key}>{key}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Focus ring width</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.interactivity.focusRingWidth}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        interactivity: { ...current.utilities.interactivity, focusRingWidth: event.target.value as typeof current.utilities.interactivity.focusRingWidth },
+                      },
+                    }))
+                  }>
+                  <option value="2px">2px</option>
+                  <option value="3px">3px</option>
+                  <option value="4px">4px</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Selection style</span>
+                <select className="field px-3 py-2 text-sm" value={system.utilities.interactivity.selectionStyle}
+                  onChange={(event) =>
+                    setSystem((current) => ({
+                      ...current,
+                      utilities: {
+                        ...current.utilities,
+                        interactivity: { ...current.utilities.interactivity, selectionStyle: event.target.value as typeof current.utilities.interactivity.selectionStyle },
+                      },
+                    }))
+                  }>
+                  <option value="brand">Brand</option>
+                  <option value="neutral">Neutral</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </details>
+
+        <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
+            <span className="inline-flex items-center gap-2"><Sparkles className="h-4 w-4" /> Component recipes</span>
+          </summary>
+          <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Button radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.button.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, button: { ...current.components.button, radius: event.target.value as typeof current.components.button.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Button shadow</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.button.primaryShadow}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, button: { ...current.components.button, primaryShadow: event.target.value as typeof current.components.button.primaryShadow } },
+                  }))}>
+                  {Object.keys(system.shadows).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Button padding X</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.button.paddingX}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, button: { ...current.components.button, paddingX: event.target.value as typeof current.components.button.paddingX } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Button padding Y</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.button.paddingY}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, button: { ...current.components.button, paddingY: event.target.value as typeof current.components.button.paddingY } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Secondary button style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.button.secondaryStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, button: { ...current.components.button, secondaryStyle: event.target.value as typeof current.components.button.secondaryStyle } },
+                  }))}>
+                  <option value="outline">Outline</option>
+                  <option value="soft">Soft</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Input radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, radius: event.target.value as typeof current.components.input.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Input border style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.borderStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, borderStyle: event.target.value as typeof current.components.input.borderStyle } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Input padding X</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.paddingX}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, paddingX: event.target.value as typeof current.components.input.paddingX } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Input padding Y</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.paddingY}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, paddingY: event.target.value as typeof current.components.input.paddingY } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Textarea radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.textarea.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, textarea: { ...current.components.textarea, radius: event.target.value as typeof current.components.textarea.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Textarea min height</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.textarea.minHeight}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, textarea: { ...current.components.textarea, minHeight: event.target.value as typeof current.components.textarea.minHeight } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Textarea padding</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.textarea.padding}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, textarea: { ...current.components.textarea, padding: event.target.value as typeof current.components.textarea.padding } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Badge radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.badge.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, badge: { ...current.components.badge, radius: event.target.value as typeof current.components.badge.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Badge style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.badge.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, badge: { ...current.components.badge, style: event.target.value as typeof current.components.badge.style } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="solid">Solid</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Badge padding X</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.badge.paddingX}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, badge: { ...current.components.badge, paddingX: event.target.value as typeof current.components.badge.paddingX } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Badge padding Y</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.badge.paddingY}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, badge: { ...current.components.badge, paddingY: event.target.value as typeof current.components.badge.paddingY } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Alert radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.alert.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, alert: { ...current.components.alert, radius: event.target.value as typeof current.components.alert.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Alert emphasis</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.alert.emphasis}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, alert: { ...current.components.alert, emphasis: event.target.value as typeof current.components.alert.emphasis } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Alert padding</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.alert.padding}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, alert: { ...current.components.alert, padding: event.target.value as typeof current.components.alert.padding } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Table radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.table.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, table: { ...current.components.table, radius: event.target.value as typeof current.components.table.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Table header style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.table.headerStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, table: { ...current.components.table, headerStyle: event.target.value as typeof current.components.table.headerStyle } },
+                  }))}>
+                  <option value="muted">Muted</option>
+                  <option value="elevated">Elevated</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Cell padding X</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.table.cellPaddingX}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, table: { ...current.components.table, cellPaddingX: event.target.value as typeof current.components.table.cellPaddingX } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Cell padding Y</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.table.cellPaddingY}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, table: { ...current.components.table, cellPaddingY: event.target.value as typeof current.components.table.cellPaddingY } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dialog radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, radius: event.target.value as typeof current.components.dialog.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dialog width</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.width}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, width: event.target.value as typeof current.components.dialog.width } },
+                  }))}>
+                  {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dialog padding</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.padding}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, padding: event.target.value as typeof current.components.dialog.padding } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dialog shadow</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.shadow}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, shadow: event.target.value as typeof current.components.dialog.shadow } },
+                  }))}>
+                  {Object.keys(system.shadows).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+            </div>
+          </div>
+        </details>
+
+        <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><SwatchBook className="h-4 w-4" /> Semantic mappings</span>
           </summary>
           <div className="grid gap-4 border-t border-app-border/70 px-4 py-4">
@@ -923,7 +1769,7 @@ function UIKitPreview() {
     <div className="preview-stack flex flex-col">
       <section className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr]">
         <div className="preview-surface space-y-4 p-5">
-          <span className="preview-badge inline-flex rounded-full px-3 py-1 text-xs font-semibold">Buttons and Inputs</span>
+          <span className="preview-badge inline-flex px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Buttons and Inputs</span>
           <div>
             <h3 className="preview-heading text-3xl font-semibold">A grounded UI kit with brand-backed defaults.</h3>
             <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
@@ -931,13 +1777,13 @@ function UIKitPreview() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button className="preview-button-primary rounded-[var(--preview-radius-pill)] px-4 py-3 font-medium">Primary button</button>
-            <button className="preview-button-secondary rounded-[var(--preview-radius-pill)] px-4 py-3 font-medium">Secondary action</button>
+            <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Primary button</button>
+            <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Secondary action</button>
           </div>
           <div className="grid gap-3">
-            <input className="preview-input rounded-[var(--preview-radius-md)] px-4 py-3" value="Workspace name" readOnly />
-            <textarea className="preview-input min-h-28 rounded-[var(--preview-radius-md)] px-4 py-3" value="Supporting notes that explain how tokens should feel in the product surface." readOnly />
-            <select className="preview-input rounded-[var(--preview-radius-md)] px-4 py-3" defaultValue="comfortable">
+            <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Workspace name" readOnly />
+            <textarea className="preview-input min-h-[var(--preview-textarea-min-height)] rounded-[var(--preview-textarea-radius)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Supporting notes that explain how tokens should feel in the product surface." readOnly />
+            <select className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" defaultValue="comfortable">
               <option value="comfortable">Comfortable density</option>
             </select>
           </div>
@@ -947,12 +1793,12 @@ function UIKitPreview() {
           <div className="preview-surface p-5">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium" style={{ color: "var(--preview-text-secondary)" }}>Badges and alerts</span>
-              <span className="preview-badge rounded-full px-3 py-1 text-xs font-semibold">New release</span>
+              <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">New release</span>
             </div>
             <div className="mt-4 space-y-3">
-              <div className="preview-alert-success rounded-[var(--preview-radius-md)] px-4 py-3 text-sm">Accessible success state with semantic green mapping.</div>
-              <div className="preview-alert-warning rounded-[var(--preview-radius-md)] px-4 py-3 text-sm">Warning tokens stay warm and legible in both themes.</div>
-              <div className="preview-alert-danger rounded-[var(--preview-radius-md)] px-4 py-3 text-sm">Danger surfaces carry urgency without overpowering the UI.</div>
+              <div className="preview-alert-success px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Accessible success state with semantic green mapping.</div>
+              <div className="preview-alert-warning px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Warning tokens stay warm and legible in both themes.</div>
+              <div className="preview-alert-danger px-[var(--preview-alert-padding)] py-[var(--preview-alert-padding)] text-sm">Danger surfaces carry urgency without overpowering the UI.</div>
             </div>
           </div>
 
@@ -984,7 +1830,7 @@ function UIKitPreview() {
   );
 }
 
-function DashboardPreview({ brandName }: { brandName: string }) {
+function DashboardPreview({ brandName, system }: { brandName: string; system: GeneratedSystem }) {
   return (
     <div className="preview-grid-gap grid xl:grid-cols-[220px_1fr]">
       <aside className="preview-surface space-y-4 p-4">
@@ -1034,13 +1880,19 @@ function DashboardPreview({ brandName }: { brandName: string }) {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="preview-heading text-xl font-semibold">Brand profiles</h4>
               <div className="flex gap-2">
-                <input className="preview-input rounded-[var(--preview-radius-pill)] px-4 py-2" value="Search systems" readOnly />
-                <button className="preview-button-secondary rounded-[var(--preview-radius-pill)] px-4 py-2">Filter</button>
+                <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Search systems" readOnly />
+                <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)]">Filter</button>
               </div>
             </div>
 
-            <div className="mt-4 overflow-hidden rounded-[var(--preview-radius-lg)] border" style={{ borderColor: "var(--preview-border-default)" }}>
-              <div className="grid grid-cols-[1.3fr_0.9fr_0.9fr_0.7fr] bg-[var(--preview-surface-elevated)] px-4 py-3 text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>
+            <div className="mt-4 overflow-hidden border rounded-[var(--preview-table-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
+              <div
+                className="grid grid-cols-[1.3fr_0.9fr_0.9fr_0.7fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-xs uppercase tracking-[0.16em]"
+                style={{
+                  color: "var(--preview-text-muted)",
+                  background: system.components.table.headerStyle === "elevated" ? "var(--preview-surface-elevated)" : "color-mix(in srgb, var(--preview-border-default) 24%, transparent)",
+                }}
+              >
                 <span>Brand</span>
                 <span>Direction</span>
                 <span>Theme health</span>
@@ -1051,7 +1903,7 @@ function DashboardPreview({ brandName }: { brandName: string }) {
                 ["Aurelian Studio", "Editorial", "Review", "CL"],
                 ["Vector Health", "Minimal", "Healthy", "JN"],
               ].map((row) => (
-                <div key={row[0]} className="preview-table-row grid grid-cols-[1.3fr_0.9fr_0.9fr_0.7fr] px-4 py-3 text-sm">
+                <div key={row[0]} className="preview-table-row grid grid-cols-[1.3fr_0.9fr_0.9fr_0.7fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-sm">
                   {row.map((cell) => (
                     <span key={cell}>{cell}</span>
                   ))}
@@ -1064,19 +1916,19 @@ function DashboardPreview({ brandName }: { brandName: string }) {
             <div className="preview-surface p-5">
               <h4 className="preview-heading text-xl font-semibold">Form section</h4>
               <div className="mt-4 space-y-3">
-                <input className="preview-input w-full rounded-[var(--preview-radius-md)] px-4 py-3" value="Token group name" readOnly />
-                <textarea className="preview-input min-h-24 w-full rounded-[var(--preview-radius-md)] px-4 py-3" value="Design rationale and implementation notes." readOnly />
-                <button className="preview-button-primary w-full rounded-[var(--preview-radius-md)] px-4 py-3 font-medium">Save mapping</button>
+                <input className="preview-input w-full px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Token group name" readOnly />
+                <textarea className="preview-input w-full min-h-[var(--preview-textarea-min-height)] rounded-[var(--preview-textarea-radius)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Design rationale and implementation notes." readOnly />
+                <button className="preview-button-primary w-full px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Save mapping</button>
               </div>
             </div>
 
-            <div className="preview-elevated p-5">
+            <div className="preview-elevated p-5" style={{ maxWidth: "var(--preview-dialog-width)", borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
               <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Drawer preview</p>
               <h4 className="preview-heading mt-2 text-xl font-semibold">Export package</h4>
               <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
                 Includes theme CSS, Tailwind v4 theme layer, JSON tokens, and a handoff README.
               </p>
-              <div className="mt-4 rounded-[var(--preview-radius-md)] border px-4 py-3 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>
+              <div className="mt-4 border px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)] text-sm rounded-[var(--preview-dialog-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
                 Ready for ZIP download
               </div>
             </div>
@@ -1101,8 +1953,8 @@ function MarketingPreview({ brandName }: { brandName: string }) {
               {brandName} teams can shape palettes, semantic roles, typography, and export artifacts without hand-authoring every token by hand.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <button className="preview-button-primary rounded-[var(--preview-radius-pill)] px-5 py-3 font-medium">Generate theme</button>
-              <button className="preview-button-secondary rounded-[var(--preview-radius-pill)] px-5 py-3 font-medium">Preview dashboard</button>
+              <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Generate theme</button>
+              <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Preview dashboard</button>
             </div>
           </div>
 

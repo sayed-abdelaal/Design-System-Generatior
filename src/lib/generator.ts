@@ -5,6 +5,7 @@ import {
   AspectRatioScale,
   BrandInputs,
   BreakpointScale,
+  ComponentRecipes,
   ContainerScale,
   Density,
   EasingScale,
@@ -22,6 +23,7 @@ import {
   TrackingScale,
   ThemeSemanticTokens,
   TypographyScale,
+  UtilitySettings,
 } from "@/types/design-system";
 
 function buildTypographyScale(direction: BrandInputs["styleDirection"]): TypographyScale {
@@ -258,6 +260,109 @@ function buildFoundations(direction: BrandInputs["styleDirection"]): {
   };
 }
 
+function buildUtilitySettings(
+  density: Density,
+  direction: BrandInputs["styleDirection"],
+): UtilitySettings {
+  return {
+    layout: {
+      contentWidth: direction === "editorial" ? "xl" : "lg",
+      sectionGap: density === "airy" ? "12" : "10",
+      cardGap: density === "compact" ? "4" : "6",
+      defaultRadius: direction === "editorial" ? "md" : "lg",
+    },
+    spacing: {
+      densityMode: density,
+      stackGap: density === "compact" ? "4" : "6",
+      inlineGap: density === "compact" ? "3" : "4",
+      insetPadding: density === "airy" ? "6" : "5",
+    },
+    sizing: {
+      controlHeight: density === "compact" ? "10" : "12",
+      sidebarWidth: "sm",
+      modalWidth: direction === "editorial" ? "lg" : "md",
+    },
+    typography: {
+      headingWeight: direction === "bold" ? "bold" : "semibold",
+      bodyWeight: "regular",
+      bodyLeading: density === "airy" ? "relaxed" : "normal",
+      headingTracking: direction === "editorial" ? "tight" : "normal",
+    },
+    borders: {
+      borderRadius: direction === "minimal" ? "md" : "lg",
+      borderWidth: direction === "bold" ? "strong" : "default",
+      outlineStyle: direction === "bold" ? "brand" : "soft",
+    },
+    effects: {
+      surfaceShadow: "sm",
+      elevatedShadow: "lg",
+      surfaceBlur: density === "compact" ? "sm" : "md",
+    },
+    motion: {
+      motionLevel: direction === "minimal" ? "calm" : direction === "bold" ? "expressive" : "balanced",
+      transitionEase: direction === "bold" ? "emphasized" : "standard",
+      entranceAnimation: direction === "minimal" ? "fadeIn" : "riseIn",
+    },
+    interactivity: {
+      focusRingWidth: density === "compact" ? "3px" : "4px",
+      controlCursor: "pointer",
+      selectionStyle: "brand",
+    },
+  };
+}
+
+function buildComponentRecipes(
+  density: Density,
+  direction: BrandInputs["styleDirection"],
+): ComponentRecipes {
+  const compact = density === "compact";
+  const airy = density === "airy";
+
+  return {
+    button: {
+      radius: direction === "editorial" ? "md" : "pill",
+      paddingX: compact ? "4" : airy ? "6" : "5",
+      paddingY: compact ? "3" : "4",
+      primaryShadow: direction === "bold" ? "md" : "sm",
+      secondaryStyle: direction === "minimal" ? "outline" : "soft",
+    },
+    input: {
+      radius: direction === "minimal" ? "md" : "lg",
+      paddingX: compact ? "4" : "5",
+      paddingY: compact ? "3" : "4",
+      borderStyle: direction === "bold" ? "strong" : "soft",
+    },
+    textarea: {
+      radius: direction === "minimal" ? "md" : "lg",
+      minHeight: airy ? "16" : "12",
+      padding: compact ? "4" : "5",
+    },
+    badge: {
+      radius: direction === "minimal" ? "md" : "pill",
+      paddingX: compact ? "3" : "4",
+      paddingY: compact ? "1" : "2",
+      style: direction === "bold" ? "solid" : "soft",
+    },
+    alert: {
+      radius: direction === "editorial" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    table: {
+      radius: direction === "minimal" ? "md" : "lg",
+      cellPaddingX: compact ? "3" : "4",
+      cellPaddingY: compact ? "3" : "4",
+      headerStyle: direction === "editorial" ? "elevated" : "muted",
+    },
+    dialog: {
+      radius: direction === "editorial" ? "lg" : "xl",
+      width: airy ? "lg" : "md",
+      padding: compact ? "5" : "6",
+      shadow: direction === "bold" ? "lg" : "md",
+    },
+  };
+}
+
 function buildSemanticTokens(): { lightTokens: ThemeSemanticTokens; darkTokens: ThemeSemanticTokens } {
   return {
     lightTokens: {
@@ -327,6 +432,8 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
 
   const { lightTokens, darkTokens } = buildSemanticTokens();
   const { foundations, density } = buildFoundations(inputs.styleDirection);
+  const utilities = buildUtilitySettings(density, inputs.styleDirection);
+  const components = buildComponentRecipes(density, inputs.styleDirection);
 
   return {
     palettes,
@@ -340,6 +447,8 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
     radius: buildRadii(inputs.styleDirection),
     shadows: buildShadows(inputs.styleDirection),
     foundations,
+    utilities,
+    components,
     density,
   };
 }
