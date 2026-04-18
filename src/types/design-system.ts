@@ -108,6 +108,96 @@ export type ShadowScale = {
   lg: string;
 };
 
+export type InsetShadowScale = {
+  xs: string;
+  sm: string;
+};
+
+export type DropShadowScale = {
+  sm: string;
+  md: string;
+};
+
+export type BlurScale = {
+  sm: string;
+  md: string;
+  lg: string;
+};
+
+export type EasingScale = {
+  standard: string;
+  emphasized: string;
+  entrance: string;
+};
+
+export type AnimationScale = {
+  fadeIn: string;
+  riseIn: string;
+  pulseSoft: string;
+};
+
+export type BreakpointScale = {
+  sm: string;
+  md: string;
+  lg: string;
+  xl: string;
+  "2xl": string;
+};
+
+export type ContainerScale = {
+  sm: string;
+  md: string;
+  lg: string;
+  xl: string;
+  "2xl": string;
+};
+
+export type AspectRatioScale = {
+  square: string;
+  video: string;
+  portrait: string;
+  wide: string;
+};
+
+export type SpacingScale = Record<
+  "0" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12" | "16" | "20" | "24",
+  string
+>;
+
+export type FontWeightScale = {
+  regular: string;
+  medium: string;
+  semibold: string;
+  bold: string;
+};
+
+export type TrackingScale = {
+  tight: string;
+  normal: string;
+  wide: string;
+};
+
+export type LeadingScale = {
+  snug: string;
+  normal: string;
+  relaxed: string;
+};
+
+export type FoundationTokens = {
+  spacing: SpacingScale;
+  fontWeights: FontWeightScale;
+  tracking: TrackingScale;
+  leading: LeadingScale;
+  breakpoints: BreakpointScale;
+  containers: ContainerScale;
+  insetShadows: InsetShadowScale;
+  dropShadows: DropShadowScale;
+  blur: BlurScale;
+  easing: EasingScale;
+  animations: AnimationScale;
+  aspectRatios: AspectRatioScale;
+};
+
 export type Density = "compact" | "comfortable" | "airy";
 
 export type BrandInputs = {
@@ -129,5 +219,6 @@ export type GeneratedSystem = {
   typography: TypographyTokens;
   radius: RadiusScale;
   shadows: ShadowScale;
+  foundations: FoundationTokens;
   density: Density;
 };

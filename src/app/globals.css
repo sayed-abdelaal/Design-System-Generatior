@@ -93,6 +93,7 @@ select {
   color: var(--preview-foreground);
   background: var(--preview-background);
   font-family: var(--preview-font-body), sans-serif;
+  animation: var(--preview-animate-fade-in);
 }
 
 .preview-surface {
@@ -101,6 +102,11 @@ select {
   border: 1px solid var(--preview-border-default);
   border-radius: var(--preview-radius-lg);
   box-shadow: var(--preview-shadow-md);
+  backdrop-filter: blur(var(--preview-blur-sm));
+  transition:
+    background-color 180ms var(--preview-ease-standard),
+    border-color 180ms var(--preview-ease-standard),
+    transform 180ms var(--preview-ease-standard);
 }
 
 .preview-elevated {
@@ -108,6 +114,10 @@ select {
   border: 1px solid var(--preview-border-default);
   border-radius: var(--preview-radius-lg);
   box-shadow: var(--preview-shadow-lg);
+  transition:
+    background-color 180ms var(--preview-ease-standard),
+    border-color 180ms var(--preview-ease-standard),
+    transform 220ms var(--preview-ease-emphasized);
 }
 
 .preview-display,
@@ -119,16 +129,24 @@ select {
   background: var(--preview-action-primary);
   color: var(--preview-action-primary-foreground);
   box-shadow: var(--preview-shadow-sm);
+  transition:
+    background-color 160ms var(--preview-ease-standard),
+    transform 160ms var(--preview-ease-standard),
+    box-shadow 160ms var(--preview-ease-standard);
 }
 
 .preview-button-primary:hover {
   background: var(--preview-action-primary-hover);
+  transform: translateY(-1px);
 }
 
 .preview-button-secondary {
   background: color-mix(in srgb, var(--preview-action-secondary) 14%, transparent);
   color: var(--preview-action-secondary);
   border: 1px solid color-mix(in srgb, var(--preview-action-secondary) 35%, var(--preview-border-default));
+  transition:
+    background-color 160ms var(--preview-ease-standard),
+    transform 160ms var(--preview-ease-standard);
 }
 
 .preview-input {
@@ -170,6 +188,14 @@ select {
   background: var(--preview-surface-elevated);
   color: var(--preview-text-primary);
   border-color: var(--preview-border-strong);
+}
+
+.preview-stack {
+  gap: var(--preview-space-6);
+}
+
+.preview-grid-gap {
+  gap: var(--preview-space-4);
 }
 
 .preview-table-row + .preview-table-row {

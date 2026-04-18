@@ -42,6 +42,18 @@ function chromeLines(system: GeneratedSystem) {
   return [
     ...Object.entries(system.radius).map(([key, value]) => `  --ds-radius-${key}: ${value};`),
     ...Object.entries(system.shadows).map(([key, value]) => `  --ds-shadow-${key}: ${value};`),
+    ...Object.entries(system.foundations.insetShadows).map(([key, value]) => `  --ds-inset-shadow-${key}: ${value};`),
+    ...Object.entries(system.foundations.dropShadows).map(([key, value]) => `  --ds-drop-shadow-${key}: ${value};`),
+    ...Object.entries(system.foundations.blur).map(([key, value]) => `  --ds-blur-${key}: ${value};`),
+    ...Object.entries(system.foundations.easing).map(([key, value]) => `  --ds-ease-${key}: ${value};`),
+    ...Object.entries(system.foundations.animations).map(([key, value]) => `  --ds-animate-${key}: ${value};`),
+    ...Object.entries(system.foundations.breakpoints).map(([key, value]) => `  --ds-breakpoint-${key}: ${value};`),
+    ...Object.entries(system.foundations.containers).map(([key, value]) => `  --ds-container-${key}: ${value};`),
+    ...Object.entries(system.foundations.spacing).map(([key, value]) => `  --ds-spacing-${key}: ${value};`),
+    ...Object.entries(system.foundations.fontWeights).map(([key, value]) => `  --ds-font-weight-${key}: ${value};`),
+    ...Object.entries(system.foundations.tracking).map(([key, value]) => `  --ds-tracking-${key}: ${value};`),
+    ...Object.entries(system.foundations.leading).map(([key, value]) => `  --ds-leading-${key}: ${value};`),
+    ...Object.entries(system.foundations.aspectRatios).map(([key, value]) => `  --ds-aspect-${key}: ${value};`),
     `  --ds-density: ${system.density};`,
   ].join("\n");
 }
@@ -50,8 +62,8 @@ export function buildThemeCss(system: GeneratedSystem) {
   return `:root {\n${paletteLines(system)}\n${typographyLines(system)}\n${chromeLines(system)}\n${semanticBlock("light", system.lightTokens, system)}\n}\n\n[data-theme="dark"] {\n${semanticBlock("dark", system.darkTokens, system)}\n}\n`;
 }
 
-export function buildTailwindThemeCss() {
-  return `@import "tailwindcss";\n\n@theme inline {\n  --color-background: var(--ds-background);\n  --color-foreground: var(--ds-foreground);\n  --color-surface: var(--ds-surface);\n  --color-surface-elevated: var(--ds-surface-elevated);\n  --color-text-primary: var(--ds-text-primary);\n  --color-text-secondary: var(--ds-text-secondary);\n  --color-text-muted: var(--ds-text-muted);\n  --color-border-default: var(--ds-border-default);\n  --color-border-strong: var(--ds-border-strong);\n  --color-action-primary: var(--ds-action-primary);\n  --color-action-secondary: var(--ds-action-secondary);\n  --color-focus-ring: var(--ds-focus-ring);\n  --color-success: var(--ds-success);\n  --color-warning: var(--ds-warning);\n  --color-danger: var(--ds-danger);\n  --font-sans: var(--ds-font-body);\n  --font-display: var(--ds-font-heading);\n  --radius-sm: var(--ds-radius-sm);\n  --radius-md: var(--ds-radius-md);\n  --radius-lg: var(--ds-radius-lg);\n  --radius-xl: var(--ds-radius-xl);\n  --shadow-sm: var(--ds-shadow-sm);\n  --shadow-md: var(--ds-shadow-md);\n  --shadow-lg: var(--ds-shadow-lg);\n}\n`;
+export function buildTailwindThemeCss(system: GeneratedSystem) {
+  return `@import "tailwindcss";\n\n@theme static inline {\n  --color-background: var(--ds-background);\n  --color-foreground: var(--ds-foreground);\n  --color-surface: var(--ds-surface);\n  --color-surface-elevated: var(--ds-surface-elevated);\n  --color-text-primary: var(--ds-text-primary);\n  --color-text-secondary: var(--ds-text-secondary);\n  --color-text-muted: var(--ds-text-muted);\n  --color-border-default: var(--ds-border-default);\n  --color-border-strong: var(--ds-border-strong);\n  --color-action-primary: var(--ds-action-primary);\n  --color-action-secondary: var(--ds-action-secondary);\n  --color-focus-ring: var(--ds-focus-ring);\n  --color-success: var(--ds-success);\n  --color-warning: var(--ds-warning);\n  --color-danger: var(--ds-danger);\n  --font-sans: var(--ds-font-body);\n  --font-display: var(--ds-font-heading);\n${PALETTE_NAMES.flatMap((paletteName) => SCALE_STEPS.map((step) => `  --color-${paletteName}-${step}: ${system.palettes[paletteName][step]};`)).join("\n")}\n${Object.entries(system.foundations.spacing).map(([key, value]) => `  --spacing-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.fontWeights).map(([key, value]) => `  --font-weight-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.tracking).map(([key, value]) => `  --tracking-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.leading).map(([key, value]) => `  --leading-${key}: ${value};`).join("\n")}\n${Object.entries(system.radius).map(([key, value]) => `  --radius-${key}: ${value};`).join("\n")}\n${Object.entries(system.shadows).map(([key, value]) => `  --shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.insetShadows).map(([key, value]) => `  --inset-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.dropShadows).map(([key, value]) => `  --drop-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.blur).map(([key, value]) => `  --blur-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.breakpoints).map(([key, value]) => `  --breakpoint-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.containers).map(([key, value]) => `  --container-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.aspectRatios).map(([key, value]) => `  --aspect-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.easing).map(([key, value]) => `  --ease-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.animations).map(([key, value]) => `  --animate-${key}: ${value};`).join("\n")}\n}\n\n@theme {\n  @keyframes fade-in {\n    0% { opacity: 0; }\n    100% { opacity: 1; }\n  }\n\n  @keyframes rise-in {\n    0% { opacity: 0; transform: translateY(8px); }\n    100% { opacity: 1; transform: translateY(0); }\n  }\n\n  @keyframes pulse-soft {\n    0%, 100% { opacity: 1; }\n    50% { opacity: 0.7; }\n  }\n}\n`;
 }
 
 export function buildTokensJson(system: GeneratedSystem, brandName: string) {
@@ -74,6 +86,7 @@ export function buildTokensJson(system: GeneratedSystem, brandName: string) {
         bodyFont: body,
         scale: system.typography.scale,
       },
+      foundations: system.foundations,
       radius: system.radius,
       shadows: system.shadows,
       density: system.density,
@@ -91,7 +104,7 @@ export async function buildZip(system: GeneratedSystem, brandName: string) {
   const zip = new JSZip();
   zip.file("tokens.json", buildTokensJson(system, brandName));
   zip.file("theme.css", buildThemeCss(system));
-  zip.file("tailwind-theme.css", buildTailwindThemeCss());
+  zip.file("tailwind-theme.css", buildTailwindThemeCss(system));
   zip.file("README.md", buildReadme(brandName));
 
   return zip.generateAsync({ type: "blob" });

@@ -1,12 +1,25 @@
 import { FONT_OPTIONS } from "@/data/fonts";
 import { makeNeutralAnchor, makeScaleFromAnchor, normalizeHex } from "@/lib/color";
 import {
+  AnimationScale,
+  AspectRatioScale,
   BrandInputs,
+  BreakpointScale,
+  ContainerScale,
   Density,
+  EasingScale,
+  FontWeightScale,
+  FoundationTokens,
   GeneratedSystem,
+  InsetShadowScale,
+  BlurScale,
+  DropShadowScale,
+  LeadingScale,
   PaletteCollection,
   RadiusScale,
   ShadowScale,
+  SpacingScale,
+  TrackingScale,
   ThemeSemanticTokens,
   TypographyScale,
 } from "@/types/design-system";
@@ -84,6 +97,167 @@ function buildDensity(direction: BrandInputs["styleDirection"]): Density {
   return "comfortable";
 }
 
+function buildSpacing(density: Density): SpacingScale {
+  if (density === "compact") {
+    return {
+      "0": "0rem",
+      "1": "0.2rem",
+      "2": "0.35rem",
+      "3": "0.55rem",
+      "4": "0.75rem",
+      "5": "0.95rem",
+      "6": "1.15rem",
+      "8": "1.45rem",
+      "10": "1.9rem",
+      "12": "2.35rem",
+      "16": "3rem",
+      "20": "4rem",
+      "24": "5rem",
+    };
+  }
+
+  if (density === "airy") {
+    return {
+      "0": "0rem",
+      "1": "0.3rem",
+      "2": "0.5rem",
+      "3": "0.8rem",
+      "4": "1rem",
+      "5": "1.3rem",
+      "6": "1.6rem",
+      "8": "2rem",
+      "10": "2.6rem",
+      "12": "3.2rem",
+      "16": "4.3rem",
+      "20": "5.6rem",
+      "24": "7rem",
+    };
+  }
+
+  return {
+    "0": "0rem",
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.2rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "10": "2.5rem",
+    "12": "3rem",
+    "16": "4rem",
+    "20": "5rem",
+    "24": "6rem",
+  };
+}
+
+function buildFontWeights(direction: BrandInputs["styleDirection"]): FontWeightScale {
+  if (direction === "bold") {
+    return { regular: "500", medium: "600", semibold: "700", bold: "800" };
+  }
+
+  return { regular: "450", medium: "520", semibold: "620", bold: "720" };
+}
+
+function buildTracking(direction: BrandInputs["styleDirection"]): TrackingScale {
+  if (direction === "editorial") {
+    return { tight: "-0.045em", normal: "-0.015em", wide: "0.08em" };
+  }
+
+  return { tight: "-0.03em", normal: "0em", wide: "0.06em" };
+}
+
+function buildLeading(density: Density): LeadingScale {
+  if (density === "compact") {
+    return { snug: "1.15", normal: "1.45", relaxed: "1.6" };
+  }
+
+  if (density === "airy") {
+    return { snug: "1.25", normal: "1.6", relaxed: "1.82" };
+  }
+
+  return { snug: "1.2", normal: "1.5", relaxed: "1.72" };
+}
+
+function buildBreakpoints(): BreakpointScale {
+  return { sm: "40rem", md: "48rem", lg: "64rem", xl: "80rem", "2xl": "96rem" };
+}
+
+function buildContainers(density: Density): ContainerScale {
+  if (density === "airy") {
+    return { sm: "26rem", md: "34rem", lg: "46rem", xl: "62rem", "2xl": "76rem" };
+  }
+
+  return { sm: "24rem", md: "32rem", lg: "42rem", xl: "58rem", "2xl": "72rem" };
+}
+
+function buildInsetShadows(): InsetShadowScale {
+  return {
+    xs: "inset 0 1px 0 rgba(255,255,255,0.55)",
+    sm: "inset 0 1px 2px rgba(15,23,42,0.08)",
+  };
+}
+
+function buildDropShadows(): DropShadowScale {
+  return {
+    sm: "0 4px 10px rgba(15,23,42,0.12)",
+    md: "0 10px 18px rgba(15,23,42,0.18)",
+  };
+}
+
+function buildBlur(direction: BrandInputs["styleDirection"]): BlurScale {
+  if (direction === "minimal") {
+    return { sm: "4px", md: "10px", lg: "16px" };
+  }
+
+  return { sm: "6px", md: "12px", lg: "20px" };
+}
+
+function buildEasing(): EasingScale {
+  return {
+    standard: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+    emphasized: "cubic-bezier(0.16, 1, 0.3, 1)",
+    entrance: "cubic-bezier(0.12, 0.9, 0.24, 1)",
+  };
+}
+
+function buildAnimations(): AnimationScale {
+  return {
+    fadeIn: "fade-in 180ms var(--ease-standard)",
+    riseIn: "rise-in 240ms var(--ease-entrance)",
+    pulseSoft: "pulse-soft 2.4s ease-in-out infinite",
+  };
+}
+
+function buildAspectRatios(): AspectRatioScale {
+  return { square: "1 / 1", video: "16 / 9", portrait: "4 / 5", wide: "21 / 9" };
+}
+
+function buildFoundations(direction: BrandInputs["styleDirection"]): {
+  foundations: FoundationTokens;
+  density: Density;
+} {
+  const density = buildDensity(direction);
+
+  return {
+    density,
+    foundations: {
+      spacing: buildSpacing(density),
+      fontWeights: buildFontWeights(direction),
+      tracking: buildTracking(direction),
+      leading: buildLeading(density),
+      breakpoints: buildBreakpoints(),
+      containers: buildContainers(density),
+      insetShadows: buildInsetShadows(),
+      dropShadows: buildDropShadows(),
+      blur: buildBlur(direction),
+      easing: buildEasing(),
+      animations: buildAnimations(),
+      aspectRatios: buildAspectRatios(),
+    },
+  };
+}
+
 function buildSemanticTokens(): { lightTokens: ThemeSemanticTokens; darkTokens: ThemeSemanticTokens } {
   return {
     lightTokens: {
@@ -152,6 +326,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
   };
 
   const { lightTokens, darkTokens } = buildSemanticTokens();
+  const { foundations, density } = buildFoundations(inputs.styleDirection);
 
   return {
     palettes,
@@ -164,7 +339,8 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
     },
     radius: buildRadii(inputs.styleDirection),
     shadows: buildShadows(inputs.styleDirection),
-    density: buildDensity(inputs.styleDirection),
+    foundations,
+    density,
   };
 }
 

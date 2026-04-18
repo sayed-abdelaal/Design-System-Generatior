@@ -113,6 +113,12 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-shadow-sm": system.shadows.sm,
     "--preview-shadow-md": system.shadows.md,
     "--preview-shadow-lg": system.shadows.lg,
+    "--preview-blur-sm": system.foundations.blur.sm,
+    "--preview-space-4": system.foundations.spacing["4"],
+    "--preview-space-6": system.foundations.spacing["6"],
+    "--preview-ease-standard": system.foundations.easing.standard,
+    "--preview-ease-emphasized": system.foundations.easing.emphasized,
+    "--preview-animate-fade-in": system.foundations.animations.fadeIn,
   } as CSSProperties;
 }
 
@@ -470,7 +476,7 @@ function TokenPanel({
     }
 
     if (type === "tailwind") {
-      downloadTextFile("tailwind-theme.css", buildTailwindThemeCss(), "text/css");
+      downloadTextFile("tailwind-theme.css", buildTailwindThemeCss(system), "text/css");
       return;
     }
 
@@ -526,6 +532,247 @@ function TokenPanel({
                 </div>
               </div>
             ))}
+          </div>
+        </details>
+
+        <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
+            <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4" /> Tailwind foundations</span>
+          </summary>
+          <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
+            <div className="grid gap-2 sm:grid-cols-2">
+              {Object.entries(system.foundations.spacing).map(([key, value]) => (
+                <label key={`spacing-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Spacing {key}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          spacing: { ...current.foundations.spacing, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              {Object.entries(system.foundations.fontWeights).map(([key, value]) => (
+                <label key={`weight-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Weight {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          fontWeights: { ...current.foundations.fontWeights, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+              {Object.entries(system.foundations.tracking).map(([key, value]) => (
+                <label key={`tracking-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Tracking {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          tracking: { ...current.foundations.tracking, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+              {Object.entries(system.foundations.leading).map(([key, value]) => (
+                <label key={`leading-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Leading {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          leading: { ...current.foundations.leading, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              {Object.entries(system.foundations.breakpoints).map(([key, value]) => (
+                <label key={`breakpoint-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Breakpoint {key}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          breakpoints: { ...current.foundations.breakpoints, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+              {Object.entries(system.foundations.containers).map(([key, value]) => (
+                <label key={`container-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Container {key}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          containers: { ...current.foundations.containers, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="grid gap-2">
+              {Object.entries(system.foundations.blur).map(([key, value]) => (
+                <label key={`blur-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Blur {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          blur: { ...current.foundations.blur, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="grid gap-2">
+              {Object.entries(system.foundations.easing).map(([key, value]) => (
+                <label key={`ease-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Easing {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          easing: { ...current.foundations.easing, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+              {Object.entries(system.foundations.animations).map(([key, value]) => (
+                <label key={`animation-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Animation {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          animations: { ...current.foundations.animations, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              {Object.entries(system.foundations.insetShadows).map(([key, value]) => (
+                <label key={`inset-shadow-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Inset shadow {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          insetShadows: { ...current.foundations.insetShadows, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+              {Object.entries(system.foundations.dropShadows).map(([key, value]) => (
+                <label key={`drop-shadow-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Drop shadow {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          dropShadows: { ...current.foundations.dropShadows, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+              {Object.entries(system.foundations.aspectRatios).map(([key, value]) => (
+                <label key={`aspect-${key}`} className="space-y-1 text-xs text-app-muted">
+                  <span>Aspect {sectionLabel(key)}</span>
+                  <input
+                    className="field px-3 py-2 text-sm"
+                    value={value}
+                    onChange={(event) =>
+                      setSystem((current) => ({
+                        ...current,
+                        foundations: {
+                          ...current.foundations,
+                          aspectRatios: { ...current.foundations.aspectRatios, [key]: event.target.value },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
           </div>
         </details>
 
@@ -673,8 +920,8 @@ function TokenPanel({
 
 function UIKitPreview() {
   return (
-    <div className="space-y-6">
-      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="preview-stack flex flex-col">
+      <section className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr]">
         <div className="preview-surface space-y-4 p-5">
           <span className="preview-badge inline-flex rounded-full px-3 py-1 text-xs font-semibold">Buttons and Inputs</span>
           <div>
@@ -696,7 +943,7 @@ function UIKitPreview() {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="preview-stack flex flex-col">
           <div className="preview-surface p-5">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium" style={{ color: "var(--preview-text-secondary)" }}>Badges and alerts</span>
@@ -721,7 +968,7 @@ function UIKitPreview() {
                 </button>
               ))}
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="preview-grid-gap mt-4 grid grid-cols-2">
               {[1, 2, 3, 4].map((item) => (
                 <div key={item} className="preview-elevated p-4">
                   <div className="h-2 w-16 rounded-full" style={{ background: "var(--preview-action-primary)" }} />
@@ -739,7 +986,7 @@ function UIKitPreview() {
 
 function DashboardPreview({ brandName }: { brandName: string }) {
   return (
-    <div className="grid gap-4 xl:grid-cols-[220px_1fr]">
+    <div className="preview-grid-gap grid xl:grid-cols-[220px_1fr]">
       <aside className="preview-surface space-y-4 p-4">
         <div>
           <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "var(--preview-text-muted)" }}>Workspace</p>
@@ -759,7 +1006,7 @@ function DashboardPreview({ brandName }: { brandName: string }) {
         ))}
       </aside>
 
-      <div className="space-y-4">
+      <div className="preview-stack flex flex-col">
         <nav className="preview-surface flex flex-wrap items-center justify-between gap-4 p-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "var(--preview-text-muted)" }}>Top nav</p>
@@ -768,7 +1015,7 @@ function DashboardPreview({ brandName }: { brandName: string }) {
           <button className="preview-button-primary rounded-[var(--preview-radius-pill)] px-4 py-3 font-medium">Publish theme package</button>
         </nav>
 
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="preview-grid-gap grid lg:grid-cols-3">
           {[
             { label: "Tokens generated", value: "168" },
             { label: "Contrast checks", value: "14" },
@@ -782,7 +1029,7 @@ function DashboardPreview({ brandName }: { brandName: string }) {
           ))}
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="preview-grid-gap grid xl:grid-cols-[1.2fr_0.8fr]">
           <section className="preview-surface p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="preview-heading text-xl font-semibold">Brand profiles</h4>
@@ -813,7 +1060,7 @@ function DashboardPreview({ brandName }: { brandName: string }) {
             </div>
           </section>
 
-          <section className="space-y-4">
+          <section className="preview-stack flex flex-col">
             <div className="preview-surface p-5">
               <h4 className="preview-heading text-xl font-semibold">Form section</h4>
               <div className="mt-4 space-y-3">
@@ -842,9 +1089,9 @@ function DashboardPreview({ brandName }: { brandName: string }) {
 
 function MarketingPreview({ brandName }: { brandName: string }) {
   return (
-    <div className="space-y-4">
+    <div className="preview-stack flex flex-col">
       <section className="preview-surface overflow-hidden p-6">
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+        <div className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div>
             <p className="text-xs uppercase tracking-[0.22em]" style={{ color: "var(--preview-text-muted)" }}>Marketing preview</p>
             <h2 className="preview-display mt-3 text-[clamp(3rem,5vw,5rem)] leading-[0.92] font-semibold">
@@ -859,7 +1106,7 @@ function MarketingPreview({ brandName }: { brandName: string }) {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="preview-grid-gap grid sm:grid-cols-2">
             {["OKLCH scales", "Semantic tokens", "Tailwind export", "Dark mode"].map((item) => (
               <div key={item} className="preview-elevated p-4">
                 <div className="h-10 w-10 rounded-2xl" style={{ background: "color-mix(in srgb, var(--preview-action-primary) 14%, transparent)" }} />
@@ -873,7 +1120,7 @@ function MarketingPreview({ brandName }: { brandName: string }) {
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-3">
+      <section className="preview-grid-gap grid lg:grid-cols-3">
         {[
           "Generate usable palette ladders with intentional 500 anchors.",
           "Preview real components, dashboards, and landing surfaces instantly.",
