@@ -5,8 +5,10 @@ import {
   AspectRatioScale,
   BrandInputs,
   BreakpointScale,
+  BorderWidthScale,
   ComponentRecipes,
   ContainerScale,
+  ContentFoundations,
   CustomPalette,
   Density,
   EasingScale,
@@ -15,9 +17,12 @@ import {
   GeneratedSystem,
   InsetShadowScale,
   IconSystem,
+  MotionDurationScale,
+  OpacityScale,
   BlurScale,
   DropShadowScale,
   LeadingScale,
+  AccessibilityFoundations,
   PaletteCollection,
   RadiusScale,
   ScreenPresets,
@@ -28,6 +33,7 @@ import {
   TypographyScale,
   UtilityCoverageMatrix,
   UtilitySettings,
+  ZIndexScale,
 } from "@/types/design-system";
 
 function buildTypographyScale(direction: BrandInputs["styleDirection"]): TypographyScale {
@@ -233,12 +239,32 @@ function buildBlur(direction: BrandInputs["styleDirection"]): BlurScale {
   return { sm: "6px", md: "12px", lg: "20px" };
 }
 
+function buildOpacity(direction: BrandInputs["styleDirection"]): OpacityScale {
+  if (direction === "bold") {
+    return { subtle: "0.72", muted: "0.58", disabled: "0.42", strong: "0.9" };
+  }
+
+  return { subtle: "0.8", muted: "0.64", disabled: "0.46", strong: "0.92" };
+}
+
 function buildEasing(): EasingScale {
   return {
     standard: "cubic-bezier(0.2, 0.8, 0.2, 1)",
     emphasized: "cubic-bezier(0.16, 1, 0.3, 1)",
     entrance: "cubic-bezier(0.12, 0.9, 0.24, 1)",
   };
+}
+
+function buildDurations(direction: BrandInputs["styleDirection"]): MotionDurationScale {
+  if (direction === "minimal") {
+    return { fast: "120ms", standard: "180ms", slow: "260ms" };
+  }
+
+  if (direction === "bold") {
+    return { fast: "150ms", standard: "220ms", slow: "320ms" };
+  }
+
+  return { fast: "140ms", standard: "200ms", slow: "280ms" };
 }
 
 function buildAnimations(): AnimationScale {
@@ -251,6 +277,61 @@ function buildAnimations(): AnimationScale {
 
 function buildAspectRatios(): AspectRatioScale {
   return { square: "1 / 1", video: "16 / 9", portrait: "4 / 5", wide: "21 / 9" };
+}
+
+function buildBorderWidths(direction: BrandInputs["styleDirection"]): BorderWidthScale {
+  if (direction === "bold") {
+    return { hairline: "1px", default: "2px", strong: "3px" };
+  }
+
+  return { hairline: "1px", default: "1.5px", strong: "2px" };
+}
+
+function buildZIndex(): ZIndexScale {
+  return {
+    base: "0",
+    dropdown: "30",
+    sticky: "40",
+    overlay: "50",
+    modal: "60",
+    toast: "70",
+  };
+}
+
+function buildContentFoundations(density: Density, direction: BrandInputs["styleDirection"]): ContentFoundations {
+  return {
+    links: {
+      underline: direction === "editorial" ? "always" : direction === "minimal" ? "hover" : "hover",
+      weight: direction === "bold" ? "semibold" : "medium",
+      tone: direction === "minimal" ? "foreground" : "brand",
+    },
+    lists: {
+      marker: direction === "editorial" ? "decimal" : "disc",
+      gap: density === "compact" ? "2" : "3",
+      indent: density === "airy" ? "6" : "5",
+    },
+    code: {
+      fontScale: density === "compact" ? "codeSm" : "code",
+      radius: direction === "minimal" ? "sm" : "md",
+      paddingX: density === "compact" ? "2" : "3",
+      paddingY: density === "compact" ? "1" : "2",
+    },
+    truncation: {
+      singleLine: true,
+      multiLineClamp: direction === "editorial" ? "4" : "3",
+      maxInlineSize: density === "airy" ? "lg" : "md",
+    },
+  };
+}
+
+function buildAccessibilityFoundations(density: Density, direction: BrandInputs["styleDirection"]): AccessibilityFoundations {
+  return {
+    contrastTarget: direction === "minimal" ? "AA" : "AAA",
+    focusTreatment: direction === "bold" ? "high-contrast" : direction === "studio" ? "brand" : "soft",
+    keyboardPattern: density === "airy" ? "enhanced" : "standard",
+    screenReaderLabelPrefix: "Design system",
+    touchTargetMin: density === "compact" ? "10" : "12",
+  };
 }
 
 function buildFoundations(direction: BrandInputs["styleDirection"]): {
@@ -268,12 +349,18 @@ function buildFoundations(direction: BrandInputs["styleDirection"]): {
       leading: buildLeading(density),
       breakpoints: buildBreakpoints(),
       containers: buildContainers(density),
+      borderWidths: buildBorderWidths(direction),
       insetShadows: buildInsetShadows(),
       dropShadows: buildDropShadows(),
       blur: buildBlur(direction),
+      opacity: buildOpacity(direction),
       easing: buildEasing(),
+      durations: buildDurations(direction),
       animations: buildAnimations(),
       aspectRatios: buildAspectRatios(),
+      zIndex: buildZIndex(),
+      content: buildContentFoundations(density, direction),
+      accessibility: buildAccessibilityFoundations(density, direction),
     },
   };
 }
@@ -541,6 +628,12 @@ function buildComponentRecipes(
       borderStyle: direction === "bold" ? "strong" : "soft",
       validationStyle: direction === "bold" ? "strong" : "soft",
       showHelperText: true,
+      showPrefix: direction !== "minimal",
+      showSuffix: direction === "bold" || direction === "studio",
+      searchStyle: direction === "minimal" ? "underline" : "boxed",
+      selectStyle: direction === "editorial" ? "quiet" : "default",
+      messageStyle: density === "compact" ? "inline" : "stacked",
+      readOnlyStyle: direction === "minimal" ? "outlined" : "muted",
     },
     textarea: {
       radius: direction === "minimal" ? "md" : "lg",
@@ -615,6 +708,8 @@ function buildComponentRecipes(
       shadow: direction === "bold" ? "lg" : "md",
       overlayBlur: direction === "minimal" ? "sm" : "md",
       overlayTone: direction === "bold" ? "strong" : "soft",
+      presentation: direction === "minimal" ? "drawer" : "modal",
+      placement: direction === "minimal" ? "right" : "center",
     },
     listbox: {
       radius: direction === "minimal" ? "md" : "lg",
@@ -624,6 +719,12 @@ function buildComponentRecipes(
     pagination: {
       radius: direction === "minimal" ? "md" : "pill",
       gap: compact ? "2" : "3",
+    },
+    tabs: {
+      radius: direction === "minimal" ? "md" : "pill",
+      gap: compact ? "2" : "3",
+      activeStyle: direction === "editorial" ? "underline" : "pill",
+      tone: direction === "bold" ? "strong" : "soft",
     },
     dropdown: {
       radius: direction === "minimal" ? "md" : "lg",

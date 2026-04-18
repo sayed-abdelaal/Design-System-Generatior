@@ -188,11 +188,6 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
   const alertInfo = resolveTokenReference(system.components.alert.colors.info, system.palettes);
   const alertAttention = resolveTokenReference(system.components.alert.colors.attention, system.palettes);
   const defaultRadius = system.radius[system.utilities.layout.defaultRadius];
-  const borderWidthMap = {
-    hairline: "1px",
-    default: "1.5px",
-    strong: "2px",
-  } as const;
   const selectionMap = {
     brand: "color-mix(in oklch, var(--preview-action-primary) 22%, white)",
     neutral: "color-mix(in oklch, var(--preview-text-muted) 20%, white)",
@@ -280,15 +275,42 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-ease-emphasized": system.foundations.easing.emphasized,
     "--preview-animate-fade-in": system.foundations.animations[system.utilities.motion.entranceAnimation],
     "--preview-default-radius": defaultRadius,
-    "--preview-border-width": borderWidthMap[system.utilities.borders.borderWidth],
+    "--preview-border-width": system.foundations.borderWidths[system.utilities.borders.borderWidth],
     "--preview-surface-shadow": system.shadows[system.utilities.effects.surfaceShadow],
     "--preview-elevated-shadow": system.shadows[system.utilities.effects.elevatedShadow],
     "--preview-transition-ease": system.foundations.easing[system.utilities.motion.transitionEase],
+    "--preview-duration-fast": system.foundations.durations.fast,
+    "--preview-duration-standard": system.foundations.durations.standard,
+    "--preview-duration-slow": system.foundations.durations.slow,
     "--preview-stack-gap": system.foundations.spacing[system.utilities.spacing.stackGap],
     "--preview-card-gap": system.foundations.spacing[system.utilities.layout.cardGap],
     "--preview-focus-ring-width": system.utilities.interactivity.focusRingWidth,
     "--preview-control-cursor": system.utilities.interactivity.controlCursor,
     "--preview-selection-bg": selectionMap[system.utilities.interactivity.selectionStyle],
+    "--preview-opacity-subtle": system.foundations.opacity.subtle,
+    "--preview-opacity-muted": system.foundations.opacity.muted,
+    "--preview-opacity-disabled": system.foundations.opacity.disabled,
+    "--preview-opacity-strong": system.foundations.opacity.strong,
+    "--preview-z-dropdown": system.foundations.zIndex.dropdown,
+    "--preview-z-sticky": system.foundations.zIndex.sticky,
+    "--preview-z-overlay": system.foundations.zIndex.overlay,
+    "--preview-z-modal": system.foundations.zIndex.modal,
+    "--preview-z-toast": system.foundations.zIndex.toast,
+    "--preview-link-weight": system.foundations.fontWeights[system.foundations.content.links.weight],
+    "--preview-link-underline": system.foundations.content.links.underline === "always" ? "underline" : "none",
+    "--preview-link-hover-underline": system.foundations.content.links.underline === "hover" ? "underline" : system.foundations.content.links.underline === "always" ? "underline" : "none",
+    "--preview-link-color": system.foundations.content.links.tone === "brand"
+      ? resolved.actionPrimary
+      : system.foundations.content.links.tone === "foreground"
+        ? resolved.textPrimary
+        : resolved.textSecondary,
+    "--preview-list-gap": system.foundations.spacing[system.foundations.content.lists.gap],
+    "--preview-list-indent": system.foundations.spacing[system.foundations.content.lists.indent],
+    "--preview-code-radius": system.radius[system.foundations.content.code.radius],
+    "--preview-code-px": system.foundations.spacing[system.foundations.content.code.paddingX],
+    "--preview-code-py": system.foundations.spacing[system.foundations.content.code.paddingY],
+    "--preview-touch-target-min": system.foundations.spacing[system.foundations.accessibility.touchTargetMin],
+    "--preview-screen-reader-prefix": `"${system.foundations.accessibility.screenReaderLabelPrefix}"`,
     "--preview-button-radius": system.radius[system.components.button.radius],
     "--preview-button-shadow": system.shadows[system.components.button.primaryShadow],
     "--preview-button-px": system.foundations.spacing[system.components.button.paddingX],
@@ -324,6 +346,18 @@ function createPreviewStyle(system: GeneratedSystem, activeTheme: ActiveTheme) {
     "--preview-input-success-bg": system.components.input.validationStyle === "strong"
       ? "color-mix(in srgb, var(--preview-success) 12%, transparent)"
       : "color-mix(in srgb, var(--preview-success) 6%, transparent)",
+    "--preview-input-readonly-bg": system.components.input.readOnlyStyle === "muted"
+      ? "color-mix(in srgb, var(--preview-border-default) 18%, transparent)"
+      : "transparent",
+    "--preview-input-readonly-border": system.components.input.readOnlyStyle === "muted"
+      ? "color-mix(in srgb, var(--preview-border-strong) 35%, transparent)"
+      : "var(--preview-border-strong)",
+    "--preview-input-search-border": system.components.input.searchStyle === "underline"
+      ? "transparent"
+      : "var(--preview-border-default)",
+    "--preview-input-select-bg": system.components.input.selectStyle === "quiet"
+      ? "color-mix(in srgb, var(--preview-surface-elevated) 65%, transparent)"
+      : "var(--preview-surface-elevated)",
     "--preview-textarea-radius": system.radius[system.components.textarea.radius],
     "--preview-textarea-padding": system.foundations.spacing[system.components.textarea.padding],
     "--preview-textarea-min-height": system.foundations.spacing[system.components.textarea.minHeight],
@@ -1475,6 +1509,63 @@ function TokenPanel({
 
             <div className="workspace-card space-y-3">
               <div>
+                <p className="text-sm font-semibold text-app-foreground">Visual system primitives</p>
+                <p className="mt-1 text-xs text-app-muted">Border widths, opacity, motion duration, and stacking now behave like first-class foundations instead of scattered presets.</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {Object.entries(system.foundations.borderWidths).map(([key, value]) => (
+                  <label key={`border-width-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Border width {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        borderWidths: { ...current.foundations.borderWidths, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.opacity).map(([key, value]) => (
+                  <label key={`opacity-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Opacity {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        opacity: { ...current.foundations.opacity, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.durations).map(([key, value]) => (
+                  <label key={`duration-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Duration {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        durations: { ...current.foundations.durations, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+                {Object.entries(system.foundations.zIndex).map(([key, value]) => (
+                  <label key={`z-${key}`} className="space-y-1 text-xs text-app-muted">
+                    <span>Z-index {sectionLabel(key)}</span>
+                    <input className="field px-3 py-2 text-sm" value={value} onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      foundations: {
+                        ...current.foundations,
+                        zIndex: { ...current.foundations.zIndex, [key]: event.target.value },
+                      },
+                    }))} />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="workspace-card space-y-3">
+              <div>
                 <p className="text-sm font-semibold text-app-foreground">Depth and motion</p>
                 <p className="mt-1 text-xs text-app-muted">Shadows, blur, easing, and animations shape the app feel before component-level adjustments.</p>
               </div>
@@ -1548,6 +1639,251 @@ function TokenPanel({
                     }))} />
                   </label>
                 ))}
+              </div>
+            </div>
+
+            <div className="workspace-card space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-app-foreground">Content and accessibility rules</p>
+                <p className="mt-1 text-xs text-app-muted">Link behavior, lists, code styling, truncation, and baseline accessibility rules now live with the rest of the foundations.</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Link underline</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.links.underline} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        links: { ...current.foundations.content.links, underline: event.target.value as typeof current.foundations.content.links.underline },
+                      },
+                    },
+                  }))}>
+                    <option value="always">Always</option>
+                    <option value="hover">Hover</option>
+                    <option value="never">Never</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Link weight</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.links.weight} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        links: { ...current.foundations.content.links, weight: event.target.value as typeof current.foundations.content.links.weight },
+                      },
+                    },
+                  }))}>
+                    {Object.keys(system.foundations.fontWeights).map((key) => <option key={key} value={key}>{key}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Link tone</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.links.tone} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        links: { ...current.foundations.content.links, tone: event.target.value as typeof current.foundations.content.links.tone },
+                      },
+                    },
+                  }))}>
+                    <option value="brand">Brand</option>
+                    <option value="foreground">Foreground</option>
+                    <option value="muted">Muted</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>List marker</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.lists.marker} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        lists: { ...current.foundations.content.lists, marker: event.target.value as typeof current.foundations.content.lists.marker },
+                      },
+                    },
+                  }))}>
+                    <option value="disc">Disc</option>
+                    <option value="decimal">Decimal</option>
+                    <option value="dash">Dash</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>List gap</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.lists.gap} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        lists: { ...current.foundations.content.lists, gap: event.target.value as typeof current.foundations.content.lists.gap },
+                      },
+                    },
+                  }))}>
+                    {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>List indent</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.lists.indent} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        lists: { ...current.foundations.content.lists, indent: event.target.value as typeof current.foundations.content.lists.indent },
+                      },
+                    },
+                  }))}>
+                    {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Code scale</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.code.fontScale} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        code: { ...current.foundations.content.code, fontScale: event.target.value as typeof current.foundations.content.code.fontScale },
+                      },
+                    },
+                  }))}>
+                    {Object.keys(system.typography.scale).map((key) => <option key={key} value={key}>{sectionLabel(key)}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Code radius</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.code.radius} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        code: { ...current.foundations.content.code, radius: event.target.value as typeof current.foundations.content.code.radius },
+                      },
+                    },
+                  }))}>
+                    {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Single-line truncation</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.truncation.singleLine ? "yes" : "no"} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        truncation: { ...current.foundations.content.truncation, singleLine: event.target.value === "yes" },
+                      },
+                    },
+                  }))}>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Multi-line clamp</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.truncation.multiLineClamp} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        truncation: { ...current.foundations.content.truncation, multiLineClamp: event.target.value as typeof current.foundations.content.truncation.multiLineClamp },
+                      },
+                    },
+                  }))}>
+                    <option value="2">2 lines</option>
+                    <option value="3">3 lines</option>
+                    <option value="4">4 lines</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Truncation width</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.content.truncation.maxInlineSize} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      content: {
+                        ...current.foundations.content,
+                        truncation: { ...current.foundations.content.truncation, maxInlineSize: event.target.value as typeof current.foundations.content.truncation.maxInlineSize },
+                      },
+                    },
+                  }))}>
+                    {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Contrast target</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.accessibility.contrastTarget} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      accessibility: { ...current.foundations.accessibility, contrastTarget: event.target.value as typeof current.foundations.accessibility.contrastTarget },
+                    },
+                  }))}>
+                    <option value="AA">AA</option>
+                    <option value="AAA">AAA</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Focus treatment</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.accessibility.focusTreatment} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      accessibility: { ...current.foundations.accessibility, focusTreatment: event.target.value as typeof current.foundations.accessibility.focusTreatment },
+                    },
+                  }))}>
+                    <option value="soft">Soft</option>
+                    <option value="brand">Brand</option>
+                    <option value="high-contrast">High contrast</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Keyboard pattern</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.accessibility.keyboardPattern} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      accessibility: { ...current.foundations.accessibility, keyboardPattern: event.target.value as typeof current.foundations.accessibility.keyboardPattern },
+                    },
+                  }))}>
+                    <option value="standard">Standard</option>
+                    <option value="enhanced">Enhanced</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Touch target minimum</span>
+                  <select className="field px-3 py-2 text-sm" value={system.foundations.accessibility.touchTargetMin} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      accessibility: { ...current.foundations.accessibility, touchTargetMin: event.target.value as typeof current.foundations.accessibility.touchTargetMin },
+                    },
+                  }))}>
+                    {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted sm:col-span-2">
+                  <span>Screen reader label prefix</span>
+                  <input className="field px-3 py-2 text-sm" value={system.foundations.accessibility.screenReaderLabelPrefix} onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    foundations: {
+                      ...current.foundations,
+                      accessibility: { ...current.foundations.accessibility, screenReaderLabelPrefix: event.target.value },
+                    },
+                  }))} />
+                </label>
               </div>
             </div>
           </div>
@@ -2454,6 +2790,72 @@ function TokenPanel({
                   <option value="no">No</option>
                 </select>
               </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Show prefix</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.showPrefix ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, showPrefix: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Show suffix</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.showSuffix ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, showSuffix: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Search style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.searchStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, searchStyle: event.target.value as typeof current.components.input.searchStyle } },
+                  }))}>
+                  <option value="boxed">Boxed</option>
+                  <option value="underline">Underline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Select style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.selectStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, selectStyle: event.target.value as typeof current.components.input.selectStyle } },
+                  }))}>
+                  <option value="default">Default</option>
+                  <option value="quiet">Quiet</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Message layout</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.messageStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, messageStyle: event.target.value as typeof current.components.input.messageStyle } },
+                  }))}>
+                  <option value="stacked">Stacked</option>
+                  <option value="inline">Inline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Read-only style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.input.readOnlyStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, input: { ...current.components.input, readOnlyStyle: event.target.value as typeof current.components.input.readOnlyStyle } },
+                  }))}>
+                  <option value="muted">Muted</option>
+                  <option value="outlined">Outlined</option>
+                </select>
+              </label>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
@@ -2769,6 +3171,28 @@ function TokenPanel({
                   <option value="strong">Strong</option>
                 </select>
               </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dialog presentation</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.presentation}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, presentation: event.target.value as typeof current.components.dialog.presentation } },
+                  }))}>
+                  <option value="modal">Modal</option>
+                  <option value="drawer">Drawer</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dialog placement</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.placement}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, placement: event.target.value as typeof current.components.dialog.placement } },
+                  }))}>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                </select>
+              </label>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
@@ -2855,6 +3279,38 @@ function TokenPanel({
                     components: { ...current.components, pagination: { ...current.components.pagination, radius: event.target.value as typeof current.components.pagination.radius } },
                   }))}>
                   {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tabs radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tabs.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, tabs: { ...current.components.tabs, radius: event.target.value as typeof current.components.tabs.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tabs active style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tabs.activeStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, tabs: { ...current.components.tabs, activeStyle: event.target.value as typeof current.components.tabs.activeStyle } },
+                  }))}>
+                  <option value="pill">Pill</option>
+                  <option value="underline">Underline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tabs tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tabs.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, tabs: { ...current.components.tabs, tone: event.target.value as typeof current.components.tabs.tone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
                 </select>
               </label>
             </div>
@@ -3277,6 +3733,15 @@ function TokenPanel({
 }
 
 function UIKitPreview({ system }: { system: GeneratedSystem }) {
+  const supportLayout = system.components.input.messageStyle === "inline" ? "flex items-center justify-between gap-3" : "space-y-1";
+  const tabsGap = system.foundations.spacing[system.components.tabs.gap];
+  const tabsActiveTone = system.components.tabs.tone === "strong"
+    ? "var(--preview-action-primary)"
+    : "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)";
+  const tabsActiveColor = system.components.tabs.tone === "strong"
+    ? "var(--preview-action-primary-foreground)"
+    : "var(--preview-action-primary)";
+
   return (
     <div className="preview-stack flex flex-col">
       <section className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr]">
@@ -3294,17 +3759,33 @@ function UIKitPreview({ system }: { system: GeneratedSystem }) {
             <button className="preview-button-ghost flex items-center gap-2 px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium"><PreviewIcon icon={Menu01Icon} context="buttons" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />Ghost action</button>
           </div>
           <div className="grid gap-3">
-            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]"><PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /><span>Workspace name</span></div>
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ borderColor: "var(--preview-input-search-border)", borderBottomColor: system.components.input.searchStyle === "underline" ? "var(--preview-border-strong)" : "var(--preview-input-search-border)", borderRadius: system.components.input.searchStyle === "underline" ? "0" : "var(--preview-input-radius)", borderWidth: system.components.input.searchStyle === "underline" ? "0 0 var(--preview-input-border-width) 0" : "var(--preview-input-border-width)" }}>
+              <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+              <span className="min-w-0 flex-1">Search brand tokens</span>
+              {system.components.input.showSuffix ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>⌘K</span> : null}
+            </div>
             <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="success" value="Brand color validated" readOnly />
             <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="error" value="Accent color needs contrast help" readOnly />
             {system.components.input.showHelperText ? (
-              <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>
-                {`Helper text ${" "}`}
-                <span style={{ display: "inline-block" }}>
-                  stays attached to control recipes.
-                </span>
-              </p>
+              <div className={supportLayout}>
+                <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>
+                  Helper text stays attached to control recipes.
+                </p>
+                <span className="text-xs" style={{ color: "var(--preview-success)" }}>Ready</span>
+              </div>
             ) : null}
+            <div className="preview-input flex items-center justify-between px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ background: "var(--preview-input-select-bg)" }}>
+              <div className="flex min-w-0 items-center gap-3">
+                {system.components.input.showPrefix ? <PreviewIcon icon={Settings01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span>Density mode</span>
+              </div>
+              <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.input.selectStyle === "quiet" ? "Quiet select" : "Default select"} ⌄</span>
+            </div>
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ background: "var(--preview-input-readonly-bg)", borderColor: "var(--preview-input-readonly-border)" }}>
+              {system.components.input.showPrefix ? <PreviewIcon icon={DatabaseIcon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+              <span className="min-w-0 flex-1">Generated token namespace</span>
+              {system.components.input.showSuffix ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Read only</span> : null}
+            </div>
             <textarea className="preview-input min-h-[var(--preview-textarea-min-height)] rounded-[var(--preview-textarea-radius)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Supporting notes that explain how tokens should feel in the product surface." readOnly />
             <select className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" defaultValue="comfortable">
               <option value="comfortable">Comfortable density</option>
@@ -3328,12 +3809,18 @@ function UIKitPreview({ system }: { system: GeneratedSystem }) {
           </div>
 
           <div className="preview-surface p-5">
-            <div className="flex rounded-full border p-1" style={{ borderColor: "var(--preview-border-default)" }}>
+            <div className="flex border p-1" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.components.tabs.activeStyle === "pill" ? system.radius[system.components.tabs.radius] : system.radius.md, gap: tabsGap }}>
               {["Overview", "Components", "States"].map((tab, index) => (
                 <button
                   key={tab}
                   className="preview-tab flex-1 rounded-full border border-transparent px-3 py-2 text-sm"
                   data-active={index === 0}
+                  style={index === 0 ? {
+                    background: system.components.tabs.activeStyle === "pill" ? tabsActiveTone : "transparent",
+                    color: tabsActiveColor,
+                    borderRadius: system.radius[system.components.tabs.radius],
+                    borderBottom: system.components.tabs.activeStyle === "underline" ? `2px solid ${tabsActiveColor}` : undefined,
+                  } : { borderRadius: system.radius[system.components.tabs.radius] }}
                 >
                   {tab}
                 </button>
@@ -3372,6 +3859,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "combobox",
     "listbox",
     "pagination",
+    "tabs",
     "navbar",
     "sidebar",
     "avatar",
@@ -3384,6 +3872,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "stackedLayout",
     "authLayout",
   ] as const;
+  const messageInline = system.components.input.messageStyle === "inline";
 
   return (
     <div className="preview-stack flex flex-col">
@@ -3427,18 +3916,51 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
           <h4 className="preview-heading text-xl font-semibold">Inputs</h4>
           <div className="mt-4 space-y-3">
             <div>
-              <input className="preview-input w-full px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Default input" readOnly />
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                {system.components.input.showPrefix ? <PreviewIcon icon={UserIcon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span className="min-w-0 flex-1">Default input</span>
+                {system.components.input.showSuffix ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>ID</span> : null}
+              </div>
               {system.components.input.showHelperText ? (
-                <p className="mt-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>Helper text follows the component recipe toggle.</p>
+                <div className={`mt-2 ${messageInline ? "flex items-center justify-between gap-3" : "space-y-1"}`}>
+                  <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Helper text follows the component recipe toggle.</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Optional</span>
+                </div>
               ) : null}
             </div>
             <div>
-              <input className="preview-input w-full px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="success" value="Success state" readOnly />
-              <p className="mt-2 text-xs" style={{ color: "var(--preview-success)" }}>Everything checks out.</p>
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="success">
+                {system.components.input.showPrefix ? <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span className="min-w-0 flex-1">Search field</span>
+                {system.components.input.showSuffix ? <span className="text-xs" style={{ color: "var(--preview-success)" }}>Live</span> : null}
+              </div>
+              <div className={`mt-2 ${messageInline ? "flex items-center justify-between gap-3" : "space-y-1"}`}>
+                <p className="text-xs" style={{ color: "var(--preview-success)" }}>Everything checks out.</p>
+                <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Success</span>
+              </div>
             </div>
             <div>
-              <input className="preview-input w-full px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="error" value="Error state" readOnly />
-              <p className="mt-2 text-xs" style={{ color: "var(--preview-danger)" }}>Needs a more accessible accent value.</p>
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" data-state="error">
+                {system.components.input.showPrefix ? <PreviewIcon icon={Alert02Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span className="min-w-0 flex-1">Error state</span>
+                {system.components.input.showSuffix ? <span className="text-xs" style={{ color: "var(--preview-danger)" }}>Fix</span> : null}
+              </div>
+              <div className={`mt-2 ${messageInline ? "flex items-center justify-between gap-3" : "space-y-1"}`}>
+                <p className="text-xs" style={{ color: "var(--preview-danger)" }}>Needs a more accessible accent value.</p>
+                <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Required</span>
+              </div>
+            </div>
+            <div className="preview-input flex items-center justify-between px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ background: "var(--preview-input-select-bg)" }}>
+              <div className="flex min-w-0 items-center gap-3">
+                {system.components.input.showPrefix ? <PreviewIcon icon={TableIcon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span>Select field</span>
+              </div>
+              <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.input.selectStyle === "quiet" ? "Quiet" : "Default"} ⌄</span>
+            </div>
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ background: "var(--preview-input-readonly-bg)", borderColor: "var(--preview-input-readonly-border)" }}>
+              {system.components.input.showPrefix ? <PreviewIcon icon={DatabaseIcon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+              <span className="min-w-0 flex-1">Read-only token reference</span>
+              <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.input.readOnlyStyle)}</span>
             </div>
             <textarea className="preview-input w-full min-h-[var(--preview-textarea-min-height)] rounded-[var(--preview-textarea-radius)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Textarea recipe uses its own min-height and padding settings." readOnly />
           </div>
@@ -3462,7 +3984,29 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
 
         <div className="preview-surface p-5">
-          <h4 className="preview-heading text-xl font-semibold">Table and Dialog</h4>
+          <h4 className="preview-heading text-xl font-semibold">Tabs, Table, and Dialog</h4>
+          <div className="mt-4 flex border p-1" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.tabs.radius], gap: system.foundations.spacing[system.components.tabs.gap] }}>
+            {["Tokens", "Navigation", "Overlays"].map((tab, index) => (
+              <button
+                key={tab}
+                className="flex-1 px-3 py-2 text-sm"
+                style={index === 0 ? {
+                  background: system.components.tabs.activeStyle === "pill"
+                    ? system.components.tabs.tone === "strong"
+                      ? "var(--preview-action-primary)"
+                      : "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)"
+                    : "transparent",
+                  color: system.components.tabs.tone === "strong" ? "var(--preview-action-primary-foreground)" : "var(--preview-action-primary)",
+                  borderRadius: system.radius[system.components.tabs.radius],
+                  borderBottom: system.components.tabs.activeStyle === "underline"
+                    ? `2px solid ${system.components.tabs.tone === "strong" ? "var(--preview-action-primary)" : "var(--preview-action-primary)"}`
+                    : undefined,
+                } : { borderRadius: system.radius[system.components.tabs.radius], color: "var(--preview-text-secondary)" }}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
           <div className="mt-4 overflow-hidden border rounded-[var(--preview-table-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
             <div
               className="grid grid-cols-[1.3fr_0.8fr_0.9fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-xs uppercase tracking-[0.16em]"
@@ -3492,13 +4036,13 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
             ))}
           </div>
 
-          <div className="preview-overlay mt-5 rounded-[var(--preview-dialog-radius)] p-3">
-            <div className="preview-elevated" style={{ maxWidth: "var(--preview-dialog-width)", borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
+          <div className="preview-overlay mt-5 rounded-[var(--preview-dialog-radius)] p-3" style={{ display: "flex", justifyContent: system.components.dialog.presentation === "drawer" || system.components.dialog.placement === "right" ? "flex-end" : "center" }}>
+            <div className="preview-elevated" style={{ maxWidth: "var(--preview-dialog-width)", width: system.components.dialog.presentation === "drawer" ? "100%" : undefined, borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
               <div className="px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)]">
-                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Dialog recipe</p>
-                <h5 className="preview-heading mt-2 text-lg font-semibold">Review export package</h5>
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>{system.components.dialog.presentation === "drawer" ? "Drawer recipe" : "Dialog recipe"}</p>
+                <h5 className="preview-heading mt-2 text-lg font-semibold">{system.components.dialog.presentation === "drawer" ? "Inspect side panel" : "Review export package"}</h5>
                 <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
-                  Overlay tone, blur, radius, width, and shadow are all recipe-driven.
+                  Overlay tone, blur, radius, width, shadow, and presentation are all recipe-driven.
                 </p>
                 <div className="mt-4 flex gap-3">
                   <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Cancel</button>
@@ -3794,6 +4338,55 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[0.95fr_1.05fr]">
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Form structure and support</h4>
+          <div className="mt-4 border" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.fieldset.radius], padding: system.foundations.spacing[system.components.fieldset.padding] }}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Form section</p>
+                <p className="mt-2 text-sm font-semibold">Brand contact details</p>
+              </div>
+              <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Draft</span>
+            </div>
+            <div className="mt-4 grid gap-3">
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                {system.components.input.showPrefix ? <PreviewIcon icon={Mail01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span className="min-w-0 flex-1">Email address</span>
+                {system.components.input.showSuffix ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Required</span> : null}
+              </div>
+              <div className={`text-xs ${messageInline ? "flex items-center justify-between gap-3" : "space-y-1"}`} style={{ color: "var(--preview-text-muted)" }}>
+                <span>Helper text, validation, and field metadata now behave like a more complete form system.</span>
+                <span style={{ color: "var(--preview-success)" }}>Saved</span>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Cancel</button>
+                <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Save section</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Search and filter row</h4>
+          <div className="mt-4 grid gap-3 lg:grid-cols-[1.1fr_0.9fr_auto]">
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ borderColor: "var(--preview-input-search-border)", borderBottomColor: system.components.input.searchStyle === "underline" ? "var(--preview-border-strong)" : "var(--preview-input-search-border)", borderRadius: system.components.input.searchStyle === "underline" ? "0" : "var(--preview-input-radius)", borderWidth: system.components.input.searchStyle === "underline" ? "0 0 var(--preview-input-border-width) 0" : "var(--preview-input-border-width)" }}>
+              <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+              <span className="min-w-0 flex-1">Search systems</span>
+              {system.components.input.showSuffix ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>⌘K</span> : null}
+            </div>
+            <div className="preview-input flex items-center justify-between px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ background: "var(--preview-input-select-bg)" }}>
+              <span>Status filter</span>
+              <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>All ⌄</span>
+            </div>
+            <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Apply</button>
+          </div>
+          <p className="mt-3 text-xs" style={{ color: "var(--preview-text-muted)" }}>
+            Search field, select field, affixes, support text, and actions now read like part of one coherent form recipe layer.
+          </p>
         </div>
       </section>
     </div>
@@ -4202,6 +4795,126 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
+      <section className="preview-grid-gap grid xl:grid-cols-[0.95fr_1.05fr]">
+        <div className="preview-surface p-5">
+          <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Mature foundation tokens</p>
+          <h4 className="preview-heading mt-2 text-xl font-semibold">Borders, opacity, durations, and stacking</h4>
+          <div className="mt-4 grid gap-4">
+            <div className="grid gap-3 sm:grid-cols-3">
+              {Object.entries(system.foundations.borderWidths).map(([key, value]) => (
+                <div key={key} className="preview-elevated p-4">
+                  <div className="h-10 rounded-[var(--preview-radius-sm)] bg-[var(--preview-surface)]" style={{ border: `${value} solid var(--preview-border-strong)` }} />
+                  <p className="mt-3 text-sm font-semibold">{sectionLabel(key)}</p>
+                  <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-4">
+              {Object.entries(system.foundations.opacity).map(([key, value]) => (
+                <div key={key} className="preview-elevated p-4">
+                  <div className="h-10 rounded-[var(--preview-radius-sm)] bg-[var(--preview-action-primary)]" style={{ opacity: value }} />
+                  <p className="mt-3 text-sm font-semibold">{sectionLabel(key)}</p>
+                  <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {Object.entries(system.foundations.durations).map(([key, value]) => (
+                <div key={key} className="preview-elevated p-4">
+                  <div className="h-2 rounded-full bg-[var(--preview-border-default)]">
+                    <div className="h-2 rounded-full bg-[var(--preview-action-primary)]" style={{ width: key === "fast" ? "45%" : key === "standard" ? "70%" : "100%", transitionDuration: value }} />
+                  </div>
+                  <p className="mt-3 text-sm font-semibold">{sectionLabel(key)}</p>
+                  <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {Object.entries(system.foundations.zIndex).map(([key, value]) => (
+                <div key={key} className="preview-elevated p-4">
+                  <div className="relative h-16 rounded-[var(--preview-radius-sm)] border bg-[var(--preview-surface)]" style={{ borderColor: "var(--preview-border-default)" }}>
+                    <span className="absolute left-3 top-3 h-7 w-7 rounded-full bg-[var(--preview-border-default)]" />
+                    <span className="absolute left-6 top-6 h-7 w-7 rounded-full bg-[var(--preview-action-primary)]" style={{ zIndex: Number(value) }} />
+                  </div>
+                  <p className="mt-3 text-sm font-semibold">{sectionLabel(key)}</p>
+                  <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>z-{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Content and accessibility</p>
+          <h4 className="preview-heading mt-2 text-xl font-semibold">Usage rules that now live in foundations</h4>
+          <div className="mt-4 space-y-4">
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Link and list rules</p>
+              <a
+                href="#"
+                className="mt-3 inline-block text-sm"
+                style={{
+                  color: "var(--preview-link-color)",
+                  fontWeight: "var(--preview-link-weight)",
+                  textDecorationLine: "var(--preview-link-underline)",
+                  textUnderlineOffset: "0.18em",
+                }}
+              >
+                Review the content foundation guidance
+              </a>
+              <ul className="mt-3 text-sm" style={{ color: "var(--preview-text-secondary)", paddingInlineStart: "var(--preview-list-indent)", display: "grid", gap: "var(--preview-list-gap)", listStyleType: system.foundations.content.lists.marker === "decimal" ? "decimal" : "disc" }}>
+                <li>Link tone: {sectionLabel(system.foundations.content.links.tone)}</li>
+                <li>Marker style: {sectionLabel(system.foundations.content.lists.marker)}</li>
+                <li>Truncation clamp: {system.foundations.content.truncation.multiLineClamp} lines</li>
+              </ul>
+            </div>
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Code and truncation</p>
+              <code
+                className="mt-3 inline-block border"
+                style={{
+                  borderColor: "var(--preview-border-default)",
+                  borderRadius: "var(--preview-code-radius)",
+                  padding: "var(--preview-code-py) var(--preview-code-px)",
+                  fontSize: system.typography.scale[system.foundations.content.code.fontScale].size,
+                  lineHeight: system.typography.scale[system.foundations.content.code.fontScale].lineHeight,
+                }}
+              >
+                npm run build && npm run lint
+              </code>
+              <p
+                className="mt-3 text-sm"
+                style={{
+                  color: "var(--preview-text-secondary)",
+                  maxWidth: system.foundations.containers[system.foundations.content.truncation.maxInlineSize],
+                  whiteSpace: system.foundations.content.truncation.singleLine ? "nowrap" : "normal",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                This line demonstrates how the current truncation rules constrain long content before it breaks layout rhythm across the product surface.
+              </p>
+            </div>
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Accessibility baseline</p>
+              <div className="mt-3 grid gap-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                <p>Contrast target: {system.foundations.accessibility.contrastTarget}</p>
+                <p>Focus treatment: {sectionLabel(system.foundations.accessibility.focusTreatment)}</p>
+                <p>Keyboard pattern: {sectionLabel(system.foundations.accessibility.keyboardPattern)}</p>
+                <p>Touch target minimum: {system.foundations.spacing[system.foundations.accessibility.touchTargetMin]}</p>
+                <p>Screen reader prefix: {system.foundations.accessibility.screenReaderLabelPrefix}</p>
+              </div>
+              <button
+                className="preview-button-secondary mt-4 px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium"
+                style={{ minHeight: "var(--preview-touch-target-min)" }}
+              >
+                Focus sample
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="preview-grid-gap grid xl:grid-cols-[0.82fr_1.18fr]">
         <div className="preview-surface p-5">
           <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>QA posture</p>
@@ -4440,9 +5153,9 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
               </div>
             </div>
 
-            <div className="preview-overlay rounded-[var(--preview-dialog-radius)] p-3">
-              <div className="preview-elevated p-5" style={{ maxWidth: "var(--preview-dialog-width)", borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
-                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Drawer preview</p>
+            <div className="preview-overlay rounded-[var(--preview-dialog-radius)] p-3" style={{ display: "flex", justifyContent: system.components.dialog.presentation === "drawer" || system.components.dialog.placement === "right" ? "flex-end" : "center" }}>
+              <div className="preview-elevated p-5" style={{ maxWidth: "var(--preview-dialog-width)", width: system.components.dialog.presentation === "drawer" ? "100%" : undefined, borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>{system.components.dialog.presentation === "drawer" ? "Drawer preview" : "Dialog preview"}</p>
                 <h4 className="preview-heading mt-2 text-xl font-semibold">Export package</h4>
                 <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
                   Includes theme CSS, Tailwind v4 theme layer, JSON tokens, component recipes, README, and a reusable session file.

@@ -170,10 +170,23 @@ export type BlurScale = {
   lg: string;
 };
 
+export type OpacityScale = {
+  subtle: string;
+  muted: string;
+  disabled: string;
+  strong: string;
+};
+
 export type EasingScale = {
   standard: string;
   emphasized: string;
   entrance: string;
+};
+
+export type MotionDurationScale = {
+  fast: string;
+  standard: string;
+  slow: string;
 };
 
 export type AnimationScale = {
@@ -205,6 +218,21 @@ export type AspectRatioScale = {
   wide: string;
 };
 
+export type BorderWidthScale = {
+  hairline: string;
+  default: string;
+  strong: string;
+};
+
+export type ZIndexScale = {
+  base: string;
+  dropdown: string;
+  sticky: string;
+  overlay: string;
+  modal: string;
+  toast: string;
+};
+
 export type SpacingScale = Record<
   "0" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12" | "16" | "20" | "24",
   string
@@ -229,6 +257,46 @@ export type LeadingScale = {
   relaxed: string;
 };
 
+export type LinkStyleRules = {
+  underline: "always" | "hover" | "never";
+  weight: keyof FontWeightScale;
+  tone: "brand" | "foreground" | "muted";
+};
+
+export type ListStyleRules = {
+  marker: "disc" | "decimal" | "dash";
+  gap: keyof SpacingScale;
+  indent: keyof SpacingScale;
+};
+
+export type CodeStyleRules = {
+  fontScale: keyof TypographyScale;
+  radius: keyof RadiusScale;
+  paddingX: keyof SpacingScale;
+  paddingY: keyof SpacingScale;
+};
+
+export type TruncationRules = {
+  singleLine: boolean;
+  multiLineClamp: "2" | "3" | "4";
+  maxInlineSize: keyof ContainerScale;
+};
+
+export type ContentFoundations = {
+  links: LinkStyleRules;
+  lists: ListStyleRules;
+  code: CodeStyleRules;
+  truncation: TruncationRules;
+};
+
+export type AccessibilityFoundations = {
+  contrastTarget: "AA" | "AAA";
+  focusTreatment: "soft" | "brand" | "high-contrast";
+  keyboardPattern: "standard" | "enhanced";
+  screenReaderLabelPrefix: string;
+  touchTargetMin: keyof SpacingScale;
+};
+
 export type FoundationTokens = {
   spacing: SpacingScale;
   fontWeights: FontWeightScale;
@@ -236,12 +304,18 @@ export type FoundationTokens = {
   leading: LeadingScale;
   breakpoints: BreakpointScale;
   containers: ContainerScale;
+  borderWidths: BorderWidthScale;
   insetShadows: InsetShadowScale;
   dropShadows: DropShadowScale;
   blur: BlurScale;
+  opacity: OpacityScale;
   easing: EasingScale;
+  durations: MotionDurationScale;
   animations: AnimationScale;
   aspectRatios: AspectRatioScale;
+  zIndex: ZIndexScale;
+  content: ContentFoundations;
+  accessibility: AccessibilityFoundations;
 };
 
 export type LayoutUtilitySettings = {
@@ -376,6 +450,12 @@ export type InputRecipe = {
   borderStyle: "soft" | "strong";
   validationStyle: "soft" | "strong";
   showHelperText: boolean;
+  showPrefix: boolean;
+  showSuffix: boolean;
+  searchStyle: "boxed" | "underline";
+  selectStyle: "default" | "quiet";
+  messageStyle: "stacked" | "inline";
+  readOnlyStyle: "muted" | "outlined";
 };
 
 export type TextareaRecipe = {
@@ -426,6 +506,8 @@ export type DialogRecipe = {
   shadow: keyof ShadowScale;
   overlayBlur: keyof BlurScale;
   overlayTone: "soft" | "strong";
+  presentation: "modal" | "drawer";
+  placement: "center" | "right";
 };
 
 export type CheckboxRecipe = {
@@ -466,6 +548,13 @@ export type ListboxRecipe = {
 export type PaginationRecipe = {
   radius: keyof RadiusScale;
   gap: keyof SpacingScale;
+};
+
+export type TabsRecipe = {
+  radius: keyof RadiusScale;
+  gap: keyof SpacingScale;
+  activeStyle: "pill" | "underline";
+  tone: "soft" | "strong";
 };
 
 export type DropdownRecipe = {
@@ -574,6 +663,7 @@ export type ComponentRecipes = {
   badge: BadgeRecipe;
   listbox: ListboxRecipe;
   pagination: PaginationRecipe;
+  tabs: TabsRecipe;
   dropdown: DropdownRecipe;
   alert: AlertRecipe;
   navbar: NavbarRecipe;
