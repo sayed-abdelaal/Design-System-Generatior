@@ -802,6 +802,13 @@ export type TextRecipe = {
   tone: "primary" | "secondary" | "muted";
 };
 
+export type LinkRecipe = {
+  scale: keyof TypographyScale;
+  weight: keyof FontWeightScale;
+  underline: "always" | "hover" | "none";
+  tone: "brand" | "foreground" | "muted";
+};
+
 export type FieldsetRecipe = {
   radius: keyof RadiusScale;
   padding: keyof SpacingScale;
@@ -819,6 +826,41 @@ export type AuthLayoutRecipe = {
   cardWidth: keyof ContainerScale;
   cardRadius: keyof RadiusScale;
   cardPadding: keyof SpacingScale;
+};
+
+export type SaveStateRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  style: "inline" | "banner" | "toast";
+  emphasis: "soft" | "strong";
+};
+
+export type PageTemplateRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  style: "empty" | "error" | "maintenance";
+  alignment: "centered" | "split";
+};
+
+export type OnboardingRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  layout: "checklist" | "spotlight";
+  emphasis: "soft" | "strong";
+};
+
+export type MultiStepFlowRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  stepStyle: "pill" | "line";
+  showSummary: boolean;
+};
+
+export type PermissionStateRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  tone: "soft" | "strong";
+  layout: "inline" | "panel";
 };
 
 export type ScreenPreset = {
@@ -905,11 +947,17 @@ export type ComponentRecipes = {
   textarea: TextareaRecipe;
   heading: HeadingRecipe;
   text: TextRecipe;
+  link: LinkRecipe;
   fieldset: FieldsetRecipe;
   dialog: DialogRecipe;
   sidebarLayout: LayoutShellRecipe;
   stackedLayout: LayoutShellRecipe;
   authLayout: AuthLayoutRecipe;
+  saveState: SaveStateRecipe;
+  pageTemplate: PageTemplateRecipe;
+  onboarding: OnboardingRecipe;
+  multiStepFlow: MultiStepFlowRecipe;
+  permissionState: PermissionStateRecipe;
 };
 
 export type Density = "compact" | "comfortable" | "airy";

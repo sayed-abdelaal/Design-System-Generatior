@@ -4111,6 +4111,40 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Link scale</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.link.scale}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, link: { ...current.components.link, scale: event.target.value as typeof current.components.link.scale } },
+                  }))}>
+                  {Object.keys(system.typography.scale).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Link underline</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.link.underline}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, link: { ...current.components.link, underline: event.target.value as typeof current.components.link.underline } },
+                  }))}>
+                  <option value="always">Always</option>
+                  <option value="hover">Hover</option>
+                  <option value="none">None</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Link tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.link.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, link: { ...current.components.link, tone: event.target.value as typeof current.components.link.tone } },
+                  }))}>
+                  <option value="brand">Brand</option>
+                  <option value="foreground">Foreground</option>
+                  <option value="muted">Muted</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Fieldset radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.fieldset.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -4315,6 +4349,118 @@ function TokenPanel({
                     components: { ...current.components, authLayout: { ...current.components.authLayout, cardPadding: event.target.value as typeof current.components.authLayout.cardPadding } },
                   }))}>
                   {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Save state style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.saveState.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, saveState: { ...current.components.saveState, style: event.target.value as typeof current.components.saveState.style } },
+                  }))}>
+                  <option value="inline">Inline</option>
+                  <option value="banner">Banner</option>
+                  <option value="toast">Toast</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Save state emphasis</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.saveState.emphasis}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, saveState: { ...current.components.saveState, emphasis: event.target.value as typeof current.components.saveState.emphasis } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Template type</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.pageTemplate.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, pageTemplate: { ...current.components.pageTemplate, style: event.target.value as typeof current.components.pageTemplate.style } },
+                  }))}>
+                  <option value="empty">Empty</option>
+                  <option value="error">Error</option>
+                  <option value="maintenance">Maintenance</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Template alignment</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.pageTemplate.alignment}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, pageTemplate: { ...current.components.pageTemplate, alignment: event.target.value as typeof current.components.pageTemplate.alignment } },
+                  }))}>
+                  <option value="centered">Centered</option>
+                  <option value="split">Split</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Onboarding layout</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.onboarding.layout}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, onboarding: { ...current.components.onboarding, layout: event.target.value as typeof current.components.onboarding.layout } },
+                  }))}>
+                  <option value="checklist">Checklist</option>
+                  <option value="spotlight">Spotlight</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Onboarding emphasis</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.onboarding.emphasis}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, onboarding: { ...current.components.onboarding, emphasis: event.target.value as typeof current.components.onboarding.emphasis } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Flow step style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.multiStepFlow.stepStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, multiStepFlow: { ...current.components.multiStepFlow, stepStyle: event.target.value as typeof current.components.multiStepFlow.stepStyle } },
+                  }))}>
+                  <option value="pill">Pill</option>
+                  <option value="line">Line</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Flow summary</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.multiStepFlow.showSummary ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, multiStepFlow: { ...current.components.multiStepFlow, showSummary: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Permission tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.permissionState.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, permissionState: { ...current.components.permissionState, tone: event.target.value as typeof current.components.permissionState.tone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Permission layout</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.permissionState.layout}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, permissionState: { ...current.components.permissionState, layout: event.target.value as typeof current.components.permissionState.layout } },
+                  }))}>
+                  <option value="inline">Inline</option>
+                  <option value="panel">Panel</option>
                 </select>
               </label>
             </div>
@@ -4781,9 +4927,15 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "descriptionList",
     "heading",
     "text",
+    "link",
     "sidebarLayout",
     "stackedLayout",
     "authLayout",
+    "saveState",
+    "pageTemplate",
+    "onboarding",
+    "multiStepFlow",
+    "permissionState",
   ] as const;
   const messageInline = system.components.input.messageStyle === "inline";
   const settingsPreset = system.screens.settings;
@@ -5920,6 +6072,128 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   </div>
                 </div>
               </div>
+
+              <div className="preview-surface p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Product patterns</p>
+                  <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{sectionLabel(system.components.pageTemplate.style)}</span>
+                </div>
+                <div className={`mt-4 grid gap-4 ${system.components.pageTemplate.alignment === "split" ? "lg:grid-cols-[1fr_0.9fr]" : ""}`}>
+                  <div
+                    className="preview-elevated"
+                    style={{
+                      borderRadius: system.radius[system.components.pageTemplate.radius],
+                      padding: system.foundations.spacing[system.components.pageTemplate.padding],
+                    }}
+                  >
+                    <p className="preview-heading text-xl font-semibold">
+                      {system.components.pageTemplate.style === "maintenance"
+                        ? "Scheduled maintenance in progress"
+                        : system.components.pageTemplate.style === "error"
+                          ? "Something blocked this workspace"
+                          : "No brand systems yet"}
+                    </p>
+                    <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                      {system.components.pageTemplate.style === "maintenance"
+                        ? "Exports and previews are paused while the pipeline catches up."
+                        : system.components.pageTemplate.style === "error"
+                          ? "The system can recover with a fresh validation run."
+                          : "Create a new brand profile to generate palettes, tokens, and previews."}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Primary action</button>
+                      <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Secondary action</button>
+                    </div>
+                  </div>
+                  <div
+                    className="preview-surface"
+                    style={{
+                      borderRadius: system.radius[system.components.saveState.radius],
+                      padding: system.foundations.spacing[system.components.saveState.padding],
+                      background: system.components.saveState.emphasis === "strong"
+                        ? "color-mix(in srgb, var(--preview-action-primary) 10%, var(--preview-surface-elevated))"
+                        : "var(--preview-surface-elevated)",
+                      border: "1px solid var(--preview-border-default)",
+                    }}
+                  >
+                    <p className="text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.saveState.style)} save state</p>
+                    <div className="mt-3 grid gap-2 text-sm">
+                      {[
+                        "Draft saved locally",
+                        "Autosave synced 14 seconds ago",
+                        "Last publish succeeded",
+                      ].map((item, index) => (
+                        <div
+                          key={item}
+                          className="flex items-center justify-between rounded-[var(--preview-radius-sm)]"
+                          style={{
+                            padding: system.components.saveState.style === "inline" ? "0" : "0.55rem 0.7rem",
+                            background: system.components.saveState.style === "inline" ? "transparent" : index === 2 ? "color-mix(in srgb, var(--preview-success) 8%, transparent)" : "color-mix(in srgb, var(--preview-action-primary) 6%, transparent)",
+                          }}
+                        >
+                          <span>{item}</span>
+                          <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{index === 0 ? "Now" : index === 1 ? "Live" : "2m"}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="preview-surface p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Onboarding and access</p>
+                  <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{sectionLabel(system.components.onboarding.layout)}</span>
+                </div>
+                <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_0.95fr]">
+                  <div
+                    className="preview-elevated"
+                    style={{
+                      borderRadius: system.radius[system.components.onboarding.radius],
+                      padding: system.foundations.spacing[system.components.onboarding.padding],
+                      background: system.components.onboarding.emphasis === "strong"
+                        ? "color-mix(in srgb, var(--preview-action-primary) 10%, var(--preview-surface-elevated))"
+                        : "var(--preview-surface-elevated)",
+                    }}
+                  >
+                    <p className="text-sm font-semibold">Onboarding flow</p>
+                    <div className="mt-3 grid gap-2 text-sm">
+                      {(system.components.onboarding.layout === "spotlight"
+                        ? ["Connect brand inputs", "Review generated tokens", "Export theme package"]
+                        : ["Brand setup complete", "Typography chosen", "Preview approved"]
+                      ).map((item, index) => (
+                        <div key={item} className="flex items-center justify-between rounded-[var(--preview-radius-sm)] px-3 py-2" style={{ background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 8%, transparent)" : "transparent" }}>
+                          <span>{item}</span>
+                          <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{index === 0 ? "Next" : "Done"}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.multiStepFlow.radius], padding: system.foundations.spacing[system.components.multiStepFlow.padding] }}>
+                    <p className="text-sm font-semibold">Multi-step review</p>
+                    <div className="mt-3 flex items-center gap-3">
+                      {["Draft", "Review", "Submit"].map((step, index) => (
+                        <div key={step} className="flex items-center gap-3">
+                          <span className="inline-flex items-center justify-center text-xs font-semibold" style={{ width: "1.75rem", height: "1.75rem", borderRadius: system.components.multiStepFlow.stepStyle === "pill" ? "999px" : system.radius.md, background: index <= 1 ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-border-default) 36%, transparent)", color: index <= 1 ? "var(--preview-action-primary-foreground)" : "var(--preview-text-secondary)" }}>{index + 1}</span>
+                          <span className="text-sm" style={{ color: index <= 1 ? "var(--preview-text-primary)" : "var(--preview-text-secondary)" }}>{step}</span>
+                          {index < 2 ? <span className="h-px w-5" style={{ background: "color-mix(in srgb, var(--preview-border-default) 70%, transparent)" }} /> : null}
+                        </div>
+                      ))}
+                    </div>
+                    {system.components.multiStepFlow.showSummary ? <p className="mt-3 text-xs" style={{ color: "var(--preview-text-muted)" }}>Summary panel is enabled for the final review step.</p> : null}
+                  </div>
+                  <div className="preview-elevated lg:col-span-2" style={{ borderRadius: system.radius[system.components.permissionState.radius], padding: system.foundations.spacing[system.components.permissionState.padding], background: system.components.permissionState.tone === "strong" ? "color-mix(in srgb, var(--preview-danger) 10%, var(--preview-surface-elevated))" : "var(--preview-surface-elevated)" }}>
+                    <p className="text-sm font-semibold">Permission state</p>
+                    <div className={`mt-3 ${system.components.permissionState.layout === "panel" ? "grid gap-3 lg:grid-cols-[1fr_auto]" : "flex flex-wrap items-center justify-between gap-3"}`}>
+                      <div>
+                        <p className="text-sm">You need publish access to ship this theme package.</p>
+                        <p className="mt-1 text-xs" style={{ color: "var(--preview-text-muted)" }}>Request elevated access or export a draft for review.</p>
+                      </div>
+                      <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Request access</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -5939,6 +6213,29 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
               <p className="text-sm font-medium">Text primitive</p>
               <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
                 Body text, helper copy, and supporting prose draw from the same type scale and body family settings.
+              </p>
+            </div>
+            <div className="preview-surface border p-4" style={{ borderColor: "var(--preview-border-default)" }}>
+              <p className="text-sm font-medium">Link primitive</p>
+              <a
+                href="#"
+                className="mt-2 inline-flex items-center gap-2"
+                style={{
+                  fontSize: system.typography.scale[system.components.link.scale].size,
+                  fontWeight: system.foundations.fontWeights[system.components.link.weight],
+                  color: system.components.link.tone === "brand"
+                    ? "var(--preview-action-primary)"
+                    : system.components.link.tone === "foreground"
+                      ? "var(--preview-text-primary)"
+                      : "var(--preview-text-muted)",
+                  textDecoration: system.components.link.underline === "always" ? "underline" : "none",
+                }}
+              >
+                Open exported theme files
+                <PreviewIcon icon={ArrowRight01Icon} context="nav" size={16} strokeWidth={system.icons.strokeWidth} />
+              </a>
+              <p className="mt-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>
+                Underline, tone, and type scale are recipe-driven.
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -7127,6 +7424,94 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                     </div>
                   ))}
                 </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.saveState.radius], padding: system.foundations.spacing[system.components.saveState.padding] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Save states</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.saveState.style)}</span>
+                </div>
+                <div className="mt-3 grid gap-2 text-sm">
+                  {["Draft saved", "Autosave running", "Publish complete"].map((item, index) => (
+                    <div
+                      key={item}
+                      className="flex items-center justify-between rounded-[var(--preview-radius-sm)]"
+                      style={{
+                        padding: system.components.saveState.style === "inline" ? "0" : "0.55rem 0.7rem",
+                        background: system.components.saveState.style === "inline" ? "transparent" : index === 2 ? "color-mix(in srgb, var(--preview-success) 8%, transparent)" : "color-mix(in srgb, var(--preview-action-primary) 6%, transparent)",
+                      }}
+                    >
+                      <span>{item}</span>
+                      <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{index === 0 ? "Now" : index === 1 ? "Live" : "2m"}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.pageTemplate.radius], padding: system.foundations.spacing[system.components.pageTemplate.padding] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Template state</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.pageTemplate.style)}</span>
+                </div>
+                <p className="mt-3 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                  {system.components.pageTemplate.style === "maintenance"
+                    ? "This workspace is temporarily paused for maintenance."
+                    : system.components.pageTemplate.style === "error"
+                      ? "A blocking issue needs review before publishing."
+                      : "No brand systems match the current filters yet."}
+                </p>
+                <div className="mt-4">
+                  <a
+                    href="#"
+                    className="inline-flex items-center gap-2 text-sm"
+                    style={{
+                      color: system.components.link.tone === "brand" ? "var(--preview-action-primary)" : system.components.link.tone === "foreground" ? "var(--preview-text-primary)" : "var(--preview-text-muted)",
+                      textDecoration: system.components.link.underline === "always" ? "underline" : "none",
+                      fontWeight: system.foundations.fontWeights[system.components.link.weight],
+                    }}
+                  >
+                    Review recovery steps
+                    <PreviewIcon icon={ArrowRight01Icon} context="nav" size={16} strokeWidth={system.icons.strokeWidth} />
+                  </a>
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.onboarding.radius], padding: system.foundations.spacing[system.components.onboarding.padding] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Onboarding</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.onboarding.layout)}</span>
+                </div>
+                <div className="mt-3 grid gap-2 text-sm">
+                  {(system.components.onboarding.layout === "spotlight"
+                    ? ["Connect brand", "Choose fonts", "Export system"]
+                    : ["Brand complete", "Preview approved", "Export ready"]
+                  ).map((item, index) => (
+                    <div key={item} className="flex items-center justify-between rounded-[var(--preview-radius-sm)] px-3 py-2" style={{ background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 8%, transparent)" : "transparent" }}>
+                      <span>{item}</span>
+                      <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{index === 0 ? "Next" : "Done"}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.permissionState.radius], padding: system.foundations.spacing[system.components.permissionState.padding], background: system.components.permissionState.tone === "strong" ? "color-mix(in srgb, var(--preview-danger) 10%, var(--preview-surface-elevated))" : "var(--preview-surface-elevated)" }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Permission state</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.permissionState.layout)}</span>
+                </div>
+                <p className="mt-3 text-sm" style={{ color: "var(--preview-text-secondary)" }}>Publish access is required to release this package to the shared workspace.</p>
+                <button className="mt-4 preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Request access</button>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.multiStepFlow.radius], padding: system.foundations.spacing[system.components.multiStepFlow.padding] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Multi-step flow</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.multiStepFlow.stepStyle)}</span>
+                </div>
+                <div className="mt-3 flex items-center gap-3">
+                  {["Draft", "Review", "Submit"].map((step, index) => (
+                    <div key={step} className="flex items-center gap-3">
+                      <span className="inline-flex items-center justify-center text-xs font-semibold" style={{ width: "1.75rem", height: "1.75rem", borderRadius: system.components.multiStepFlow.stepStyle === "pill" ? "999px" : system.radius.md, background: index <= 1 ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-border-default) 36%, transparent)", color: index <= 1 ? "var(--preview-action-primary-foreground)" : "var(--preview-text-secondary)" }}>{index + 1}</span>
+                      <span className="text-sm" style={{ color: index <= 1 ? "var(--preview-text-primary)" : "var(--preview-text-secondary)" }}>{step}</span>
+                    </div>
+                  ))}
+                </div>
+                {system.components.multiStepFlow.showSummary ? <p className="mt-3 text-xs" style={{ color: "var(--preview-text-muted)" }}>Summary panel remains visible before submit.</p> : null}
               </div>
               <div
                 className="preview-elevated"

@@ -930,6 +930,12 @@ function buildComponentRecipes(
       leading: airy ? "relaxed" : "normal",
       tone: "secondary",
     },
+    link: {
+      scale: compact ? "bodySm" : "body",
+      weight: direction === "bold" ? "semibold" : "medium",
+      underline: direction === "editorial" ? "always" : direction === "minimal" ? "hover" : "hover",
+      tone: direction === "minimal" ? "foreground" : "brand",
+    },
     fieldset: {
       radius: direction === "minimal" ? "md" : "lg",
       padding: compact ? "4" : "5",
@@ -951,6 +957,36 @@ function buildComponentRecipes(
       cardWidth: airy ? "md" : "sm",
       cardRadius: direction === "minimal" ? "lg" : "xl",
       cardPadding: compact ? "5" : "6",
+    },
+    saveState: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      style: direction === "minimal" ? "inline" : direction === "bold" ? "toast" : "banner",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    pageTemplate: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      padding: airy ? "8" : compact ? "5" : "6",
+      style: direction === "bold" ? "maintenance" : direction === "minimal" ? "empty" : "error",
+      alignment: direction === "editorial" ? "split" : "centered",
+    },
+    onboarding: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      padding: compact ? "5" : "6",
+      layout: direction === "editorial" ? "spotlight" : "checklist",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    multiStepFlow: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      stepStyle: direction === "minimal" ? "line" : "pill",
+      showSummary: direction !== "minimal",
+    },
+    permissionState: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      padding: compact ? "4" : "5",
+      tone: direction === "bold" ? "strong" : "soft",
+      layout: direction === "editorial" ? "panel" : "inline",
     },
   };
 }
