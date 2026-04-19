@@ -473,6 +473,49 @@ export type TypedFieldRecipe = {
   urlPreview: boolean;
 };
 
+export type DatePickerRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  density: "compact" | "comfortable";
+  showWeekNumbers: boolean;
+};
+
+export type DateRangePickerRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  presetStyle: "chips" | "inline";
+  showComparison: boolean;
+};
+
+export type TimePickerRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  format: "12h" | "24h";
+  step: "15m" | "30m" | "60m";
+};
+
+export type FileUploadRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  style: "dropzone" | "inline";
+  showPreview: boolean;
+  dragState: "soft" | "strong";
+};
+
+export type SliderRecipe = {
+  trackHeight: keyof SpacingScale;
+  thumbSize: keyof SpacingScale;
+  showValue: boolean;
+  showTicks: boolean;
+};
+
+export type RangeSliderRecipe = {
+  trackHeight: keyof SpacingScale;
+  thumbSize: keyof SpacingScale;
+  showValues: boolean;
+  showInputs: boolean;
+};
+
 export type TextareaRecipe = {
   radius: keyof RadiusScale;
   minHeight: keyof SpacingScale;
@@ -798,6 +841,12 @@ export type ComponentRecipes = {
   input: InputRecipe;
   searchField: SearchFieldRecipe;
   typedField: TypedFieldRecipe;
+  datePicker: DatePickerRecipe;
+  dateRangePicker: DateRangePickerRecipe;
+  timePicker: TimePickerRecipe;
+  fileUpload: FileUploadRecipe;
+  slider: SliderRecipe;
+  rangeSlider: RangeSliderRecipe;
   table: TableRecipe;
   sidebar: SidebarRecipe;
   checkbox: CheckboxRecipe;

@@ -648,6 +648,43 @@ function buildComponentRecipes(
       contactIcon: direction !== "minimal",
       urlPreview: direction !== "bold",
     },
+    datePicker: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      density: compact ? "compact" : "comfortable",
+      showWeekNumbers: airy,
+    },
+    dateRangePicker: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      presetStyle: direction === "minimal" ? "inline" : "chips",
+      showComparison: direction !== "minimal",
+    },
+    timePicker: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      format: direction === "editorial" ? "24h" : "12h",
+      step: compact ? "30m" : "15m",
+    },
+    fileUpload: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      style: direction === "minimal" ? "inline" : "dropzone",
+      showPreview: direction !== "minimal",
+      dragState: direction === "bold" ? "strong" : "soft",
+    },
+    slider: {
+      trackHeight: compact ? "1" : "2",
+      thumbSize: compact ? "4" : "5",
+      showValue: true,
+      showTicks: airy,
+    },
+    rangeSlider: {
+      trackHeight: compact ? "1" : "2",
+      thumbSize: compact ? "4" : "5",
+      showValues: true,
+      showInputs: direction !== "minimal",
+    },
     textarea: {
       radius: direction === "minimal" ? "md" : "lg",
       minHeight: airy ? "16" : "12",

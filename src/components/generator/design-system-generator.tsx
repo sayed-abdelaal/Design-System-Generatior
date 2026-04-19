@@ -2935,6 +2935,73 @@ function TokenPanel({
                   <option value="no">No</option>
                 </select>
               </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Date picker density</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.datePicker.density}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, datePicker: { ...current.components.datePicker, density: event.target.value as typeof current.components.datePicker.density } },
+                  }))}>
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Show week numbers</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.datePicker.showWeekNumbers ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, datePicker: { ...current.components.datePicker, showWeekNumbers: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Date range presets</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dateRangePicker.presetStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dateRangePicker: { ...current.components.dateRangePicker, presetStyle: event.target.value as typeof current.components.dateRangePicker.presetStyle } },
+                  }))}>
+                  <option value="chips">Chips</option>
+                  <option value="inline">Inline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Comparison range</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dateRangePicker.showComparison ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dateRangePicker: { ...current.components.dateRangePicker, showComparison: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Time format</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.timePicker.format}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, timePicker: { ...current.components.timePicker, format: event.target.value as typeof current.components.timePicker.format } },
+                  }))}>
+                  <option value="12h">12h</option>
+                  <option value="24h">24h</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Time step</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.timePicker.step}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, timePicker: { ...current.components.timePicker, step: event.target.value as typeof current.components.timePicker.step } },
+                  }))}>
+                  <option value="15m">15 min</option>
+                  <option value="30m">30 min</option>
+                  <option value="60m">60 min</option>
+                </select>
+              </label>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
@@ -3667,6 +3734,46 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Date picker radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.datePicker.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, datePicker: { ...current.components.datePicker, radius: event.target.value as typeof current.components.datePicker.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Date range radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dateRangePicker.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dateRangePicker: { ...current.components.dateRangePicker, radius: event.target.value as typeof current.components.dateRangePicker.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Time picker radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.timePicker.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, timePicker: { ...current.components.timePicker, radius: event.target.value as typeof current.components.timePicker.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Upload radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.fileUpload.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, fileUpload: { ...current.components.fileUpload, radius: event.target.value as typeof current.components.fileUpload.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Listbox radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.listbox.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -3707,6 +3814,93 @@ function TokenPanel({
                   <option value="2">2</option>
                   <option value="3">3</option>
                   <option value="4">4</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Upload style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.fileUpload.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, fileUpload: { ...current.components.fileUpload, style: event.target.value as typeof current.components.fileUpload.style } },
+                  }))}>
+                  <option value="dropzone">Dropzone</option>
+                  <option value="inline">Inline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Upload preview</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.fileUpload.showPreview ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, fileUpload: { ...current.components.fileUpload, showPreview: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Upload drag state</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.fileUpload.dragState}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, fileUpload: { ...current.components.fileUpload, dragState: event.target.value as typeof current.components.fileUpload.dragState } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Slider value label</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.slider.showValue ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, slider: { ...current.components.slider, showValue: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Slider ticks</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.slider.showTicks ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, slider: { ...current.components.slider, showTicks: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Range slider inputs</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.rangeSlider.showInputs ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, rangeSlider: { ...current.components.rangeSlider, showInputs: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Slider thumb size</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.slider.thumbSize}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, slider: { ...current.components.slider, thumbSize: event.target.value as typeof current.components.slider.thumbSize } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Range slider values</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.rangeSlider.showValues ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, rangeSlider: { ...current.components.rangeSlider, showValues: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
@@ -4473,6 +4667,12 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "input",
     "searchField",
     "typedField",
+    "datePicker",
+    "dateRangePicker",
+    "timePicker",
+    "fileUpload",
+    "slider",
+    "rangeSlider",
     "textarea",
     "badge",
     "alert",
@@ -4684,6 +4884,133 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
               <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.input.readOnlyStyle)}</span>
             </div>
             <textarea className="preview-input w-full min-h-[var(--preview-textarea-min-height)] rounded-[var(--preview-textarea-radius)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Textarea recipe uses its own min-height and padding settings." readOnly />
+            <div className="grid gap-3 lg:grid-cols-2">
+              <div className="preview-elevated" style={{ padding: system.foundations.spacing[system.components.datePicker.padding], borderRadius: system.radius[system.components.datePicker.radius] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Date picker</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.datePicker.density)}</span>
+                </div>
+                <div className="mt-3 grid grid-cols-8 gap-1 text-center text-xs" style={{ color: "var(--preview-text-muted)" }}>
+                  {system.components.datePicker.showWeekNumbers ? <span>Wk</span> : null}
+                  {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => <span key={day}>{day}</span>)}
+                </div>
+                <div className="mt-2 grid grid-cols-8 gap-1 text-xs">
+                  {Array.from({ length: 16 }).map((_, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center justify-center"
+                      style={{
+                        minHeight: system.components.datePicker.density === "compact" ? "1.7rem" : "2rem",
+                        borderRadius: "var(--preview-radius-sm)",
+                        background: index === 9 ? "color-mix(in srgb, var(--preview-action-primary) 14%, transparent)" : "transparent",
+                        color: index === 9 ? "var(--preview-action-primary)" : "var(--preview-text-secondary)",
+                      }}
+                    >
+                      {index < 2 && system.components.datePicker.showWeekNumbers ? `${17 + index}` : `${index + 3}`}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ padding: system.foundations.spacing[system.components.timePicker.padding], borderRadius: system.radius[system.components.timePicker.radius] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Time picker</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.timePicker.format} / {system.components.timePicker.step}</span>
+                </div>
+                <div className="mt-3 grid gap-2">
+                  {["09:00", "09:30", "10:00"].map((slot, index) => (
+                    <div
+                      key={slot}
+                      className="flex items-center justify-between rounded-[var(--preview-radius-sm)] px-3 py-2 text-sm"
+                      style={{
+                        background: index === 1 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "var(--preview-surface)",
+                        color: index === 1 ? "var(--preview-action-primary)" : "var(--preview-text-secondary)",
+                        border: "1px solid var(--preview-border-default)",
+                      }}
+                    >
+                      <span>{system.components.timePicker.format === "24h" ? slot : index === 2 ? "10:00 AM" : index === 1 ? "9:30 AM" : "9:00 AM"}</span>
+                      <span style={{ color: "var(--preview-text-muted)" }}>Slot</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="preview-elevated lg:col-span-2" style={{ padding: system.foundations.spacing[system.components.dateRangePicker.padding], borderRadius: system.radius[system.components.dateRangePicker.radius] }}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Date range picker</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(system.components.dateRangePicker.presetStyle === "chips" ? ["Last 7 days", "Last 30 days", "Quarter"] : ["Start: Apr 01", "End: Apr 19"]).map((item, index) => (
+                      <span
+                        key={item}
+                        className="inline-flex items-center rounded-[var(--preview-radius-pill)] border px-3 py-1 text-xs font-medium"
+                        style={{
+                          borderColor: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 30%, transparent)" : "var(--preview-border-default)",
+                          background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 9%, transparent)" : "transparent",
+                          color: index === 0 ? "var(--preview-action-primary)" : "var(--preview-text-secondary)",
+                        }}
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                {system.components.dateRangePicker.showComparison ? <p className="mt-3 text-xs" style={{ color: "var(--preview-text-muted)" }}>Comparison against previous period is enabled in this recipe.</p> : null}
+              </div>
+              <div className="preview-elevated lg:col-span-2" style={{ padding: system.foundations.spacing[system.components.fileUpload.padding], borderRadius: system.radius[system.components.fileUpload.radius], border: `1px dashed ${system.components.fileUpload.dragState === "strong" ? "var(--preview-action-primary)" : "var(--preview-border-strong)"}`, background: system.components.fileUpload.dragState === "strong" ? "color-mix(in srgb, var(--preview-action-primary) 8%, transparent)" : "var(--preview-surface)" }}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Upload className="h-5 w-5" />
+                    <div>
+                      <p className="text-sm font-semibold">{system.components.fileUpload.style === "dropzone" ? "Drop files to upload" : "Attach assets"}</p>
+                      <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>SVG, PNG, or PDF files up to 24 MB.</p>
+                    </div>
+                  </div>
+                  <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Browse files</button>
+                </div>
+                {system.components.fileUpload.showPreview ? (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {["logo-mark.svg", "brand-guidelines.pdf"].map((file) => (
+                      <span key={file} className="inline-flex items-center rounded-[var(--preview-radius-pill)] border px-3 py-1 text-xs font-medium" style={{ borderColor: "var(--preview-border-default)", background: "var(--preview-surface-elevated)" }}>
+                        {file}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              <div className="preview-elevated" style={{ padding: "1rem", borderRadius: "var(--preview-radius-lg)" }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Slider</p>
+                  {system.components.slider.showValue ? <span className="text-xs font-medium" style={{ color: "var(--preview-action-primary)" }}>72%</span> : null}
+                </div>
+                <div className="mt-4">
+                  <div className="relative" style={{ height: system.foundations.spacing[system.components.slider.thumbSize] }}>
+                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-full" style={{ height: system.foundations.spacing[system.components.slider.trackHeight], background: "color-mix(in srgb, var(--preview-border-default) 65%, transparent)" }} />
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full" style={{ width: "72%", height: system.foundations.spacing[system.components.slider.trackHeight], background: "var(--preview-action-primary)" }} />
+                    <span className="absolute top-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm" style={{ left: "calc(72% - 0.5rem)", width: system.foundations.spacing[system.components.slider.thumbSize], height: system.foundations.spacing[system.components.slider.thumbSize], background: "var(--preview-action-primary)" }} />
+                  </div>
+                  {system.components.slider.showTicks ? <div className="mt-2 flex justify-between text-[11px]" style={{ color: "var(--preview-text-muted)" }}><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div> : null}
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ padding: "1rem", borderRadius: "var(--preview-radius-lg)" }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Range slider</p>
+                  {system.components.rangeSlider.showValues ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>20 - 68</span> : null}
+                </div>
+                <div className="mt-4">
+                  <div className="relative" style={{ height: system.foundations.spacing[system.components.rangeSlider.thumbSize] }}>
+                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-full" style={{ height: system.foundations.spacing[system.components.rangeSlider.trackHeight], background: "color-mix(in srgb, var(--preview-border-default) 65%, transparent)" }} />
+                    <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{ left: "20%", width: "48%", height: system.foundations.spacing[system.components.rangeSlider.trackHeight], background: "var(--preview-action-primary)" }} />
+                    {["20%", "68%"].map((left) => (
+                      <span key={left} className="absolute top-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm" style={{ left: `calc(${left} - 0.5rem)`, width: system.foundations.spacing[system.components.rangeSlider.thumbSize], height: system.foundations.spacing[system.components.rangeSlider.thumbSize], background: "var(--preview-action-primary)" }} />
+                    ))}
+                  </div>
+                  {system.components.rangeSlider.showInputs ? (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <div className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)] text-xs">20</div>
+                      <div className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)] text-xs">68</div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -6567,6 +6894,42 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                     </span>
                   ))}
                   <span className="inline-flex items-center text-xs" style={{ color: "var(--preview-text-muted)" }}>+2 more</span>
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.dateRangePicker.radius], padding: system.foundations.spacing[system.components.dateRangePicker.padding] }}>
+                <p className="text-sm font-semibold">Date range</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {["Apr 01", "Apr 19", "vs prev."].slice(0, system.components.dateRangePicker.showComparison ? 3 : 2).map((item, index) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center rounded-[var(--preview-radius-pill)] border px-3 py-1 text-xs font-medium"
+                      style={{
+                        borderColor: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 28%, transparent)" : "var(--preview-border-default)",
+                        background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 9%, transparent)" : "transparent",
+                        color: index === 0 ? "var(--preview-action-primary)" : "var(--preview-text-secondary)",
+                      }}
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.fileUpload.radius], padding: system.foundations.spacing[system.components.fileUpload.padding], border: `1px dashed ${system.components.fileUpload.dragState === "strong" ? "var(--preview-action-primary)" : "var(--preview-border-strong)"}` }}>
+                <p className="text-sm font-semibold">Asset upload</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                  {system.components.fileUpload.style === "dropzone" ? "Drop revised logos and exports here." : "Attach files inline inside the workflow."}
+                </p>
+                {system.components.fileUpload.showPreview ? <p className="mt-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>2 files staged for review</p> : null}
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: "var(--preview-radius-lg)", padding: "1rem" }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Density slider</p>
+                  {system.components.slider.showValue ? <span className="text-xs font-medium" style={{ color: "var(--preview-action-primary)" }}>72%</span> : null}
+                </div>
+                <div className="mt-4 relative" style={{ height: system.foundations.spacing[system.components.slider.thumbSize] }}>
+                  <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-full" style={{ height: system.foundations.spacing[system.components.slider.trackHeight], background: dashboardProgressTrack }} />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full" style={{ width: "72%", height: system.foundations.spacing[system.components.slider.trackHeight], background: "var(--preview-action-primary)" }} />
+                  <span className="absolute top-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm" style={{ left: "calc(72% - 0.5rem)", width: system.foundations.spacing[system.components.slider.thumbSize], height: system.foundations.spacing[system.components.slider.thumbSize], background: "var(--preview-action-primary)" }} />
                 </div>
               </div>
               <div
