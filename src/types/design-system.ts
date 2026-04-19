@@ -297,6 +297,13 @@ export type AccessibilityFoundations = {
   touchTargetMin: keyof SpacingScale;
 };
 
+export type SafeAreaFoundations = {
+  top: keyof SpacingScale;
+  right: keyof SpacingScale;
+  bottom: keyof SpacingScale;
+  left: keyof SpacingScale;
+};
+
 export type FoundationTokens = {
   spacing: SpacingScale;
   fontWeights: FontWeightScale;
@@ -316,6 +323,7 @@ export type FoundationTokens = {
   zIndex: ZIndexScale;
   content: ContentFoundations;
   accessibility: AccessibilityFoundations;
+  safeAreas: SafeAreaFoundations;
 };
 
 export type LayoutUtilitySettings = {
@@ -1061,6 +1069,178 @@ export type FileUploadFlowRecipe = {
   showPreview: boolean;
 };
 
+export type SegmentedControlRecipe = {
+  radius: keyof RadiusScale;
+  tone: "soft" | "strong";
+};
+
+export type ColorPickerRecipe = {
+  radius: keyof RadiusScale;
+  showHex: boolean;
+};
+
+export type RichTextEditorRecipe = {
+  radius: keyof RadiusScale;
+  toolbar: "compact" | "full";
+};
+
+export type FieldRecipe = {
+  gap: keyof SpacingScale;
+  tone: "default" | "muted";
+};
+
+export type LabelRecipe = {
+  scale: keyof TypographyScale;
+  requiredMark: "text" | "dot";
+};
+
+export type DragDropUploadRecipe = {
+  radius: keyof RadiusScale;
+  emphasis: "soft" | "strong";
+};
+
+export type TertiaryButtonRecipe = {
+  radius: keyof RadiusScale;
+  tone: "soft" | "ghost";
+};
+
+export type DestructiveButtonRecipe = {
+  radius: keyof RadiusScale;
+  emphasis: "soft" | "strong";
+};
+
+export type FabRecipe = {
+  size: keyof SpacingScale;
+  tone: "brand" | "neutral";
+};
+
+export type CopyActionRecipe = {
+  radius: keyof RadiusScale;
+  confirmation: "toast" | "inline";
+};
+
+export type ShareActionRecipe = {
+  radius: keyof RadiusScale;
+  style: "button" | "menu";
+};
+
+export type MenuRecipe = {
+  radius: keyof RadiusScale;
+  density: "compact" | "comfortable";
+};
+
+export type NavigationMenuRecipe = {
+  gap: keyof SpacingScale;
+  emphasis: "soft" | "strong";
+};
+
+export type AccordionNavRecipe = {
+  radius: keyof RadiusScale;
+  density: "compact" | "comfortable";
+};
+
+export type CircularProgressRecipe = {
+  size: keyof SpacingScale;
+  tone: "soft" | "strong";
+};
+
+export type OfflineStateRecipe = {
+  radius: keyof RadiusScale;
+  tone: "soft" | "strong";
+};
+
+export type KeyValuePairRecipe = {
+  gap: keyof SpacingScale;
+  tone: "default" | "muted";
+};
+
+export type EmptyPlaceholderRecipe = {
+  radius: keyof RadiusScale;
+  tone: "soft" | "strong";
+};
+
+export type ChartLegendRecipe = {
+  tone: "inline" | "panel";
+};
+
+export type ChartAxisRecipe = {
+  tone: "muted" | "strong";
+};
+
+export type LightboxRecipe = {
+  tone: "soft" | "strong";
+};
+
+export type BottomSheetRecipe = {
+  radius: keyof RadiusScale;
+  tone: "soft" | "strong";
+};
+
+export type CommandDialogRecipe = {
+  radius: keyof RadiusScale;
+  density: "compact" | "comfortable";
+};
+
+export type SplitViewRecipe = {
+  leftWidth: keyof ContainerScale;
+  emphasis: "soft" | "strong";
+};
+
+export type MasterDetailRecipe = {
+  masterWidth: keyof ContainerScale;
+  density: "compact" | "comfortable";
+};
+
+export type SearchResultsLayoutRecipe = {
+  filters: "sidebar" | "toolbar";
+  density: "compact" | "comfortable";
+};
+
+export type NotFoundPageRecipe = {
+  radius: keyof RadiusScale;
+  tone: "soft" | "strong";
+};
+
+export type CreateFlowRecipe = {
+  layout: "stepper" | "form";
+  emphasis: "soft" | "strong";
+};
+
+export type EditFlowRecipe = {
+  autosave: boolean;
+  layout: "inline" | "panel";
+};
+
+export type DeleteConfirmationRecipe = {
+  style: "dialog" | "inline";
+  severity: "warning" | "danger";
+};
+
+export type FilterSortPatternRecipe = {
+  layout: "toolbar" | "sidebar";
+  chips: boolean;
+};
+
+export type EmptyToPopulatedRecipe = {
+  transition: "instant" | "staged";
+};
+
+export type ActivityHistoryRecipe = {
+  density: "compact" | "comfortable";
+  grouping: "day" | "event";
+};
+
+export type SuccessConfirmationRecipe = {
+  tone: "soft" | "strong";
+  layout: "inline" | "panel";
+};
+
+export type BrandThemeVariant = {
+  name: string;
+  primary: TokenReference;
+  surface: TokenReference;
+};
+
 export type ScreenPreset = {
   maxWidth: keyof ContainerScale;
   sectionGap: keyof SpacingScale;
@@ -1192,6 +1372,40 @@ export type ComponentRecipes = {
   tableSelection: TableSelectionRecipe;
   notificationCenter: NotificationCenterRecipe;
   fileUploadFlow: FileUploadFlowRecipe;
+  segmentedControl: SegmentedControlRecipe;
+  colorPicker: ColorPickerRecipe;
+  richTextEditor: RichTextEditorRecipe;
+  field: FieldRecipe;
+  label: LabelRecipe;
+  dragDropUpload: DragDropUploadRecipe;
+  tertiaryButton: TertiaryButtonRecipe;
+  destructiveButton: DestructiveButtonRecipe;
+  fab: FabRecipe;
+  copyAction: CopyActionRecipe;
+  shareAction: ShareActionRecipe;
+  menu: MenuRecipe;
+  navigationMenu: NavigationMenuRecipe;
+  accordionNav: AccordionNavRecipe;
+  circularProgress: CircularProgressRecipe;
+  offlineState: OfflineStateRecipe;
+  keyValuePair: KeyValuePairRecipe;
+  emptyPlaceholder: EmptyPlaceholderRecipe;
+  chartLegend: ChartLegendRecipe;
+  chartAxis: ChartAxisRecipe;
+  lightbox: LightboxRecipe;
+  bottomSheet: BottomSheetRecipe;
+  commandDialog: CommandDialogRecipe;
+  splitView: SplitViewRecipe;
+  masterDetail: MasterDetailRecipe;
+  searchResultsLayout: SearchResultsLayoutRecipe;
+  notFoundPage: NotFoundPageRecipe;
+  createFlow: CreateFlowRecipe;
+  editFlow: EditFlowRecipe;
+  deleteConfirmation: DeleteConfirmationRecipe;
+  filterSortPattern: FilterSortPatternRecipe;
+  emptyToPopulated: EmptyToPopulatedRecipe;
+  activityHistory: ActivityHistoryRecipe;
+  successConfirmation: SuccessConfirmationRecipe;
 };
 
 export type Density = "compact" | "comfortable" | "airy";
@@ -1227,5 +1441,6 @@ export type GeneratedSystem = {
   utilityCoverage: UtilityCoverageMatrix;
   components: ComponentRecipes;
   screens: ScreenPresets;
+  brandThemes: BrandThemeVariant[];
   density: Density;
 };

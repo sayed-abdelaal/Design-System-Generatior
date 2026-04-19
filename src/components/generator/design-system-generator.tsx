@@ -5239,6 +5239,40 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "tableSelection",
     "notificationCenter",
     "fileUploadFlow",
+    "segmentedControl",
+    "colorPicker",
+    "richTextEditor",
+    "field",
+    "label",
+    "dragDropUpload",
+    "tertiaryButton",
+    "destructiveButton",
+    "fab",
+    "copyAction",
+    "shareAction",
+    "menu",
+    "navigationMenu",
+    "accordionNav",
+    "circularProgress",
+    "offlineState",
+    "keyValuePair",
+    "emptyPlaceholder",
+    "chartLegend",
+    "chartAxis",
+    "lightbox",
+    "bottomSheet",
+    "commandDialog",
+    "splitView",
+    "masterDetail",
+    "searchResultsLayout",
+    "notFoundPage",
+    "createFlow",
+    "editFlow",
+    "deleteConfirmation",
+    "filterSortPattern",
+    "emptyToPopulated",
+    "activityHistory",
+    "successConfirmation",
   ] as const;
   const messageInline = system.components.input.messageStyle === "inline";
   const settingsPreset = system.screens.settings;
@@ -5770,6 +5804,169 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>Jump into palette ladders, semantic mappings, utility coverage, and QA posture.</p>
                 </div>
               ) : null}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[1fr_1fr]">
+        <div className="preview-surface p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Final inventory additions</p>
+              <h4 className="preview-heading mt-2 text-xl font-semibold">Forms, actions, navigation, and feedback extras</h4>
+            </div>
+            <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Closing the remaining gaps</span>
+          </div>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Segmented, color, rich text, field, label</p>
+              <div className="mt-3 flex overflow-hidden border" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.segmentedControl.radius] }}>
+                {["Brand", "Type", "Export"].map((item, index) => <span key={item} className="flex-1 px-3 py-2 text-center text-sm" style={{ background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>{item}</span>)}
+              </div>
+              <div className="mt-3 flex items-center gap-3">
+                <span className="h-10 w-10 rounded-full border" style={{ borderColor: "var(--preview-border-default)", background: "var(--preview-action-primary)" }} />
+                {system.components.colorPicker.showHex ? <span className="text-sm">#4F46E5</span> : null}
+              </div>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.richTextEditor.radius] }}>
+                <div className="flex gap-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>
+                  {(system.components.richTextEditor.toolbar === "full" ? ["B", "I", "Link", "List"] : ["B", "I"]).map((item) => <span key={item} className="rounded-full border px-2 py-1" style={{ borderColor: "var(--preview-border-default)" }}>{item}</span>)}
+                </div>
+                <p className="mt-3 text-sm">Rich text editor body with formatting controls.</p>
+              </div>
+              <div className="mt-3 grid" style={{ gap: system.foundations.spacing[system.components.field.gap] }}>
+                <label className="text-sm font-medium">Field label {system.components.label.requiredMark === "text" ? "(required)" : "*"}</label>
+                <div className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]">Field primitive</div>
+              </div>
+            </div>
+
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Action family additions</p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Tertiary</button>
+                <button className="px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm font-medium" style={{ borderRadius: system.radius[system.components.destructiveButton.radius], background: system.components.destructiveButton.emphasis === "strong" ? "var(--preview-danger)" : "color-mix(in srgb, var(--preview-danger) 10%, transparent)", color: system.components.destructiveButton.emphasis === "strong" ? "white" : "var(--preview-danger)" }}>Delete</button>
+                <button className="text-sm font-medium" style={{ width: system.foundations.spacing[system.components.fab.size], height: system.foundations.spacing[system.components.fab.size], borderRadius: "999px", background: system.components.fab.tone === "brand" ? "var(--preview-action-primary)" : "var(--preview-surface-elevated)", color: system.components.fab.tone === "brand" ? "var(--preview-action-primary-foreground)" : "var(--preview-text-primary)" }}>+</button>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                <button className="rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>Copy link</button>
+                <button className="rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>Share</button>
+              </div>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)" }}>
+                <p className="text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>Menu and navigation menu</p>
+                <div className="mt-2 grid gap-2 text-sm">
+                  {["Open", "Duplicate", "Move"].map((item) => <div key={item} className="rounded-[var(--preview-radius-sm)] px-3 py-2" style={{ background: "color-mix(in srgb, var(--preview-border-default) 10%, transparent)" }}>{item}</div>)}
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                  {["Design", "Preview", "Export"].map((item, index) => <span key={item} className="rounded-full px-3 py-1" style={{ background: index === 1 ? "color-mix(in srgb, var(--preview-action-primary) 12%, transparent)" : "color-mix(in srgb, var(--preview-border-default) 12%, transparent)" }}>{item}</span>)}
+                </div>
+              </div>
+            </div>
+
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Navigation and status extras</p>
+              <div className="mt-3 grid gap-2 text-sm">
+                {["Getting started", "Foundations", "Components"].map((item, index) => (
+                  <div key={item} className="rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                    <div className="flex items-center justify-between">
+                      <span>{item}</span>
+                      <span>{index === 1 ? "▾" : "▸"}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 flex items-center gap-3">
+                <div className="relative" style={{ width: system.foundations.spacing[system.components.circularProgress.size], height: system.foundations.spacing[system.components.circularProgress.size] }}>
+                  <div className="absolute inset-0 rounded-full border-4" style={{ borderColor: "color-mix(in srgb, var(--preview-border-default) 38%, transparent)", borderTopColor: "var(--preview-action-primary)" }} />
+                </div>
+                <div className="rounded-[var(--preview-radius-md)] border px-3 py-2 text-sm" style={{ borderColor: "var(--preview-border-default)", background: system.components.offlineState.tone === "strong" ? "color-mix(in srgb, var(--preview-warning) 12%, transparent)" : "transparent" }}>Offline state active</div>
+              </div>
+            </div>
+
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Display and overlay extras</p>
+              <div className="mt-3 grid gap-2 text-sm">
+                <div className="flex items-center justify-between rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                  <span>Key</span>
+                  <span style={{ color: "var(--preview-text-muted)" }}>Value</span>
+                </div>
+                <div className="rounded-[var(--preview-radius-md)] border px-3 py-6 text-center text-sm" style={{ borderColor: "var(--preview-border-default)" }}>Empty placeholder</div>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {["Primary", "Secondary", "Alerts"].map((item) => <span key={item} className="rounded-full border px-3 py-1" style={{ borderColor: "var(--preview-border-default)" }}>{item}</span>)}
+                </div>
+                <div className="grid grid-cols-4 gap-2 text-[10px]" style={{ color: "var(--preview-text-muted)" }}>
+                  {["0", "25", "50", "75"].map((item) => <span key={item}>{item}</span>)}
+                </div>
+                <div className="rounded-[var(--preview-radius-md)] border p-3 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>Lightbox / bottom sheet / command dialog surface</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Pattern completions</p>
+              <h4 className="preview-heading mt-2 text-xl font-semibold">Layouts and reusable product flows</h4>
+            </div>
+            <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>System patterns</span>
+          </div>
+          <div className="mt-4 grid gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Split view and master-detail</p>
+                <div className="mt-3 grid" style={{ gridTemplateColumns: `${system.foundations.containers[system.components.splitView.leftWidth]} 1fr`, gap: "0.75rem" }}>
+                  <div className="rounded-[var(--preview-radius-sm)] border p-3" style={{ borderColor: "var(--preview-border-default)" }}>Master list</div>
+                  <div className="rounded-[var(--preview-radius-sm)] border p-3" style={{ borderColor: "var(--preview-border-default)" }}>Detail panel</div>
+                </div>
+              </div>
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Search results layout</p>
+                <div className="mt-3 grid gap-2">
+                  <div className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]">Search results</div>
+                  <div className="rounded-[var(--preview-radius-sm)] border px-3 py-2 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>{system.components.searchResultsLayout.filters} filters</div>
+                </div>
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Create flow</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{system.components.createFlow.layout} entry flow</p>
+              </div>
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Edit flow</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{system.components.editFlow.autosave ? "Autosave enabled" : "Manual save"}</p>
+              </div>
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Delete confirmation</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{system.components.deleteConfirmation.style} / {system.components.deleteConfirmation.severity}</p>
+              </div>
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Filter and sort</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{system.components.filterSortPattern.layout} with {system.components.filterSortPattern.chips ? "chips" : "plain controls"}</p>
+              </div>
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Empty to populated</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{system.components.emptyToPopulated.transition} transition</p>
+              </div>
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Success confirmation</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{system.components.successConfirmation.layout} / {system.components.successConfirmation.tone}</p>
+              </div>
+              <div className="preview-elevated p-4 md:col-span-2">
+                <p className="text-sm font-semibold">Activity history</p>
+                <div className="mt-3 grid gap-2 text-sm">
+                  {["Token updated", "Preview approved", "Export downloaded"].map((item, index) => (
+                    <div key={item} className="flex items-center justify-between rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                      <span>{item}</span>
+                      <span style={{ color: "var(--preview-text-muted)" }}>{system.components.activityHistory.grouping === "day" ? "Today" : `${index + 1}h`}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Not found page</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>404 template ready</p>
+              </div>
             </div>
           </div>
         </div>
@@ -7149,6 +7346,50 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{item.helper}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="preview-surface p-5">
+          <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Brand theme variants</p>
+          <h4 className="preview-heading mt-2 text-xl font-semibold">Named theme directions</h4>
+          <div className="mt-4 grid gap-3">
+            {system.brandThemes.map((theme) => (
+              <div key={theme.name} className="preview-elevated p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">{theme.name}</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{theme.primary}</span>
+                </div>
+                <div className="mt-3 flex gap-3">
+                  <span className="h-8 w-16 rounded-[var(--preview-radius-sm)] border" style={{ background: resolveTokenReference(theme.primary, system.palettes), borderColor: "var(--preview-border-default)" }} />
+                  <span className="h-8 w-16 rounded-[var(--preview-radius-sm)] border" style={{ background: resolveTokenReference(theme.surface, system.palettes), borderColor: "var(--preview-border-default)" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="preview-surface p-5">
+          <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Safe areas and accessibility</p>
+          <h4 className="preview-heading mt-2 text-xl font-semibold">Inset rules and interaction baselines</h4>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Safe area insets</p>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)" }}>
+                <div className="rounded-[var(--preview-radius-sm)] border p-3 text-sm" style={{ borderColor: "var(--preview-border-default)", paddingTop: system.foundations.spacing[system.foundations.safeAreas.top], paddingRight: system.foundations.spacing[system.foundations.safeAreas.right], paddingBottom: system.foundations.spacing[system.foundations.safeAreas.bottom], paddingLeft: system.foundations.spacing[system.foundations.safeAreas.left] }}>
+                  Safe area aware shell
+                </div>
+              </div>
+            </div>
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Accessibility rules</p>
+              <div className="mt-3 grid gap-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                <p>Contrast target {system.foundations.accessibility.contrastTarget}</p>
+                <p>Keyboard {sectionLabel(system.foundations.accessibility.keyboardPattern)}</p>
+                <p>Focus {sectionLabel(system.foundations.accessibility.focusTreatment)}</p>
+                <p>Touch target {system.foundations.accessibility.touchTargetMin}</p>
+              </div>
             </div>
           </div>
         </div>

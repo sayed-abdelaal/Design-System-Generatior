@@ -334,6 +334,15 @@ function buildAccessibilityFoundations(density: Density, direction: BrandInputs[
   };
 }
 
+function buildSafeAreas(density: Density) {
+  return {
+    top: density === "compact" ? "3" : "4",
+    right: density === "compact" ? "3" : "4",
+    bottom: density === "compact" ? "4" : "5",
+    left: density === "compact" ? "3" : "4",
+  } as const;
+}
+
 function buildFoundations(direction: BrandInputs["styleDirection"]): {
   foundations: FoundationTokens;
   density: Density;
@@ -361,6 +370,7 @@ function buildFoundations(direction: BrandInputs["styleDirection"]): {
       zIndex: buildZIndex(),
       content: buildContentFoundations(density, direction),
       accessibility: buildAccessibilityFoundations(density, direction),
+      safeAreas: buildSafeAreas(density),
     },
   };
 }
@@ -1150,6 +1160,138 @@ function buildComponentRecipes(
       layout: direction === "editorial" ? "steps" : "stack",
       showPreview: direction !== "minimal",
     },
+    segmentedControl: {
+      radius: direction === "minimal" ? "md" : "lg",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    colorPicker: {
+      radius: direction === "minimal" ? "md" : "lg",
+      showHex: true,
+    },
+    richTextEditor: {
+      radius: direction === "minimal" ? "md" : "lg",
+      toolbar: direction === "minimal" ? "compact" : "full",
+    },
+    field: {
+      gap: compact ? "2" : "3",
+      tone: direction === "minimal" ? "muted" : "default",
+    },
+    label: {
+      scale: compact ? "bodySm" : "label",
+      requiredMark: direction === "bold" ? "dot" : "text",
+    },
+    dragDropUpload: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    tertiaryButton: {
+      radius: direction === "minimal" ? "md" : "lg",
+      tone: direction === "minimal" ? "ghost" : "soft",
+    },
+    destructiveButton: {
+      radius: direction === "minimal" ? "md" : "lg",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    fab: {
+      size: compact ? "10" : "12",
+      tone: direction === "minimal" ? "neutral" : "brand",
+    },
+    copyAction: {
+      radius: direction === "minimal" ? "md" : "lg",
+      confirmation: direction === "minimal" ? "inline" : "toast",
+    },
+    shareAction: {
+      radius: direction === "minimal" ? "md" : "lg",
+      style: direction === "editorial" ? "menu" : "button",
+    },
+    menu: {
+      radius: direction === "minimal" ? "md" : "lg",
+      density: compact ? "compact" : "comfortable",
+    },
+    navigationMenu: {
+      gap: compact ? "2" : "3",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    accordionNav: {
+      radius: direction === "minimal" ? "md" : "lg",
+      density: compact ? "compact" : "comfortable",
+    },
+    circularProgress: {
+      size: compact ? "10" : "12",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    offlineState: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    keyValuePair: {
+      gap: compact ? "2" : "3",
+      tone: direction === "minimal" ? "muted" : "default",
+    },
+    emptyPlaceholder: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    chartLegend: {
+      tone: direction === "editorial" ? "panel" : "inline",
+    },
+    chartAxis: {
+      tone: direction === "minimal" ? "muted" : "strong",
+    },
+    lightbox: {
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    bottomSheet: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    commandDialog: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      density: compact ? "compact" : "comfortable",
+    },
+    splitView: {
+      leftWidth: airy ? "md" : "sm",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    masterDetail: {
+      masterWidth: airy ? "md" : "sm",
+      density: compact ? "compact" : "comfortable",
+    },
+    searchResultsLayout: {
+      filters: direction === "editorial" ? "sidebar" : "toolbar",
+      density: compact ? "compact" : "comfortable",
+    },
+    notFoundPage: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    createFlow: {
+      layout: direction === "editorial" ? "stepper" : "form",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    editFlow: {
+      autosave: direction !== "minimal",
+      layout: direction === "editorial" ? "panel" : "inline",
+    },
+    deleteConfirmation: {
+      style: direction === "minimal" ? "inline" : "dialog",
+      severity: direction === "bold" ? "danger" : "warning",
+    },
+    filterSortPattern: {
+      layout: direction === "editorial" ? "sidebar" : "toolbar",
+      chips: direction !== "minimal",
+    },
+    emptyToPopulated: {
+      transition: direction === "minimal" ? "instant" : "staged",
+    },
+    activityHistory: {
+      density: compact ? "compact" : "comfortable",
+      grouping: direction === "editorial" ? "day" : "event",
+    },
+    successConfirmation: {
+      tone: direction === "bold" ? "strong" : "soft",
+      layout: direction === "editorial" ? "panel" : "inline",
+    },
   };
 }
 
@@ -1288,6 +1430,11 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
   const components = buildComponentRecipes(density, inputs.styleDirection);
   const screens = buildScreenPresets(density);
   const icons = buildIconSystem(inputs.styleDirection);
+  const brandThemes = [
+    { name: "Default", primary: "primary.600", surface: "neutral.100" },
+    { name: "Emphasis", primary: "accent.600", surface: "neutral.50" },
+    { name: "Calm", primary: "secondary.600", surface: "neutral.100" },
+  ] as const;
 
   return {
     palettes,
@@ -1308,6 +1455,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
     utilityCoverage,
     components,
     screens,
+    brandThemes: [...brandThemes],
     density,
   };
 }
