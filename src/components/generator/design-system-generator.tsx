@@ -5041,7 +5041,7 @@ function UIKitPreview({ system }: { system: GeneratedSystem }) {
 
   return (
     <div className="preview-stack flex flex-col">
-      <section className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface space-y-4 p-5">
           <span className="preview-badge inline-flex px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Buttons and Inputs</span>
           <div>
@@ -5344,7 +5344,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-2">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Buttons</h4>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -5572,7 +5572,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[0.95fr_1.05fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Badges and Alerts</h4>
           <div className="mt-4 flex flex-wrap gap-3">
@@ -5712,7 +5712,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[1.05fr_0.95fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <div className="flex items-center justify-between gap-3">
             <h4 className="preview-heading text-xl font-semibold">Data grid</h4>
@@ -5809,7 +5809,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[1fr_1fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -5972,7 +5972,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[1.08fr_0.92fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Feedback and status</h4>
           <div className="mt-4 grid gap-4">
@@ -6138,7 +6138,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-2">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Selection controls</h4>
           <div className="mt-4 space-y-4">
@@ -6303,7 +6303,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-2">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <div className="flex items-center justify-between" style={{ minHeight: system.foundations.spacing[system.components.navbar.height], paddingInline: system.foundations.spacing[system.components.navbar.paddingX], backdropFilter: `blur(${system.foundations.blur[system.components.navbar.blur]})` }}>
             <div className="flex items-center gap-3">
@@ -6699,7 +6699,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[0.95fr_1.05fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Content primitives</h4>
           <div className="mt-4 space-y-4">
@@ -6842,7 +6842,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[1.05fr_0.95fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -7012,7 +7012,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[1.08fr_0.92fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Data display patterns</h4>
           <div className="mt-4 grid gap-4">
@@ -7185,7 +7185,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[0.95fr_1.05fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Form structure and support</h4>
           <div className="mt-4 border" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.fieldset.radius], padding: system.foundations.spacing[system.components.fieldset.padding] }}>
@@ -7262,7 +7262,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[1.15fr_0.85fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -7307,7 +7307,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
           <div className="preview-surface p-5">
             <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Theme roles</p>
             <h4 className="preview-heading mt-2 text-xl font-semibold">Semantic tokens in both modes</h4>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4">
               {([
                 ["light", lightValues, system.lightTokens],
                 ["dark", darkValues, system.darkTokens],
@@ -7351,7 +7351,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[0.9fr_1.1fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Brand theme variants</p>
           <h4 className="preview-heading mt-2 text-xl font-semibold">Named theme directions</h4>
@@ -7445,7 +7445,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-2">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Spatial scales</p>
           <h4 className="preview-heading mt-2 text-xl font-semibold">Spacing, radius, borders, and shadows</h4>
@@ -7626,7 +7626,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
       <section className="preview-surface p-5">
         <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>System rules</p>
         <h4 className="preview-heading mt-2 text-xl font-semibold">Utility settings and coverage matrix</h4>
-        <div className="mt-4 grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
+        <div className="mt-4 grid gap-4">
           <div className="preview-elevated p-4">
             <p className="text-sm font-semibold">Utility settings snapshot</p>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -7893,7 +7893,7 @@ function IconsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid lg:grid-cols-[1.1fr_0.9fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-elevated p-5">
           <h4 className="preview-heading text-xl font-semibold">System icon grid</h4>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
