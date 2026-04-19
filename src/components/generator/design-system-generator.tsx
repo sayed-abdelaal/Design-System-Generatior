@@ -3045,6 +3045,204 @@ function TokenPanel({
 
             <div className="grid gap-2 sm:grid-cols-2">
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Tag radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tag.radius}
+                  onChange={(event) => updateComponent("tag", { radius: event.target.value as typeof system.components.tag.radius })}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tag style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tag.style}
+                  onChange={(event) => updateComponent("tag", { style: event.target.value as typeof system.components.tag.style })}>
+                  <option value="soft">Soft</option>
+                  <option value="outline">Outline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tag background</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tag.color.background}
+                  onChange={(event) => updateComponent("tag", { color: { ...system.components.tag.color, background: event.target.value as TokenReference } })}>
+                  {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tag foreground</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tag.color.foreground}
+                  onChange={(event) => updateComponent("tag", { color: { ...system.components.tag.color, foreground: event.target.value as TokenReference } })}>
+                  {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tag border</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tag.color.border}
+                  onChange={(event) => updateComponent("tag", { color: { ...system.components.tag.color, border: event.target.value as TokenReference } })}>
+                  {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Status dot size</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.statusDot.size}
+                  onChange={(event) => updateComponent("statusDot", { size: event.target.value as typeof system.components.statusDot.size })}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Status dot style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.statusDot.style}
+                  onChange={(event) => updateComponent("statusDot", { style: event.target.value as typeof system.components.statusDot.style })}>
+                  <option value="soft">Soft</option>
+                  <option value="solid">Solid</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Banner radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.banner.radius}
+                  onChange={(event) => updateComponent("banner", { radius: event.target.value as typeof system.components.banner.radius })}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Banner style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.banner.style}
+                  onChange={(event) => updateComponent("banner", { style: event.target.value as typeof system.components.banner.style })}>
+                  <option value="soft">Soft</option>
+                  <option value="outlined">Outlined</option>
+                  <option value="solid">Solid</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Banner padding</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.banner.padding}
+                  onChange={(event) => updateComponent("banner", { padding: event.target.value as typeof system.components.banner.padding })}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Banner color</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.banner.color}
+                  onChange={(event) => updateComponent("banner", { color: event.target.value as TokenReference })}>
+                  {tokenOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Toast radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.toast.radius}
+                  onChange={(event) => updateComponent("toast", { radius: event.target.value as typeof system.components.toast.radius })}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Toast shadow</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.toast.shadow}
+                  onChange={(event) => updateComponent("toast", { shadow: event.target.value as typeof system.components.toast.shadow })}>
+                  {Object.keys(system.shadows).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Toast tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.toast.tone}
+                  onChange={(event) => updateComponent("toast", { tone: event.target.value as typeof system.components.toast.tone })}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Toast placement</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.toast.placement}
+                  onChange={(event) => updateComponent("toast", { placement: event.target.value as typeof system.components.toast.placement })}>
+                  <option value="stacked">Stacked</option>
+                  <option value="floating">Floating</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Progress height</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.progress.height}
+                  onChange={(event) => updateComponent("progress", { height: event.target.value as typeof system.components.progress.height })}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Progress tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.progress.tone}
+                  onChange={(event) => updateComponent("progress", { tone: event.target.value as typeof system.components.progress.tone })}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Progress label</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.progress.showLabel ? "yes" : "no"}
+                  onChange={(event) => updateComponent("progress", { showLabel: event.target.value === "yes" })}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Loader size</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.loader.size}
+                  onChange={(event) => updateComponent("loader", { size: event.target.value as typeof system.components.loader.size })}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Loader stroke</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.loader.stroke}
+                  onChange={(event) => updateComponent("loader", { stroke: event.target.value as typeof system.components.loader.stroke })}>
+                  <option value="thin">Thin</option>
+                  <option value="regular">Regular</option>
+                  <option value="bold">Bold</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Loader style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.loader.style}
+                  onChange={(event) => updateComponent("loader", { style: event.target.value as typeof system.components.loader.style })}>
+                  <option value="spinner">Spinner</option>
+                  <option value="orbit">Orbit</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Skeleton line height</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.skeleton.lineHeight}
+                  onChange={(event) => updateComponent("skeleton", { lineHeight: event.target.value as typeof system.components.skeleton.lineHeight })}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Skeleton shimmer</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.skeleton.shimmer}
+                  onChange={(event) => updateComponent("skeleton", { shimmer: event.target.value as typeof system.components.skeleton.shimmer })}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>State layout</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.state.layout}
+                  onChange={(event) => updateComponent("state", { layout: event.target.value as typeof system.components.state.layout })}>
+                  <option value="compact">Compact</option>
+                  <option value="feature">Feature</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>State icon emphasis</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.state.iconEmphasis}
+                  onChange={(event) => updateComponent("state", { iconEmphasis: event.target.value as typeof system.components.state.iconEmphasis })}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Table radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.table.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -3930,6 +4128,14 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "listbox",
     "pagination",
     "tabs",
+    "tag",
+    "toast",
+    "banner",
+    "statusDot",
+    "progress",
+    "loader",
+    "skeleton",
+    "state",
     "navbar",
     "sidebar",
     "avatar",
@@ -3960,6 +4166,34 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
   const formWidth = system.foundations.containers[formPagePreset.maxWidth];
   const dataTableWidth = system.foundations.containers[dataTablePreset.maxWidth];
   const authWidth = system.foundations.containers[system.components.authLayout.cardWidth];
+  const tagBackground = resolveTokenReference(system.components.tag.color.background, system.palettes);
+  const tagForeground = resolveTokenReference(system.components.tag.color.foreground, system.palettes);
+  const tagBorder = resolveTokenReference(system.components.tag.color.border, system.palettes);
+  const bannerColor = resolveTokenReference(system.components.banner.color, system.palettes);
+  const bannerBackground = system.components.banner.style === "solid"
+    ? bannerColor
+    : `color-mix(in srgb, ${bannerColor} ${system.components.banner.style === "outlined" ? "10%" : "14%"}, transparent)`;
+  const bannerBorder = system.components.banner.style === "outlined"
+    ? `color-mix(in srgb, ${bannerColor} 34%, transparent)`
+    : "transparent";
+  const toastBackground = system.components.toast.tone === "strong"
+    ? "var(--preview-surface-elevated)"
+    : "color-mix(in srgb, var(--preview-surface-elevated) 82%, var(--preview-background))";
+  const toastShadow = system.shadows[system.components.toast.shadow];
+  const statusDotSize = system.foundations.spacing[system.components.statusDot.size];
+  const progressHeight = system.foundations.spacing[system.components.progress.height];
+  const progressTrack = system.components.progress.tone === "strong"
+    ? "color-mix(in srgb, var(--preview-action-primary) 16%, transparent)"
+    : "color-mix(in srgb, var(--preview-border-default) 52%, transparent)";
+  const progressFill = system.components.progress.tone === "strong"
+    ? "var(--preview-action-primary)"
+    : "color-mix(in srgb, var(--preview-action-primary) 78%, white)";
+  const loaderSize = system.foundations.spacing[system.components.loader.size];
+  const loaderBorderWidth = system.components.loader.stroke === "thin" ? "1.5px" : system.components.loader.stroke === "bold" ? "3px" : "2px";
+  const skeletonLineHeight = system.foundations.spacing[system.components.skeleton.lineHeight];
+  const skeletonFill = system.components.skeleton.shimmer === "strong"
+    ? "linear-gradient(90deg, color-mix(in srgb, var(--preview-border-default) 32%, transparent), color-mix(in srgb, var(--preview-surface-elevated) 88%, white), color-mix(in srgb, var(--preview-border-default) 32%, transparent))"
+    : "linear-gradient(90deg, color-mix(in srgb, var(--preview-border-default) 18%, transparent), color-mix(in srgb, var(--preview-surface-elevated) 74%, white), color-mix(in srgb, var(--preview-border-default) 18%, transparent))";
 
   return (
     <div className="preview-stack flex flex-col">
@@ -4135,6 +4369,172 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Cancel</button>
                   <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Export now</button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[1.08fr_0.92fr]">
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Feedback and status</h4>
+          <div className="mt-4 grid gap-4">
+            <div
+              className="flex flex-wrap items-center justify-between gap-3 border"
+              style={{
+                padding: system.foundations.spacing[system.components.banner.padding],
+                borderRadius: system.radius[system.components.banner.radius],
+                background: bannerBackground,
+                borderColor: bannerBorder,
+                color: system.components.banner.style === "solid" ? "var(--preview-action-primary-foreground)" : bannerColor,
+              }}
+            >
+              <div>
+                <p className="text-xs uppercase tracking-[0.16em]">Banner</p>
+                <p className="mt-1 text-sm font-medium">Theme review is needed before publishing the next package.</p>
+              </div>
+              <button className="text-sm font-semibold">Review</button>
+            </div>
+
+            <div className={`grid gap-3 ${system.components.toast.placement === "floating" ? "justify-items-end" : ""}`}>
+              {[["Saved draft", "All mappings synced to session state."], ["Export ready", "ZIP package can be downloaded now."]].map(([title, body]) => (
+                <div
+                  key={title}
+                  className="border"
+                  style={{
+                    padding: system.foundations.spacing[system.components.toast.padding],
+                    borderRadius: system.radius[system.components.toast.radius],
+                    boxShadow: toastShadow,
+                    background: toastBackground,
+                    borderColor: "var(--preview-border-default)",
+                    maxWidth: system.components.toast.placement === "floating" ? "22rem" : "100%",
+                    width: "100%",
+                  }}
+                >
+                  <p className="text-sm font-semibold">{title}</p>
+                  <p className="mt-1 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="preview-elevated p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Progress</p>
+                  {system.components.progress.showLabel ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>68%</span> : null}
+                </div>
+                <div className="mt-3 overflow-hidden" style={{ height: progressHeight, borderRadius: system.radius[system.components.progress.radius], background: progressTrack }}>
+                  <div style={{ width: "68%", height: "100%", borderRadius: system.radius[system.components.progress.radius], background: progressFill }} />
+                </div>
+                <div className="mt-4 flex items-center gap-3">
+                  <div
+                    className={system.components.loader.style === "spinner" ? "animate-spin" : "animate-pulse"}
+                    style={{
+                      width: loaderSize,
+                      height: loaderSize,
+                      borderRadius: "999px",
+                      border: `${loaderBorderWidth} solid color-mix(in srgb, var(--preview-action-primary) 22%, transparent)`,
+                      borderTopColor: "var(--preview-action-primary)",
+                      boxShadow: system.components.loader.style === "orbit" ? "0 0 0 4px color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "none",
+                    }}
+                  />
+                  <span className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>Loading exported artifacts</span>
+                </div>
+              </div>
+
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Status markers</p>
+                <div className="mt-4 space-y-3">
+                  {[
+                    ["Healthy", "var(--preview-success)"],
+                    ["Needs review", "var(--preview-warning)"],
+                    ["Blocked", "var(--preview-danger)"],
+                  ].map(([label, color]) => (
+                    <div key={label} className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="inline-flex rounded-full"
+                          style={{
+                            width: statusDotSize,
+                            height: statusDotSize,
+                            background: system.components.statusDot.style === "solid" ? color : `color-mix(in srgb, ${color} 18%, transparent)`,
+                            boxShadow: system.components.statusDot.style === "solid" ? "none" : `0 0 0 1px color-mix(in srgb, ${color} 32%, transparent)`,
+                          }}
+                        />
+                        <span className="text-sm">{label}</span>
+                      </div>
+                      <span
+                        className="inline-flex border text-xs font-semibold"
+                        style={{
+                          padding: `${system.foundations.spacing[system.components.tag.paddingY]} ${system.foundations.spacing[system.components.tag.paddingX]}`,
+                          borderRadius: system.radius[system.components.tag.radius],
+                          background: system.components.tag.style === "outline" ? "transparent" : tagBackground,
+                          color: tagForeground,
+                          borderColor: tagBorder,
+                        }}
+                      >
+                        Tag
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Loading and state patterns</h4>
+          <div className="mt-4 grid gap-4">
+            <div
+              className="preview-elevated"
+              style={{
+                padding: system.foundations.spacing[system.components.state.padding],
+                borderRadius: system.radius[system.components.state.radius],
+              }}
+            >
+              <div className={`grid gap-4 ${system.components.state.layout === "feature" ? "lg:grid-cols-[auto_1fr]" : ""}`}>
+                <div
+                  className="inline-flex items-center justify-center rounded-full"
+                  style={{
+                    width: system.components.state.layout === "feature" ? "3.5rem" : "2.75rem",
+                    height: system.components.state.layout === "feature" ? "3.5rem" : "2.75rem",
+                    background: system.components.state.iconEmphasis === "strong" ? "color-mix(in srgb, var(--preview-warning) 18%, transparent)" : "color-mix(in srgb, var(--preview-warning) 10%, transparent)",
+                    color: "var(--preview-warning)",
+                  }}
+                >
+                  <PreviewIcon icon={Alert02Icon} context="alerts" size={system.icons.defaultSize + 2} strokeWidth={system.icons.strokeWidth} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Empty / error / success states</p>
+                  <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                    This recipe controls the shell used for product states, whether they appear as compact inline blocks or larger featured sections.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm font-medium">Dismiss</button>
+                    <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm font-medium">Resolve</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Skeleton loader</p>
+              <div className="mt-4 grid gap-3">
+                <div className="animate-pulse rounded-full" style={{ width: "3rem", height: "3rem", background: "color-mix(in srgb, var(--preview-border-default) 24%, transparent)" }} />
+                {[100, 78, 54].map((width, index) => (
+                  <div
+                    key={width}
+                    className={index === 0 ? "animate-pulse" : ""}
+                    style={{
+                      width: `${width}%`,
+                      height: skeletonLineHeight,
+                      borderRadius: system.radius[system.components.skeleton.radius],
+                      background: skeletonFill,
+                      backgroundSize: "200% 100%",
+                    }}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -5302,6 +5702,23 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
   const metrics = getSystemMetrics(system);
   const dashboardPreset = system.screens.dashboard;
   const dashboardGap = system.foundations.spacing[dashboardPreset.sectionGap];
+  const dashboardBannerColor = resolveTokenReference(system.components.banner.color, system.palettes);
+  const dashboardBannerBackground = system.components.banner.style === "solid"
+    ? dashboardBannerColor
+    : `color-mix(in srgb, ${dashboardBannerColor} ${system.components.banner.style === "outlined" ? "10%" : "14%"}, transparent)`;
+  const dashboardBannerBorder = system.components.banner.style === "outlined"
+    ? `color-mix(in srgb, ${dashboardBannerColor} 34%, transparent)`
+    : "transparent";
+  const dashboardToastBackground = system.components.toast.tone === "strong"
+    ? "var(--preview-surface-elevated)"
+    : "color-mix(in srgb, var(--preview-surface-elevated) 82%, var(--preview-background))";
+  const dashboardToastShadow = system.shadows[system.components.toast.shadow];
+  const dashboardProgressTrack = system.components.progress.tone === "strong"
+    ? "color-mix(in srgb, var(--preview-action-primary) 16%, transparent)"
+    : "color-mix(in srgb, var(--preview-border-default) 52%, transparent)";
+  const dashboardProgressFill = system.components.progress.tone === "strong"
+    ? "var(--preview-action-primary)"
+    : "color-mix(in srgb, var(--preview-action-primary) 78%, white)";
 
   return (
     <div className="preview-grid-gap grid xl:grid-cols-[220px_1fr]">
@@ -5334,6 +5751,23 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
         </nav>
 
         <section className="preview-surface p-5">
+          <div
+            className="mb-4 flex flex-wrap items-center justify-between gap-3 border"
+            style={{
+              padding: system.foundations.spacing[system.components.banner.padding],
+              borderRadius: system.radius[system.components.banner.radius],
+              background: dashboardBannerBackground,
+              borderColor: dashboardBannerBorder,
+              color: system.components.banner.style === "solid" ? "var(--preview-action-primary-foreground)" : dashboardBannerColor,
+            }}
+          >
+            <div>
+              <p className="text-xs uppercase tracking-[0.16em]">Release banner</p>
+              <p className="mt-1 text-sm font-medium">Two component families still need sign-off before this theme package ships.</p>
+            </div>
+            <button className="text-sm font-semibold">Open QA</button>
+          </div>
+
           <div className="flex flex-wrap items-start justify-between gap-4" style={{ marginBottom: dashboardGap }}>
             <div>
               <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Page header</p>
@@ -5358,6 +5792,30 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
               <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>All</span>
             </div>
             <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Filters</button>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            <div className="min-w-[12rem] flex-1">
+              {system.components.progress.showLabel ? <div className="mb-2 flex items-center justify-between text-xs" style={{ color: "var(--preview-text-muted)" }}><span>Release readiness</span><span>82%</span></div> : null}
+              <div className="overflow-hidden" style={{ height: system.foundations.spacing[system.components.progress.height], borderRadius: system.radius[system.components.progress.radius], background: dashboardProgressTrack }}>
+                <div style={{ width: "82%", height: "100%", borderRadius: system.radius[system.components.progress.radius], background: dashboardProgressFill }} />
+              </div>
+            </div>
+
+            <div
+              className="border"
+              style={{
+                padding: system.foundations.spacing[system.components.toast.padding],
+                borderRadius: system.radius[system.components.toast.radius],
+                boxShadow: dashboardToastShadow,
+                background: dashboardToastBackground,
+                borderColor: "var(--preview-border-default)",
+                maxWidth: "20rem",
+              }}
+            >
+              <p className="text-sm font-semibold">Toast / notification</p>
+              <p className="mt-1 text-sm" style={{ color: "var(--preview-text-secondary)" }}>Theme export finished and the session file is ready.</p>
+            </div>
           </div>
         </section>
 

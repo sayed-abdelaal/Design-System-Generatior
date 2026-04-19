@@ -651,6 +651,17 @@ function buildComponentRecipes(
         border: "primary.300",
       },
     },
+    tag: {
+      radius: direction === "minimal" ? "sm" : "pill",
+      paddingX: compact ? "2" : "3",
+      paddingY: "1",
+      style: direction === "bold" ? "outline" : "soft",
+      color: {
+        background: direction === "bold" ? "highlight.100" : "neutral.100",
+        foreground: direction === "bold" ? "highlight.800" : "neutral.700",
+        border: direction === "bold" ? "highlight.400" : "neutral.300",
+      },
+    },
     alert: {
       radius: direction === "editorial" ? "md" : "lg",
       padding: compact ? "4" : "5",
@@ -663,6 +674,45 @@ function buildComponentRecipes(
         info: "info.600",
         attention: "attention.600",
       },
+    },
+    toast: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      shadow: direction === "bold" ? "lg" : "md",
+      tone: direction === "bold" ? "strong" : "soft",
+      placement: compact ? "stacked" : "floating",
+    },
+    banner: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      style: direction === "bold" ? "solid" : direction === "minimal" ? "outlined" : "soft",
+      color: direction === "editorial" ? "attention.600" : "info.600",
+    },
+    statusDot: {
+      size: compact ? "3" : "4",
+      style: direction === "bold" ? "solid" : "soft",
+    },
+    progress: {
+      radius: "pill",
+      height: compact ? "2" : "3",
+      tone: direction === "bold" ? "strong" : "soft",
+      showLabel: true,
+    },
+    loader: {
+      size: compact ? "5" : "6",
+      stroke: direction === "minimal" ? "thin" : direction === "bold" ? "bold" : "regular",
+      style: direction === "editorial" ? "orbit" : "spinner",
+    },
+    skeleton: {
+      radius: direction === "minimal" ? "md" : "lg",
+      lineHeight: compact ? "3" : "4",
+      shimmer: direction === "bold" ? "strong" : "soft",
+    },
+    state: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      padding: compact ? "5" : "6",
+      layout: airy ? "feature" : "compact",
+      iconEmphasis: direction === "bold" ? "strong" : "soft",
     },
     table: {
       radius: direction === "minimal" ? "md" : "lg",

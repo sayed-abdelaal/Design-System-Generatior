@@ -490,6 +490,64 @@ export type AlertRecipe = {
   };
 };
 
+export type TagRecipe = {
+  radius: keyof RadiusScale;
+  paddingX: keyof SpacingScale;
+  paddingY: keyof SpacingScale;
+  style: "soft" | "outline";
+  color: {
+    background: TokenReference;
+    foreground: TokenReference;
+    border: TokenReference;
+  };
+};
+
+export type ToastRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  shadow: keyof ShadowScale;
+  tone: "soft" | "strong";
+  placement: "stacked" | "floating";
+};
+
+export type BannerRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  style: "soft" | "outlined" | "solid";
+  color: TokenReference;
+};
+
+export type StatusDotRecipe = {
+  size: keyof SpacingScale;
+  style: "soft" | "solid";
+};
+
+export type ProgressRecipe = {
+  radius: keyof RadiusScale;
+  height: keyof SpacingScale;
+  tone: "soft" | "strong";
+  showLabel: boolean;
+};
+
+export type LoaderRecipe = {
+  size: keyof SpacingScale;
+  stroke: "thin" | "regular" | "bold";
+  style: "spinner" | "orbit";
+};
+
+export type SkeletonRecipe = {
+  radius: keyof RadiusScale;
+  lineHeight: keyof SpacingScale;
+  shimmer: "soft" | "strong";
+};
+
+export type StateRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  layout: "compact" | "feature";
+  iconEmphasis: "soft" | "strong";
+};
+
 export type TableRecipe = {
   radius: keyof RadiusScale;
   cellPaddingX: keyof SpacingScale;
@@ -661,6 +719,14 @@ export type ComponentRecipes = {
   switch: SwitchRecipe;
   descriptionList: DescriptionListRecipe;
   badge: BadgeRecipe;
+  tag: TagRecipe;
+  toast: ToastRecipe;
+  banner: BannerRecipe;
+  statusDot: StatusDotRecipe;
+  progress: ProgressRecipe;
+  loader: LoaderRecipe;
+  skeleton: SkeletonRecipe;
+  state: StateRecipe;
   listbox: ListboxRecipe;
   pagination: PaginationRecipe;
   tabs: TabsRecipe;
