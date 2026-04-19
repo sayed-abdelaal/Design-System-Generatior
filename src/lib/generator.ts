@@ -772,6 +772,14 @@ function buildComponentRecipes(
       density: compact ? "compact" : "comfortable",
       zebraStripes: direction !== "minimal",
     },
+    dataGrid: {
+      radius: direction === "minimal" ? "md" : "lg",
+      cellPadding: compact ? "3" : "4",
+      headerStyle: direction === "editorial" ? "elevated" : "muted",
+      density: compact ? "compact" : "comfortable",
+      selectionStyle: direction === "minimal" ? "row" : "checkbox",
+      stickyHeader: direction !== "minimal",
+    },
     sidebar: {
       width: airy ? "md" : "sm",
       itemGap: compact ? "3" : "4",
@@ -858,6 +866,14 @@ function buildComponentRecipes(
       radius: direction === "minimal" ? "md" : "lg",
       padding: compact ? "3" : "4",
       shadow: direction === "bold" ? "md" : "sm",
+    },
+    commandPalette: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      padding: compact ? "4" : "5",
+      shadow: direction === "bold" ? "lg" : "md",
+      density: compact ? "compact" : "comfortable",
+      showShortcuts: direction !== "minimal",
+      previewPane: direction === "bold" || direction === "studio",
     },
     popover: {
       radius: direction === "minimal" ? "md" : "lg",

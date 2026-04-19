@@ -615,6 +615,15 @@ export type TableRecipe = {
   zebraStripes: boolean;
 };
 
+export type DataGridRecipe = {
+  radius: keyof RadiusScale;
+  cellPadding: keyof SpacingScale;
+  headerStyle: "muted" | "elevated";
+  density: "compact" | "comfortable";
+  selectionStyle: "checkbox" | "row";
+  stickyHeader: boolean;
+};
+
 export type DialogRecipe = {
   radius: keyof RadiusScale;
   width: keyof ContainerScale;
@@ -736,6 +745,15 @@ export type DropdownRecipe = {
   shadow: keyof ShadowScale;
 };
 
+export type CommandPaletteRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  shadow: keyof ShadowScale;
+  density: "compact" | "comfortable";
+  showShortcuts: boolean;
+  previewPane: boolean;
+};
+
 export type PopoverRecipe = {
   radius: keyof RadiusScale;
   padding: keyof SpacingScale;
@@ -848,6 +866,7 @@ export type ComponentRecipes = {
   slider: SliderRecipe;
   rangeSlider: RangeSliderRecipe;
   table: TableRecipe;
+  dataGrid: DataGridRecipe;
   sidebar: SidebarRecipe;
   checkbox: CheckboxRecipe;
   combobox: ComboboxRecipe;
@@ -872,6 +891,7 @@ export type ComponentRecipes = {
   stepper: StepperRecipe;
   tabs: TabsRecipe;
   dropdown: DropdownRecipe;
+  commandPalette: CommandPaletteRecipe;
   popover: PopoverRecipe;
   tooltip: TooltipRecipe;
   alert: AlertRecipe;

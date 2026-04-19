@@ -3904,6 +3904,72 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Data grid density</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dataGrid.density}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dataGrid: { ...current.components.dataGrid, density: event.target.value as typeof current.components.dataGrid.density } },
+                  }))}>
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Data grid selection</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dataGrid.selectionStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dataGrid: { ...current.components.dataGrid, selectionStyle: event.target.value as typeof current.components.dataGrid.selectionStyle } },
+                  }))}>
+                  <option value="checkbox">Checkbox</option>
+                  <option value="row">Row</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Sticky grid header</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dataGrid.stickyHeader ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dataGrid: { ...current.components.dataGrid, stickyHeader: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Command palette density</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.commandPalette.density}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, commandPalette: { ...current.components.commandPalette, density: event.target.value as typeof current.components.commandPalette.density } },
+                  }))}>
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Command shortcuts</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.commandPalette.showShortcuts ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, commandPalette: { ...current.components.commandPalette, showShortcuts: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Command preview pane</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.commandPalette.previewPane ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, commandPalette: { ...current.components.commandPalette, previewPane: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Pagination radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.pagination.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -4677,6 +4743,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "badge",
     "alert",
     "table",
+    "dataGrid",
     "dialog",
     "checkbox",
     "switch",
@@ -4691,6 +4758,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "breadcrumbs",
     "stepper",
     "tabs",
+    "commandPalette",
     "tag",
     "toast",
     "banner",
@@ -5150,6 +5218,103 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">{system.components.dialog.mode === "alert" ? "Delete export" : "Export now"}</button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="preview-surface p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h4 className="preview-heading text-xl font-semibold">Data grid</h4>
+            <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.dataGrid.density)} / {sectionLabel(system.components.dataGrid.selectionStyle)}</span>
+          </div>
+          <div className="mt-4 overflow-hidden border" style={{ borderRadius: system.radius[system.components.dataGrid.radius], borderColor: "var(--preview-border-default)" }}>
+            <div
+              className="grid grid-cols-[0.42fr_1.25fr_0.9fr_0.85fr_0.75fr] text-xs uppercase tracking-[0.16em]"
+              style={{
+                padding: system.foundations.spacing[system.components.dataGrid.cellPadding],
+                color: "var(--preview-text-muted)",
+                background: system.components.dataGrid.headerStyle === "elevated" ? "var(--preview-surface-elevated)" : "color-mix(in srgb, var(--preview-border-default) 24%, transparent)",
+                position: system.components.dataGrid.stickyHeader ? "sticky" : "static",
+                top: 0,
+              }}
+            >
+              <span>{system.components.dataGrid.selectionStyle === "checkbox" ? "Sel" : "Row"}</span>
+              <span>System</span>
+              <span>Status</span>
+              <span>Owner</span>
+              <span>Sync</span>
+            </div>
+            {[
+              ["□", "Northstar Labs", "Healthy", "AM", "5m"],
+              ["■", "Aurelian Studio", "Review", "CL", "18m"],
+              ["□", "Vector Health", "Ready", "JN", "42m"],
+            ].map((row, index) => (
+              <div
+                key={row[1]}
+                className="grid grid-cols-[0.42fr_1.25fr_0.9fr_0.85fr_0.75fr] text-sm"
+                style={{
+                  padding: system.foundations.spacing[system.components.dataGrid.cellPadding],
+                  background: index % 2 === 1 ? "color-mix(in srgb, var(--preview-surface-elevated) 88%, transparent)" : "transparent",
+                  borderTop: "1px solid var(--preview-border-default)",
+                }}
+              >
+                {row.map((cell) => <span key={cell}>{cell}</span>)}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h4 className="preview-heading text-xl font-semibold">Command palette</h4>
+            <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.commandPalette.density)}</span>
+          </div>
+          <div
+            className="mt-4 preview-elevated"
+            style={{
+              borderRadius: system.radius[system.components.commandPalette.radius],
+              padding: system.foundations.spacing[system.components.commandPalette.padding],
+              boxShadow: system.shadows[system.components.commandPalette.shadow],
+            }}
+          >
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+              <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+              <span className="min-w-0 flex-1">Search commands, screens, or tokens</span>
+              {system.components.commandPalette.showShortcuts ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>⌘K</span> : null}
+            </div>
+            <div className={`mt-4 grid ${system.components.commandPalette.previewPane ? "lg:grid-cols-[0.9fr_1.1fr]" : ""}`} style={{ gap: system.components.commandPalette.density === "compact" ? "0.6rem" : "0.9rem" }}>
+              <div className="grid" style={{ gap: system.components.commandPalette.density === "compact" ? "0.45rem" : "0.65rem" }}>
+                {[
+                  ["Open Foundations preview", "Preview"],
+                  ["Export component recipes", "Action"],
+                  ["Go to Dashboard layout", "Navigation"],
+                ].map(([label, group], index) => (
+                  <div
+                    key={label}
+                    className="flex items-center justify-between rounded-[var(--preview-radius-md)] border text-sm"
+                    style={{
+                      padding: system.components.commandPalette.density === "compact" ? "0.65rem 0.8rem" : "0.8rem 0.95rem",
+                      borderColor: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 24%, transparent)" : "var(--preview-border-default)",
+                      background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 8%, transparent)" : "transparent",
+                    }}
+                  >
+                    <div>
+                      <p>{label}</p>
+                      <p className="mt-1 text-xs" style={{ color: "var(--preview-text-muted)" }}>{group}</p>
+                    </div>
+                    {system.components.commandPalette.showShortcuts ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>↵</span> : null}
+                  </div>
+                ))}
+              </div>
+              {system.components.commandPalette.previewPane ? (
+                <div className="rounded-[var(--preview-radius-md)] border p-4" style={{ borderColor: "var(--preview-border-default)", background: "var(--preview-surface)" }}>
+                  <p className="text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>Preview</p>
+                  <p className="mt-3 text-sm font-semibold">Open Foundations preview</p>
+                  <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>Jump into palette ladders, semantic mappings, utility coverage, and QA posture.</p>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -6921,6 +7086,23 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                 </p>
                 {system.components.fileUpload.showPreview ? <p className="mt-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>2 files staged for review</p> : null}
               </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.dataGrid.radius], padding: system.foundations.spacing[system.components.dataGrid.cellPadding] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Data grid</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.dataGrid.selectionStyle)}</span>
+                </div>
+                <div className="mt-3 grid gap-2 text-sm">
+                  {[
+                    ["□", "Northstar Labs", "Healthy"],
+                    ["■", "Aurelian Studio", "Review"],
+                    ["□", "Vector Health", "Ready"],
+                  ].map((row, index) => (
+                    <div key={row[1]} className="grid grid-cols-[0.32fr_1.18fr_0.9fr] rounded-[var(--preview-radius-sm)]" style={{ padding: system.components.dataGrid.density === "compact" ? "0.5rem 0.65rem" : "0.65rem 0.8rem", background: index === 1 ? "color-mix(in srgb, var(--preview-action-primary) 8%, transparent)" : "var(--preview-surface)" }}>
+                      {row.map((cell) => <span key={cell}>{cell}</span>)}
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div className="preview-elevated" style={{ borderRadius: "var(--preview-radius-lg)", padding: "1rem" }}>
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-semibold">Density slider</p>
@@ -6930,6 +7112,20 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                   <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-full" style={{ height: system.foundations.spacing[system.components.slider.trackHeight], background: dashboardProgressTrack }} />
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full" style={{ width: "72%", height: system.foundations.spacing[system.components.slider.trackHeight], background: "var(--preview-action-primary)" }} />
                   <span className="absolute top-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm" style={{ left: "calc(72% - 0.5rem)", width: system.foundations.spacing[system.components.slider.thumbSize], height: system.foundations.spacing[system.components.slider.thumbSize], background: "var(--preview-action-primary)" }} />
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.commandPalette.radius], padding: system.foundations.spacing[system.components.commandPalette.padding], boxShadow: system.shadows[system.components.commandPalette.shadow] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Command palette</p>
+                  {system.components.commandPalette.showShortcuts ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>⌘K</span> : null}
+                </div>
+                <div className="mt-3 grid" style={{ gap: system.components.commandPalette.density === "compact" ? "0.45rem" : "0.65rem" }}>
+                  {["Open Foundations preview", "Go to component recipes", "Export system package"].map((item, index) => (
+                    <div key={item} className="flex items-center justify-between rounded-[var(--preview-radius-sm)] border text-sm" style={{ padding: system.components.commandPalette.density === "compact" ? "0.55rem 0.7rem" : "0.7rem 0.85rem", borderColor: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 24%, transparent)" : "var(--preview-border-default)", background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 8%, transparent)" : "transparent" }}>
+                      <span>{item}</span>
+                      <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.commandPalette.showShortcuts ? "↵" : "Run"}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
               <div
