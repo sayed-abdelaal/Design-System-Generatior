@@ -4145,6 +4145,70 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Visually hidden prefix</span>
+                <input
+                  className="field px-3 py-2 text-sm"
+                  value={system.components.visuallyHidden.labelPrefix}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, visuallyHidden: { ...current.components.visuallyHidden, labelPrefix: event.target.value } },
+                  }))}
+                />
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Reveal on focus</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.visuallyHidden.revealOnFocus ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, visuallyHidden: { ...current.components.visuallyHidden, revealOnFocus: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Portal layer</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.portal.layer}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, portal: { ...current.components.portal, layer: event.target.value as typeof current.components.portal.layer } },
+                  }))}>
+                  {Object.keys(system.foundations.zIndex).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Portal tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.portal.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, portal: { ...current.components.portal, tone: event.target.value as typeof current.components.portal.tone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Scroll area scrollbar</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.scrollArea.scrollbar}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, scrollArea: { ...current.components.scrollArea, scrollbar: event.target.value as typeof current.components.scrollArea.scrollbar } },
+                  }))}>
+                  <option value="subtle">Subtle</option>
+                  <option value="visible">Visible</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Scroll area height</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.scrollArea.maxHeight}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, scrollArea: { ...current.components.scrollArea, maxHeight: event.target.value as typeof current.components.scrollArea.maxHeight } },
+                  }))}>
+                  {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Fieldset radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.fieldset.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -4928,6 +4992,9 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "heading",
     "text",
     "link",
+    "visuallyHidden",
+    "portal",
+    "scrollArea",
     "sidebarLayout",
     "stackedLayout",
     "authLayout",
@@ -6238,6 +6305,18 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                 Underline, tone, and type scale are recipe-driven.
               </p>
             </div>
+            <div className="preview-surface border p-4" style={{ borderColor: "var(--preview-border-default)" }}>
+              <p className="text-sm font-medium">Visually hidden primitive</p>
+              <div className="mt-2 flex items-center justify-between gap-3 text-sm">
+                <span>Visible label</span>
+                <span className="rounded-full border px-2 py-1 text-xs" style={{ borderColor: "var(--preview-border-default)", color: "var(--preview-text-muted)" }}>
+                  {system.components.visuallyHidden.labelPrefix}: Skip navigation
+                </span>
+              </div>
+              <p className="mt-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>
+                {system.components.visuallyHidden.revealOnFocus ? "Reveal on focus is enabled for keyboard users." : "This stays screen-reader-only unless explicitly exposed."}
+              </p>
+            </div>
             <div className="flex items-center gap-3">
               <span
                 className="inline-flex items-center justify-center text-sm font-semibold"
@@ -6263,6 +6342,50 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Structure primitives</h4>
           <div className="mt-4 grid gap-4">
+            <div className="preview-elevated p-4" style={{ position: "relative" }}>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold">Portal primitive</p>
+                <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.portal.layer}</span>
+              </div>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)", background: "var(--preview-surface)" }}>
+                Base page content
+              </div>
+              <div
+                className="absolute right-4 top-4 rounded-[var(--preview-radius-md)] border px-3 py-2 text-sm"
+                style={{
+                  zIndex: Number(system.foundations.zIndex[system.components.portal.layer]),
+                  borderColor: "var(--preview-border-default)",
+                  background: system.components.portal.tone === "strong" ? "var(--preview-surface-elevated)" : "color-mix(in srgb, var(--preview-surface-elevated) 82%, var(--preview-background))",
+                  transform: `translate(${system.foundations.spacing[system.components.portal.offset]}, ${system.foundations.spacing[system.components.portal.offset]})`,
+                  boxShadow: "var(--preview-shadow-sm)",
+                }}
+              >
+                Layered portal content
+              </div>
+            </div>
+            <div className="preview-elevated p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold">Scroll area primitive</p>
+                <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.scrollArea.scrollbar}</span>
+              </div>
+              <div
+                className="mt-3 overflow-y-auto rounded-[var(--preview-radius-md)] border"
+                style={{
+                  maxHeight: system.foundations.containers[system.components.scrollArea.maxHeight],
+                  borderColor: "var(--preview-border-default)",
+                  padding: system.foundations.spacing[system.components.scrollArea.padding],
+                  scrollbarWidth: system.components.scrollArea.scrollbar === "visible" ? "auto" : "thin",
+                }}
+              >
+                <div className="grid gap-2 text-sm">
+                  {["Theme.css", "tailwind-theme.css", "tokens.json", "components.json", "README.md", "design-system-session.json"].map((item) => (
+                    <div key={item} className="rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
             <div className="border" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.fieldset.radius], padding: system.foundations.spacing[system.components.fieldset.padding] }}>
               <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Fieldset</p>
               <div className="mt-3 grid gap-3">
@@ -7512,6 +7635,42 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                   ))}
                 </div>
                 {system.components.multiStepFlow.showSummary ? <p className="mt-3 text-xs" style={{ color: "var(--preview-text-muted)" }}>Summary panel remains visible before submit.</p> : null}
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: "var(--preview-radius-lg)", padding: "1rem", position: "relative" }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Portal layer</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.portal.layer}</span>
+                </div>
+                <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>
+                  Base workspace content
+                </div>
+                <div
+                  className="absolute right-5 top-14 rounded-[var(--preview-radius-md)] border px-3 py-2 text-xs"
+                  style={{
+                    zIndex: Number(system.foundations.zIndex[system.components.portal.layer]),
+                    borderColor: "var(--preview-border-default)",
+                    background: system.components.portal.tone === "strong" ? "var(--preview-surface-elevated)" : "color-mix(in srgb, var(--preview-surface-elevated) 82%, var(--preview-background))",
+                    transform: `translate(${system.foundations.spacing[system.components.portal.offset]}, ${system.foundations.spacing[system.components.portal.offset]})`,
+                    boxShadow: "var(--preview-shadow-sm)",
+                  }}
+                >
+                  Layered details
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.scrollArea.radius], padding: system.foundations.spacing[system.components.scrollArea.padding] }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Scroll area</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.scrollArea.scrollbar}</span>
+                </div>
+                <div className="mt-3 overflow-y-auto rounded-[var(--preview-radius-md)] border" style={{ maxHeight: system.foundations.containers[system.components.scrollArea.maxHeight], borderColor: "var(--preview-border-default)", padding: "0.5rem", scrollbarWidth: system.components.scrollArea.scrollbar === "visible" ? "auto" : "thin" }}>
+                  <div className="grid gap-2 text-sm">
+                    {["Northstar Labs", "Aurelian Studio", "Vector Health", "Helio Systems", "Monarch Grid", "Atlas Health"].map((item) => (
+                      <div key={item} className="rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
               <div
                 className="preview-elevated"

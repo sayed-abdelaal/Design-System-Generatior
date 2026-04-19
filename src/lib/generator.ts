@@ -936,6 +936,21 @@ function buildComponentRecipes(
       underline: direction === "editorial" ? "always" : direction === "minimal" ? "hover" : "hover",
       tone: direction === "minimal" ? "foreground" : "brand",
     },
+    visuallyHidden: {
+      labelPrefix: "Screen reader",
+      revealOnFocus: direction !== "minimal",
+    },
+    portal: {
+      layer: direction === "bold" ? "modal" : "overlay",
+      offset: compact ? "3" : "4",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    scrollArea: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      scrollbar: direction === "minimal" ? "subtle" : "visible",
+      maxHeight: compact ? "sm" : "md",
+    },
     fieldset: {
       radius: direction === "minimal" ? "md" : "lg",
       padding: compact ? "4" : "5",

@@ -809,6 +809,24 @@ export type LinkRecipe = {
   tone: "brand" | "foreground" | "muted";
 };
 
+export type VisuallyHiddenRecipe = {
+  labelPrefix: string;
+  revealOnFocus: boolean;
+};
+
+export type PortalRecipe = {
+  layer: keyof ZIndexScale;
+  offset: keyof SpacingScale;
+  tone: "soft" | "strong";
+};
+
+export type ScrollAreaRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  scrollbar: "subtle" | "visible";
+  maxHeight: keyof ContainerScale;
+};
+
 export type FieldsetRecipe = {
   radius: keyof RadiusScale;
   padding: keyof SpacingScale;
@@ -948,6 +966,9 @@ export type ComponentRecipes = {
   heading: HeadingRecipe;
   text: TextRecipe;
   link: LinkRecipe;
+  visuallyHidden: VisuallyHiddenRecipe;
+  portal: PortalRecipe;
+  scrollArea: ScrollAreaRecipe;
   fieldset: FieldsetRecipe;
   dialog: DialogRecipe;
   sidebarLayout: LayoutShellRecipe;
