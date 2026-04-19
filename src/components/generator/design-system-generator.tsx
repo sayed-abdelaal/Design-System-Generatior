@@ -5287,10 +5287,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
   const stackedPageGap = system.foundations.spacing[system.components.stackedLayout.pageGap];
   const sidebarHeaderHeight = system.foundations.spacing[system.components.sidebarLayout.headerHeight];
   const stackedHeaderHeight = system.foundations.spacing[system.components.stackedLayout.headerHeight];
-  const sidebarWidth = system.foundations.containers[system.components.sidebarLayout.sidebarWidth];
   const settingsWidth = system.foundations.containers[settingsPreset.maxWidth];
-  const formWidth = system.foundations.containers[formPagePreset.maxWidth];
-  const dataTableWidth = system.foundations.containers[dataTablePreset.maxWidth];
   const authWidth = system.foundations.containers[system.components.authLayout.cardWidth];
   const tagBackground = resolveTokenReference(system.components.tag.color.background, system.palettes);
   const tagForeground = resolveTokenReference(system.components.tag.color.foreground, system.palettes);
@@ -5818,7 +5815,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
             </div>
             <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Closing the remaining gaps</span>
           </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-4 grid gap-4">
             <div className="preview-elevated p-4">
               <p className="text-sm font-semibold">Segmented, color, rich text, field, label</p>
               <div className="mt-3 flex overflow-hidden border" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.segmentedControl.radius] }}>
@@ -6407,7 +6404,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
             <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Stage 2 maturity</span>
           </div>
 
-          <div className="mt-4 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+          <div className="mt-4 grid gap-4">
             <div className="grid gap-4">
               <div className="preview-elevated p-4" style={{ maxWidth: settingsWidth }}>
                 <div className="flex flex-wrap items-start justify-between gap-4" style={{ marginBottom: settingsGap }}>
@@ -6421,8 +6418,8 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm font-medium">Publish changes</button>
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[0.84fr_1.16fr]" style={{ gap: settingsGap }}>
-                  <aside className="preview-surface p-4" style={{ minWidth: sidebarWidth }}>
+                <div className="grid gap-4" style={{ gap: settingsGap }}>
+                  <aside className="preview-surface p-4">
                     {["General", "Color roles", "Typography", "Exports"].map((item, index) => (
                       <div
                         key={item}
@@ -6456,8 +6453,8 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                 </div>
               </div>
 
-              <div className="grid gap-4 xl:grid-cols-2">
-                <div className="preview-elevated p-4" style={{ maxWidth: dataTableWidth }}>
+              <div className="grid gap-4">
+                <div className="preview-elevated p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3" style={{ marginBottom: dataTableGap }}>
                     <div>
                       <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Data table page</p>
@@ -6469,7 +6466,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                     </div>
                   </div>
                   <div className="grid gap-3" style={{ gap: dataTableGap }}>
-                    <div className="grid gap-3 lg:grid-cols-[1fr_auto_auto]">
+                    <div className="grid gap-3">
                       <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
                         <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
                         <span className="min-w-0 flex-1">Search rows</span>
@@ -6505,7 +6502,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   </div>
                 </div>
 
-                <div className="preview-elevated p-4" style={{ maxWidth: formWidth }}>
+                <div className="preview-elevated p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3" style={{ marginBottom: formGap }}>
                     <div>
                       <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Form page layout</p>
@@ -6534,18 +6531,18 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
               <div className="preview-surface p-4">
                 <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>App shell recipes</p>
                 <div className="mt-3 grid gap-4">
-                  <div className="preview-elevated p-4" style={{ maxWidth: system.foundations.containers[system.components.sidebarLayout.contentWidth] }}>
+                  <div className="preview-elevated p-4">
                     <div className="preview-surface mb-3 flex items-center justify-between px-4" style={{ minHeight: sidebarHeaderHeight }}>
                       <span className="text-sm font-medium">Sidebar shell header</span>
                       <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.sidebarLayout.contentWidth} content</span>
                     </div>
-                    <div className="grid" style={{ gridTemplateColumns: `${sidebarWidth} 1fr`, gap: sidebarPageGap }}>
+                    <div className="grid gap-3" style={{ gap: sidebarPageGap }}>
                       <div className="preview-surface p-4">Sidebar nav</div>
                       <div className="preview-surface p-4">Content region</div>
                     </div>
                   </div>
 
-                  <div className="preview-elevated p-4" style={{ maxWidth: system.foundations.containers[system.components.stackedLayout.contentWidth] }}>
+                  <div className="preview-elevated p-4">
                     <div className="preview-surface px-4" style={{ minHeight: stackedHeaderHeight, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span className="text-sm font-medium">Stacked shell header</span>
                       <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.stackedLayout.pageGap} page gap</span>
@@ -6578,7 +6575,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Product patterns</p>
                   <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{sectionLabel(system.components.pageTemplate.style)}</span>
                 </div>
-                <div className={`mt-4 grid gap-4 ${system.components.pageTemplate.alignment === "split" ? "lg:grid-cols-[1fr_0.9fr]" : ""}`}>
+                <div className="mt-4 grid gap-4">
                   <div
                     className="preview-elevated"
                     style={{
@@ -6645,7 +6642,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Onboarding and access</p>
                   <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{sectionLabel(system.components.onboarding.layout)}</span>
                 </div>
-                <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_0.95fr]">
+                <div className="mt-4 grid gap-4">
                   <div
                     className="preview-elevated"
                     style={{
@@ -7413,14 +7410,14 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
                 : "var(--preview-font-body)";
 
             return (
-              <div key={token} className="grid gap-3 rounded-[var(--preview-radius-md)] border px-4 py-4 lg:grid-cols-[180px_1fr_260px]" style={{ borderColor: "var(--preview-border-default)" }}>
+              <div key={token} className="grid gap-3 rounded-[var(--preview-radius-md)] border px-4 py-4" style={{ borderColor: "var(--preview-border-default)" }}>
                 <div>
                   <p className="text-sm font-semibold">{sectionLabel(token)}</p>
                   <p className="mt-1 text-xs" style={{ color: "var(--preview-text-muted)" }}>
                     {fontFamily === "var(--preview-font-display)" ? "Display family" : fontFamily === "var(--preview-font-heading)" ? "Heading family" : "Body family"}
                   </p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p
                     style={{
                       fontFamily,
@@ -7428,6 +7425,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
                       lineHeight: styleToken.lineHeight,
                       letterSpacing: styleToken.letterSpacing,
                       fontWeight: styleToken.weight,
+                      overflowWrap: "anywhere",
                     }}
                   >
                     System typography should feel deliberate at every level.
@@ -7683,12 +7681,14 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-[0.95fr_1.05fr]">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
           <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Mature foundation tokens</p>
           <h4 className="preview-heading mt-2 text-xl font-semibold">Borders, opacity, durations, and stacking</h4>
           <div className="mt-4 grid gap-4">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div>
+              <p className="text-sm font-semibold">Border widths</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {Object.entries(system.foundations.borderWidths).map(([key, value]) => (
                 <div key={key} className="preview-elevated p-4">
                   <div className="h-10 rounded-[var(--preview-radius-sm)] bg-[var(--preview-surface)]" style={{ border: `${value} solid var(--preview-border-strong)` }} />
@@ -7696,8 +7696,11 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{value}</p>
                 </div>
               ))}
+              </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-4">
+            <div>
+              <p className="text-sm font-semibold">Opacity scale</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {Object.entries(system.foundations.opacity).map(([key, value]) => (
                 <div key={key} className="preview-elevated p-4">
                   <div className="h-10 rounded-[var(--preview-radius-sm)] bg-[var(--preview-action-primary)]" style={{ opacity: value }} />
@@ -7705,8 +7708,11 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{value}</p>
                 </div>
               ))}
+              </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div>
+              <p className="text-sm font-semibold">Motion durations</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {Object.entries(system.foundations.durations).map(([key, value]) => (
                 <div key={key} className="preview-elevated p-4">
                   <div className="h-2 rounded-full bg-[var(--preview-border-default)]">
@@ -7716,8 +7722,11 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{value}</p>
                 </div>
               ))}
+              </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div>
+              <p className="text-sm font-semibold">Z-index scale</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {Object.entries(system.foundations.zIndex).map(([key, value]) => (
                 <div key={key} className="preview-elevated p-4">
                   <div className="relative h-16 rounded-[var(--preview-radius-sm)] border bg-[var(--preview-surface)]" style={{ borderColor: "var(--preview-border-default)" }}>
@@ -7728,6 +7737,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-xs" style={{ color: "var(--preview-text-muted)" }}>z-{value}</p>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         </div>
