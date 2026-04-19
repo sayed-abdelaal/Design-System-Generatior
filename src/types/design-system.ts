@@ -809,6 +809,83 @@ export type LinkRecipe = {
   tone: "brand" | "foreground" | "muted";
 };
 
+export type BoxRecipe = {
+  padding: keyof SpacingScale;
+  radius: keyof RadiusScale;
+  surface: "flat" | "raised";
+};
+
+export type ContainerRecipe = {
+  width: keyof ContainerScale;
+  padding: keyof SpacingScale;
+  align: "left" | "center";
+};
+
+export type StackRecipe = {
+  gap: keyof SpacingScale;
+  align: "start" | "center" | "stretch";
+};
+
+export type InlineRecipe = {
+  gap: keyof SpacingScale;
+  wrap: boolean;
+  align: "start" | "center" | "between";
+};
+
+export type GridPrimitiveRecipe = {
+  columns: "2" | "3" | "4";
+  gap: keyof SpacingScale;
+  responsive: "auto" | "fixed";
+};
+
+export type IconButtonRecipe = {
+  size: keyof SpacingScale;
+  radius: keyof RadiusScale;
+  tone: "filled" | "soft" | "ghost";
+};
+
+export type LinkButtonRecipe = {
+  scale: keyof TypographyScale;
+  emphasis: "underline" | "solid";
+  tone: "brand" | "muted";
+};
+
+export type SplitButtonRecipe = {
+  radius: keyof RadiusScale;
+  tone: "soft" | "strong";
+};
+
+export type ButtonGroupRecipe = {
+  radius: keyof RadiusScale;
+  attached: boolean;
+};
+
+export type ContextMenuRecipe = {
+  radius: keyof RadiusScale;
+  density: "compact" | "comfortable";
+};
+
+export type SkipLinkRecipe = {
+  radius: keyof RadiusScale;
+  offset: keyof SpacingScale;
+  reveal: "inline" | "floating";
+};
+
+export type AnchorNavRecipe = {
+  gap: keyof SpacingScale;
+  style: "underline" | "pill";
+};
+
+export type BottomNavRecipe = {
+  height: keyof SpacingScale;
+  emphasis: "soft" | "strong";
+};
+
+export type TreeViewRecipe = {
+  indent: keyof SpacingScale;
+  density: "compact" | "comfortable";
+};
+
 export type VisuallyHiddenRecipe = {
   labelPrefix: string;
   revealOnFocus: boolean;
@@ -825,6 +902,39 @@ export type ScrollAreaRecipe = {
   padding: keyof SpacingScale;
   scrollbar: "subtle" | "visible";
   maxHeight: keyof ContainerScale;
+};
+
+export type OtpInputRecipe = {
+  slots: "4" | "6";
+  gap: keyof SpacingScale;
+  mask: boolean;
+};
+
+export type StepperInputRecipe = {
+  radius: keyof RadiusScale;
+  stepSize: "1" | "5" | "10";
+};
+
+export type DateTimePickerRecipe = {
+  radius: keyof RadiusScale;
+  density: "compact" | "comfortable";
+  timeFormat: "12h" | "24h";
+};
+
+export type SelectFieldRecipe = {
+  radius: keyof RadiusScale;
+  style: "default" | "quiet" | "underline";
+};
+
+export type InputGroupRecipe = {
+  radius: keyof RadiusScale;
+  gap: keyof SpacingScale;
+  attached: boolean;
+};
+
+export type CharacterCountRecipe = {
+  tone: "muted" | "warning";
+  alignment: "end" | "between";
 };
 
 export type FieldsetRecipe = {
@@ -879,6 +989,76 @@ export type PermissionStateRecipe = {
   padding: keyof SpacingScale;
   tone: "soft" | "strong";
   layout: "inline" | "panel";
+};
+
+export type HoverCardRecipe = {
+  radius: keyof RadiusScale;
+  shadow: keyof ShadowScale;
+  trigger: "hover" | "click";
+};
+
+export type CodeBlockRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  lineNumbers: boolean;
+};
+
+export type QuoteBlockRecipe = {
+  radius: keyof RadiusScale;
+  border: "accent" | "neutral";
+};
+
+export type CalendarViewRecipe = {
+  density: "compact" | "comfortable";
+  showWeekends: boolean;
+};
+
+export type FilterBarRecipe = {
+  radius: keyof RadiusScale;
+  chips: boolean;
+  sticky: boolean;
+};
+
+export type ChartCardRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  chartType: "line" | "bar" | "donut";
+};
+
+export type SheetRecipe = {
+  radius: keyof RadiusScale;
+  placement: "bottom" | "right";
+  tone: "soft" | "strong";
+};
+
+export type SidePanelRecipe = {
+  width: keyof ContainerScale;
+  tone: "soft" | "strong";
+};
+
+export type BulkActionsRecipe = {
+  radius: keyof RadiusScale;
+  selectionStyle: "inline" | "bar";
+};
+
+export type InlineEditRecipe = {
+  radius: keyof RadiusScale;
+  trigger: "icon" | "row";
+};
+
+export type TableSelectionRecipe = {
+  density: "compact" | "comfortable";
+  bulkBar: boolean;
+};
+
+export type NotificationCenterRecipe = {
+  width: keyof ContainerScale;
+  style: "stacked" | "grouped";
+};
+
+export type FileUploadFlowRecipe = {
+  layout: "steps" | "stack";
+  showPreview: boolean;
 };
 
 export type ScreenPreset = {
@@ -966,9 +1146,29 @@ export type ComponentRecipes = {
   heading: HeadingRecipe;
   text: TextRecipe;
   link: LinkRecipe;
+  box: BoxRecipe;
+  container: ContainerRecipe;
+  stack: StackRecipe;
+  inline: InlineRecipe;
+  gridPrimitive: GridPrimitiveRecipe;
+  iconButton: IconButtonRecipe;
+  linkButton: LinkButtonRecipe;
+  splitButton: SplitButtonRecipe;
+  buttonGroup: ButtonGroupRecipe;
+  contextMenu: ContextMenuRecipe;
+  skipLink: SkipLinkRecipe;
+  anchorNav: AnchorNavRecipe;
+  bottomNav: BottomNavRecipe;
+  treeView: TreeViewRecipe;
   visuallyHidden: VisuallyHiddenRecipe;
   portal: PortalRecipe;
   scrollArea: ScrollAreaRecipe;
+  otpInput: OtpInputRecipe;
+  stepperInput: StepperInputRecipe;
+  dateTimePicker: DateTimePickerRecipe;
+  selectField: SelectFieldRecipe;
+  inputGroup: InputGroupRecipe;
+  characterCount: CharacterCountRecipe;
   fieldset: FieldsetRecipe;
   dialog: DialogRecipe;
   sidebarLayout: LayoutShellRecipe;
@@ -979,6 +1179,19 @@ export type ComponentRecipes = {
   onboarding: OnboardingRecipe;
   multiStepFlow: MultiStepFlowRecipe;
   permissionState: PermissionStateRecipe;
+  hoverCard: HoverCardRecipe;
+  codeBlock: CodeBlockRecipe;
+  quoteBlock: QuoteBlockRecipe;
+  calendarView: CalendarViewRecipe;
+  filterBar: FilterBarRecipe;
+  chartCard: ChartCardRecipe;
+  sheet: SheetRecipe;
+  sidePanel: SidePanelRecipe;
+  bulkActions: BulkActionsRecipe;
+  inlineEdit: InlineEditRecipe;
+  tableSelection: TableSelectionRecipe;
+  notificationCenter: NotificationCenterRecipe;
+  fileUploadFlow: FileUploadFlowRecipe;
 };
 
 export type Density = "compact" | "comfortable" | "airy";

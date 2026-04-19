@@ -4528,6 +4528,209 @@ function TokenPanel({
                 </select>
               </label>
             </div>
+
+            <div className="mt-4 rounded-[var(--app-radius-md)] border border-dashed p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-app-foreground">Extended inventory</p>
+                  <p className="mt-1 text-xs text-app-muted">Remaining primitives, advanced controls, and product patterns now have first-class recipe controls too.</p>
+                </div>
+                <span className="rounded-full border px-3 py-1 text-xs text-app-muted">Breadth-first coverage</span>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Box surface</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.box.surface}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, box: { ...current.components.box, surface: event.target.value as typeof current.components.box.surface } },
+                    }))}>
+                    <option value="flat">Flat</option>
+                    <option value="raised">Raised</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Container align</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.container.align}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, container: { ...current.components.container, align: event.target.value as typeof current.components.container.align } },
+                    }))}>
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Grid columns</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.gridPrimitive.columns}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, gridPrimitive: { ...current.components.gridPrimitive, columns: event.target.value as typeof current.components.gridPrimitive.columns } },
+                    }))}>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Icon button tone</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.iconButton.tone}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, iconButton: { ...current.components.iconButton, tone: event.target.value as typeof current.components.iconButton.tone } },
+                    }))}>
+                    <option value="filled">Filled</option>
+                    <option value="soft">Soft</option>
+                    <option value="ghost">Ghost</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Context menu density</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.contextMenu.density}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, contextMenu: { ...current.components.contextMenu, density: event.target.value as typeof current.components.contextMenu.density } },
+                    }))}>
+                    <option value="compact">Compact</option>
+                    <option value="comfortable">Comfortable</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Tree view density</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.treeView.density}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, treeView: { ...current.components.treeView, density: event.target.value as typeof current.components.treeView.density } },
+                    }))}>
+                    <option value="compact">Compact</option>
+                    <option value="comfortable">Comfortable</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>OTP slots</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.otpInput.slots}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, otpInput: { ...current.components.otpInput, slots: event.target.value as typeof current.components.otpInput.slots } },
+                    }))}>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Date-time format</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.dateTimePicker.timeFormat}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, dateTimePicker: { ...current.components.dateTimePicker, timeFormat: event.target.value as typeof current.components.dateTimePicker.timeFormat } },
+                    }))}>
+                    <option value="12h">12h</option>
+                    <option value="24h">24h</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Select style</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.selectField.style}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, selectField: { ...current.components.selectField, style: event.target.value as typeof current.components.selectField.style } },
+                    }))}>
+                    <option value="default">Default</option>
+                    <option value="quiet">Quiet</option>
+                    <option value="underline">Underline</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Character count tone</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.characterCount.tone}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, characterCount: { ...current.components.characterCount, tone: event.target.value as typeof current.components.characterCount.tone } },
+                    }))}>
+                    <option value="muted">Muted</option>
+                    <option value="warning">Warning</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Code block line numbers</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.codeBlock.lineNumbers ? "yes" : "no"}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, codeBlock: { ...current.components.codeBlock, lineNumbers: event.target.value === "yes" } },
+                    }))}>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Chart style</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.chartCard.chartType}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, chartCard: { ...current.components.chartCard, chartType: event.target.value as typeof current.components.chartCard.chartType } },
+                    }))}>
+                    <option value="line">Line</option>
+                    <option value="bar">Bar</option>
+                    <option value="donut">Donut</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Sheet placement</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.sheet.placement}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, sheet: { ...current.components.sheet, placement: event.target.value as typeof current.components.sheet.placement } },
+                    }))}>
+                    <option value="bottom">Bottom</option>
+                    <option value="right">Right</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Notification center style</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.notificationCenter.style}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, notificationCenter: { ...current.components.notificationCenter, style: event.target.value as typeof current.components.notificationCenter.style } },
+                    }))}>
+                    <option value="stacked">Stacked</option>
+                    <option value="grouped">Grouped</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Bulk actions style</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.bulkActions.selectionStyle}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, bulkActions: { ...current.components.bulkActions, selectionStyle: event.target.value as typeof current.components.bulkActions.selectionStyle } },
+                    }))}>
+                    <option value="inline">Inline</option>
+                    <option value="bar">Bar</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Inline edit trigger</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.inlineEdit.trigger}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, inlineEdit: { ...current.components.inlineEdit, trigger: event.target.value as typeof current.components.inlineEdit.trigger } },
+                    }))}>
+                    <option value="icon">Icon</option>
+                    <option value="row">Row</option>
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-app-muted">
+                  <span>Upload flow layout</span>
+                  <select className="field px-3 py-2 text-sm" value={system.components.fileUploadFlow.layout}
+                    onChange={(event) => setSystem((current) => ({
+                      ...current,
+                      components: { ...current.components, fileUploadFlow: { ...current.components.fileUploadFlow, layout: event.target.value as typeof current.components.fileUploadFlow.layout } },
+                    }))}>
+                    <option value="steps">Steps</option>
+                    <option value="stack">Stack</option>
+                  </select>
+                </label>
+              </div>
+            </div>
           </div>
         </details>
         ) : null}
@@ -4992,9 +5195,29 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "heading",
     "text",
     "link",
+    "box",
+    "container",
+    "stack",
+    "inline",
+    "gridPrimitive",
+    "iconButton",
+    "linkButton",
+    "splitButton",
+    "buttonGroup",
+    "contextMenu",
+    "skipLink",
+    "anchorNav",
+    "bottomNav",
+    "treeView",
     "visuallyHidden",
     "portal",
     "scrollArea",
+    "otpInput",
+    "stepperInput",
+    "dateTimePicker",
+    "selectField",
+    "inputGroup",
+    "characterCount",
     "sidebarLayout",
     "stackedLayout",
     "authLayout",
@@ -5003,6 +5226,19 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "onboarding",
     "multiStepFlow",
     "permissionState",
+    "hoverCard",
+    "codeBlock",
+    "quoteBlock",
+    "calendarView",
+    "filterBar",
+    "chartCard",
+    "sheet",
+    "sidePanel",
+    "bulkActions",
+    "inlineEdit",
+    "tableSelection",
+    "notificationCenter",
+    "fileUploadFlow",
   ] as const;
   const messageInline = system.components.input.messageStyle === "inline";
   const settingsPreset = system.screens.settings;
@@ -6404,6 +6640,176 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{description}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="preview-surface p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Extended primitives and actions</p>
+              <h4 className="preview-heading mt-2 text-xl font-semibold">Layout, action, and navigation inventory</h4>
+            </div>
+            <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Breadth-first coverage</span>
+          </div>
+          <div className="mt-4 grid gap-4">
+            <div className="preview-elevated p-4" style={{ borderRadius: system.radius[system.components.box.radius], boxShadow: system.components.box.surface === "raised" ? system.shadows.md : "none" }}>
+              <p className="text-sm font-semibold">Box / Container / Stack / Inline / Grid</p>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)", maxWidth: system.foundations.containers[system.components.container.width], marginInline: system.components.container.align === "center" ? "auto" : "0", padding: system.foundations.spacing[system.components.container.padding] }}>
+                <div className="grid" style={{ gap: system.foundations.spacing[system.components.stack.gap] }}>
+                  <div className="flex flex-wrap" style={{ gap: system.foundations.spacing[system.components.inline.gap], justifyContent: system.components.inline.align === "between" ? "space-between" : system.components.inline.align === "center" ? "center" : "flex-start" }}>
+                    <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Inline</span>
+                    <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Stack</span>
+                    <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Container</span>
+                  </div>
+                  <div className="grid" style={{ gridTemplateColumns: `repeat(${system.components.gridPrimitive.columns}, minmax(0, 1fr))`, gap: system.foundations.spacing[system.components.gridPrimitive.gap] }}>
+                    {Array.from({ length: Number(system.components.gridPrimitive.columns) }).map((_, index) => (
+                      <div key={index} className="rounded-[var(--preview-radius-sm)] border px-3 py-3 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>
+                        Cell {index + 1}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Advanced action patterns</p>
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <button className="text-sm font-medium" style={{ width: system.foundations.spacing[system.components.iconButton.size], height: system.foundations.spacing[system.components.iconButton.size], borderRadius: system.radius[system.components.iconButton.radius], background: system.components.iconButton.tone === "filled" ? "var(--preview-action-primary)" : system.components.iconButton.tone === "soft" ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent", color: system.components.iconButton.tone === "filled" ? "var(--preview-action-primary-foreground)" : "var(--preview-action-primary)", border: system.components.iconButton.tone === "ghost" ? "1px solid var(--preview-border-default)" : "none" }}>+</button>
+                  <button className="text-sm font-medium" style={{ borderRadius: system.radius[system.components.splitButton.radius], padding: "0.65rem 0.9rem", background: system.components.splitButton.tone === "strong" ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)", color: system.components.splitButton.tone === "strong" ? "var(--preview-action-primary-foreground)" : "var(--preview-action-primary)" }}>Split action ▾</button>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {["Primary", "Secondary", "Tertiary"].map((item, index) => (
+                    <button key={item} className="text-sm font-medium" style={{ borderRadius: system.radius[system.components.buttonGroup.radius], padding: "0.55rem 0.8rem", border: "1px solid var(--preview-border-default)", background: system.components.buttonGroup.attached && index > 0 ? "color-mix(in srgb, var(--preview-border-default) 18%, transparent)" : "transparent" }}>
+                      {item}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)" }}>
+                  <p className="text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>Context menu</p>
+                  <div className="mt-2 grid gap-2 text-sm" style={{ gap: system.components.contextMenu.density === "compact" ? "0.35rem" : "0.55rem" }}>
+                    {["Duplicate", "Share", "Delete"].map((item) => <div key={item} className="rounded-[var(--preview-radius-sm)] px-3 py-2" style={{ background: item === "Delete" ? "color-mix(in srgb, var(--preview-danger) 10%, transparent)" : "color-mix(in srgb, var(--preview-border-default) 12%, transparent)" }}>{item}</div>)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Navigation additions</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {["Overview", "Components", "Exports"].map((item, index) => (
+                    <span key={item} className="rounded-full px-3 py-1 text-xs font-semibold" style={{ background: system.components.anchorNav.style === "pill" ? index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 12%, transparent)" : "color-mix(in srgb, var(--preview-border-default) 18%, transparent)" : "transparent", color: index === 0 ? "var(--preview-action-primary)" : "var(--preview-text-secondary)", borderBottom: system.components.anchorNav.style === "underline" && index === 0 ? "2px solid var(--preview-action-primary)" : undefined }}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-3 grid gap-2 text-sm">
+                  {["Foundations", "Components", "Patterns"].map((item, index) => (
+                    <div key={item} className="flex items-center gap-3 rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)", paddingInlineStart: `${0.75 + index * 0.55}rem` }}>
+                      <span className="inline-flex h-2.5 w-2.5 rounded-full" style={{ background: index === 0 ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-border-strong) 42%, transparent)" }} />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 flex items-center justify-between rounded-[var(--preview-radius-md)] border px-3" style={{ borderColor: "var(--preview-border-default)", minHeight: system.foundations.spacing[system.components.bottomNav.height] }}>
+                  {["Home", "Search", "Profile"].map((item, index) => (
+                    <span key={item} className="text-sm font-medium" style={{ color: index === 0 ? "var(--preview-action-primary)" : "var(--preview-text-secondary)" }}>{item}</span>
+                  ))}
+                </div>
+                <div className="mt-3 flex items-center gap-3 text-sm">
+                  <a href="#main-content" style={{ color: "var(--preview-action-primary)", textDecoration: system.components.linkButton.emphasis === "underline" ? "underline" : "none" }}>Skip link</a>
+                  <button className="text-sm font-medium" style={{ color: system.components.linkButton.tone === "brand" ? "var(--preview-action-primary)" : "var(--preview-text-secondary)" }}>Link button</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Advanced controls and product flows</p>
+              <h4 className="preview-heading mt-2 text-xl font-semibold">Remaining inventory previewed in one surface</h4>
+            </div>
+            <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Mature-system breadth</span>
+          </div>
+          <div className="mt-4 grid gap-4">
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">OTP, stepper, select, and input group</p>
+              <div className="mt-3 flex" style={{ gap: system.foundations.spacing[system.components.otpInput.gap] }}>
+                {Array.from({ length: Number(system.components.otpInput.slots) }).map((_, index) => (
+                  <div key={index} className="flex-1 rounded-[var(--preview-radius-sm)] border px-3 py-3 text-center text-sm" style={{ borderColor: "var(--preview-border-default)" }}>{system.components.otpInput.mask ? "•" : index + 1}</div>
+                ))}
+              </div>
+              <div className="mt-3 flex overflow-hidden border" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.inputGroup.radius] }}>
+                <span className="px-3 py-2 text-sm" style={{ background: "color-mix(in srgb, var(--preview-border-default) 18%, transparent)" }}>https://</span>
+                <span className="min-w-0 flex-1 px-3 py-2 text-sm">brand.example</span>
+                <span className="px-3 py-2 text-sm" style={{ background: "color-mix(in srgb, var(--preview-border-default) 12%, transparent)" }}>Check</span>
+              </div>
+              <div className="mt-3 flex items-center justify-between rounded-[var(--preview-radius-md)] border px-3 py-2 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>
+                <span>Date-time picker</span>
+                <span style={{ color: "var(--preview-text-muted)" }}>{system.components.dateTimePicker.timeFormat}</span>
+              </div>
+              <div className="mt-3 flex items-center justify-between rounded-[var(--preview-radius-md)] border px-3 py-2 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>
+                <span>Select field</span>
+                <span style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.selectField.style)}</span>
+              </div>
+              <div className="mt-3 flex items-center justify-between text-xs" style={{ color: system.components.characterCount.tone === "warning" ? "var(--preview-warning)" : "var(--preview-text-muted)" }}>
+                <span>Character count</span>
+                <span>126 / 160</span>
+              </div>
+            </div>
+
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Content, overlays, and product patterns</p>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)", boxShadow: system.shadows[system.components.hoverCard.shadow] }}>
+                <p className="text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>Hover card</p>
+                <p className="mt-2 text-sm">Design-system package with recent export activity and contributor notes.</p>
+              </div>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)" }}>
+                <pre className="overflow-x-auto text-xs" style={{ lineHeight: 1.6 }}><code>{system.components.codeBlock.lineNumbers ? "01  export const theme = {\n02    color: 'brand'\n03  };" : "export const theme = {\n  color: 'brand'\n};"}</code></pre>
+              </div>
+              <blockquote className="mt-3 rounded-[var(--preview-radius-md)] border-l-4 px-4 py-3 text-sm" style={{ borderLeftColor: system.components.quoteBlock.border === "accent" ? "var(--preview-action-primary)" : "var(--preview-border-strong)", background: "color-mix(in srgb, var(--preview-border-default) 10%, transparent)" }}>
+                “A design system becomes valuable when teams can see how decisions scale.”
+              </blockquote>
+              <div className="mt-3 grid grid-cols-7 gap-2 text-xs">
+                {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
+                  <div key={day + index} className="rounded-[var(--preview-radius-sm)] border px-2 py-2 text-center" style={{ borderColor: "var(--preview-border-default)", opacity: !system.components.calendarView.showWeekends && index > 4 ? 0.45 : 1 }}>{day}</div>
+                ))}
+              </div>
+              <div className="mt-3 flex items-end gap-2">
+                {[38, 62, 46, 74].map((value, index) => (
+                  <div key={value} className="flex-1 rounded-t-[var(--preview-radius-sm)]" style={{ height: `${value}px`, background: index === 2 && system.components.chartCard.chartType === "line" ? "var(--preview-success)" : "var(--preview-action-primary)", opacity: system.components.chartCard.chartType === "donut" && index > 1 ? 0.45 : 1 }} />
+                ))}
+              </div>
+              <div className="mt-3 rounded-[var(--preview-radius-md)] border p-3" style={{ borderColor: "var(--preview-border-default)" }}>
+                <div className="flex items-center justify-between text-sm">
+                  <span>Sheet / side panel</span>
+                  <span style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.sheet.placement)}</span>
+                </div>
+                <div className="mt-3 rounded-[var(--preview-radius-sm)] border px-3 py-2 text-sm" style={{ borderColor: "var(--preview-border-default)", maxWidth: system.foundations.containers[system.components.sidePanel.width] }}>Inspector details and review notes</div>
+              </div>
+              <div className="mt-3 grid gap-2 text-sm">
+                <div className="flex items-center justify-between rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                  <span>Bulk actions</span>
+                  <span>{sectionLabel(system.components.bulkActions.selectionStyle)}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                  <span>Inline edit</span>
+                  <span>{sectionLabel(system.components.inlineEdit.trigger)}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                  <span>Notification center</span>
+                  <span>{sectionLabel(system.components.notificationCenter.style)}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
+                  <span>Upload flow</span>
+                  <span>{sectionLabel(system.components.fileUploadFlow.layout)}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

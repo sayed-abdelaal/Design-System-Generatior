@@ -936,6 +936,69 @@ function buildComponentRecipes(
       underline: direction === "editorial" ? "always" : direction === "minimal" ? "hover" : "hover",
       tone: direction === "minimal" ? "foreground" : "brand",
     },
+    box: {
+      padding: compact ? "3" : "4",
+      radius: direction === "minimal" ? "md" : "lg",
+      surface: direction === "bold" ? "raised" : "flat",
+    },
+    container: {
+      width: airy ? "2xl" : "xl",
+      padding: compact ? "4" : "5",
+      align: direction === "editorial" ? "left" : "center",
+    },
+    stack: {
+      gap: compact ? "3" : "4",
+      align: direction === "editorial" ? "start" : "stretch",
+    },
+    inline: {
+      gap: compact ? "2" : "3",
+      wrap: true,
+      align: direction === "minimal" ? "between" : "center",
+    },
+    gridPrimitive: {
+      columns: airy ? "2" : direction === "bold" ? "4" : "3",
+      gap: compact ? "3" : "4",
+      responsive: direction === "editorial" ? "fixed" : "auto",
+    },
+    iconButton: {
+      size: compact ? "8" : "10",
+      radius: direction === "minimal" ? "md" : "lg",
+      tone: direction === "bold" ? "filled" : direction === "minimal" ? "ghost" : "soft",
+    },
+    linkButton: {
+      scale: compact ? "bodySm" : "body",
+      emphasis: direction === "editorial" ? "underline" : "solid",
+      tone: direction === "minimal" ? "muted" : "brand",
+    },
+    splitButton: {
+      radius: direction === "minimal" ? "md" : "lg",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    buttonGroup: {
+      radius: direction === "minimal" ? "md" : "lg",
+      attached: direction !== "editorial",
+    },
+    contextMenu: {
+      radius: direction === "minimal" ? "md" : "lg",
+      density: compact ? "compact" : "comfortable",
+    },
+    skipLink: {
+      radius: direction === "minimal" ? "sm" : "md",
+      offset: compact ? "2" : "3",
+      reveal: direction === "bold" ? "floating" : "inline",
+    },
+    anchorNav: {
+      gap: compact ? "2" : "3",
+      style: direction === "minimal" ? "underline" : "pill",
+    },
+    bottomNav: {
+      height: compact ? "10" : "12",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    treeView: {
+      indent: compact ? "3" : "4",
+      density: compact ? "compact" : "comfortable",
+    },
     visuallyHidden: {
       labelPrefix: "Screen reader",
       revealOnFocus: direction !== "minimal",
@@ -950,6 +1013,33 @@ function buildComponentRecipes(
       padding: compact ? "3" : "4",
       scrollbar: direction === "minimal" ? "subtle" : "visible",
       maxHeight: compact ? "sm" : "md",
+    },
+    otpInput: {
+      slots: compact ? "4" : "6",
+      gap: compact ? "2" : "3",
+      mask: direction !== "editorial",
+    },
+    stepperInput: {
+      radius: direction === "minimal" ? "md" : "lg",
+      stepSize: compact ? "1" : direction === "bold" ? "10" : "5",
+    },
+    dateTimePicker: {
+      radius: direction === "minimal" ? "md" : "lg",
+      density: compact ? "compact" : "comfortable",
+      timeFormat: direction === "editorial" ? "12h" : "24h",
+    },
+    selectField: {
+      radius: direction === "minimal" ? "md" : "lg",
+      style: direction === "minimal" ? "quiet" : direction === "editorial" ? "underline" : "default",
+    },
+    inputGroup: {
+      radius: direction === "minimal" ? "md" : "lg",
+      gap: compact ? "2" : "3",
+      attached: direction !== "editorial",
+    },
+    characterCount: {
+      tone: direction === "bold" ? "warning" : "muted",
+      alignment: direction === "editorial" ? "between" : "end",
     },
     fieldset: {
       radius: direction === "minimal" ? "md" : "lg",
@@ -1002,6 +1092,63 @@ function buildComponentRecipes(
       padding: compact ? "4" : "5",
       tone: direction === "bold" ? "strong" : "soft",
       layout: direction === "editorial" ? "panel" : "inline",
+    },
+    hoverCard: {
+      radius: direction === "minimal" ? "md" : "lg",
+      shadow: direction === "bold" ? "lg" : "md",
+      trigger: direction === "minimal" ? "click" : "hover",
+    },
+    codeBlock: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      lineNumbers: direction !== "minimal",
+    },
+    quoteBlock: {
+      radius: direction === "minimal" ? "md" : "lg",
+      border: direction === "editorial" ? "accent" : "neutral",
+    },
+    calendarView: {
+      density: compact ? "compact" : "comfortable",
+      showWeekends: direction !== "minimal",
+    },
+    filterBar: {
+      radius: direction === "minimal" ? "md" : "lg",
+      chips: direction !== "minimal",
+      sticky: direction === "bold",
+    },
+    chartCard: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      chartType: direction === "bold" ? "bar" : direction === "editorial" ? "line" : "donut",
+    },
+    sheet: {
+      radius: direction === "minimal" ? "lg" : "xl",
+      placement: direction === "editorial" ? "bottom" : "right",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    sidePanel: {
+      width: airy ? "md" : "sm",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    bulkActions: {
+      radius: direction === "minimal" ? "md" : "lg",
+      selectionStyle: direction === "editorial" ? "inline" : "bar",
+    },
+    inlineEdit: {
+      radius: direction === "minimal" ? "md" : "lg",
+      trigger: direction === "minimal" ? "icon" : "row",
+    },
+    tableSelection: {
+      density: compact ? "compact" : "comfortable",
+      bulkBar: direction !== "minimal",
+    },
+    notificationCenter: {
+      width: airy ? "md" : "sm",
+      style: direction === "editorial" ? "grouped" : "stacked",
+    },
+    fileUploadFlow: {
+      layout: direction === "editorial" ? "steps" : "stack",
+      showPreview: direction !== "minimal",
     },
   };
 }
