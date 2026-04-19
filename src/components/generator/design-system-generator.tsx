@@ -2860,6 +2860,85 @@ function TokenPanel({
 
             <div className="grid gap-2 sm:grid-cols-2">
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Search field radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.searchField.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, searchField: { ...current.components.searchField, radius: event.target.value as typeof current.components.searchField.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Search field style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.searchField.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, searchField: { ...current.components.searchField, style: event.target.value as typeof current.components.searchField.style } },
+                  }))}>
+                  <option value="boxed">Boxed</option>
+                  <option value="underline">Underline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Search shortcut</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.searchField.showShortcut ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, searchField: { ...current.components.searchField, showShortcut: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Password reveal</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.typedField.passwordReveal ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, typedField: { ...current.components.typedField, passwordReveal: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Number controls</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.typedField.numberControls}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, typedField: { ...current.components.typedField, numberControls: event.target.value as typeof current.components.typedField.numberControls } },
+                  }))}>
+                  <option value="inline">Inline</option>
+                  <option value="split">Split</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Contact icon</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.typedField.contactIcon ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, typedField: { ...current.components.typedField, contactIcon: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>URL preview</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.typedField.urlPreview ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, typedField: { ...current.components.typedField, urlPreview: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Textarea radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.textarea.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -3391,9 +3470,105 @@ function TokenPanel({
                   <option value="right">Right</option>
                 </select>
               </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Dialog mode</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.dialog.mode}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, dialog: { ...current.components.dialog, mode: event.target.value as typeof current.components.dialog.mode } },
+                  }))}>
+                  <option value="standard">Standard</option>
+                  <option value="alert">Alert dialog</option>
+                </select>
+              </label>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Breadcrumbs gap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.breadcrumbs.gap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, breadcrumbs: { ...current.components.breadcrumbs, gap: event.target.value as typeof current.components.breadcrumbs.gap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Breadcrumbs separator</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.breadcrumbs.separatorStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, breadcrumbs: { ...current.components.breadcrumbs, separatorStyle: event.target.value as typeof current.components.breadcrumbs.separatorStyle } },
+                  }))}>
+                  <option value="chevron">Chevron</option>
+                  <option value="slash">Slash</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stepper gap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.stepper.gap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, stepper: { ...current.components.stepper, gap: event.target.value as typeof current.components.stepper.gap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stepper style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.stepper.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, stepper: { ...current.components.stepper, style: event.target.value as typeof current.components.stepper.style } },
+                  }))}>
+                  <option value="line">Line</option>
+                  <option value="pill">Pill</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Popover tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.popover.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, popover: { ...current.components.popover, tone: event.target.value as typeof current.components.popover.tone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Popover shadow</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.popover.shadow}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, popover: { ...current.components.popover, shadow: event.target.value as typeof current.components.popover.shadow } },
+                  }))}>
+                  {Object.keys(system.shadows).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tooltip tone</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tooltip.tone}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, tooltip: { ...current.components.tooltip, tone: event.target.value as typeof current.components.tooltip.tone } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Tooltip padding</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.tooltip.padding}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, tooltip: { ...current.components.tooltip, padding: event.target.value as typeof current.components.tooltip.padding } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+
               <label className="space-y-1 text-xs text-app-muted">
                 <span>Checkbox size</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.checkbox.size}
@@ -3460,6 +3635,38 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Autocomplete radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.autocomplete.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, autocomplete: { ...current.components.autocomplete, radius: event.target.value as typeof current.components.autocomplete.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Autocomplete density</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.autocomplete.suggestionDensity}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, autocomplete: { ...current.components.autocomplete, suggestionDensity: event.target.value as typeof current.components.autocomplete.suggestionDensity } },
+                  }))}>
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Autocomplete preview</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.autocomplete.showPreview ? "yes" : "no"}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, autocomplete: { ...current.components.autocomplete, showPreview: event.target.value === "yes" } },
+                  }))}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Listbox radius</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.listbox.radius}
                   onChange={(event) => setSystem((current) => ({
@@ -3467,6 +3674,39 @@ function TokenPanel({
                     components: { ...current.components, listbox: { ...current.components.listbox, radius: event.target.value as typeof current.components.listbox.radius } },
                   }))}>
                   {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Multi-select radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.multiSelect.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, multiSelect: { ...current.components.multiSelect, radius: event.target.value as typeof current.components.multiSelect.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Multi-select tag style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.multiSelect.tagStyle}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, multiSelect: { ...current.components.multiSelect, tagStyle: event.target.value as typeof current.components.multiSelect.tagStyle } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="outline">Outline</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Multi-select max visible</span>
+                <select className="field px-3 py-2 text-sm" value={String(system.components.multiSelect.maxVisible)}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, multiSelect: { ...current.components.multiSelect, maxVisible: Number(event.target.value) as typeof current.components.multiSelect.maxVisible } },
+                  }))}>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
@@ -3545,6 +3785,38 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Avatar group size</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.avatarGroup.size}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, avatarGroup: { ...current.components.avatarGroup, size: event.target.value as typeof current.components.avatarGroup.size } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Avatar group overlap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.avatarGroup.overlap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, avatarGroup: { ...current.components.avatarGroup, overlap: event.target.value as typeof current.components.avatarGroup.overlap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Avatar group ring</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.avatarGroup.ring}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, avatarGroup: { ...current.components.avatarGroup, ring: event.target.value as typeof current.components.avatarGroup.ring } },
+                  }))}>
+                  <option value="none">None</option>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Divider thickness</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.divider.thickness}
                   onChange={(event) => setSystem((current) => ({
@@ -3596,6 +3868,90 @@ function TokenPanel({
                     components: { ...current.components, descriptionList: { ...current.components.descriptionList, gap: event.target.value as typeof current.components.descriptionList.gap } },
                   }))}>
                   {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>List gap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.list.gap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, list: { ...current.components.list, gap: event.target.value as typeof current.components.list.gap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>List item padding</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.list.itemPadding}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, list: { ...current.components.list, itemPadding: event.target.value as typeof current.components.list.itemPadding } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>List style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.list.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, list: { ...current.components.list, style: event.target.value as typeof current.components.list.style } },
+                  }))}>
+                  <option value="plain">Plain</option>
+                  <option value="divided">Divided</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stat card radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.statCard.radius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, statCard: { ...current.components.statCard, radius: event.target.value as typeof current.components.statCard.radius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stat card emphasis</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.statCard.emphasis}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, statCard: { ...current.components.statCard, emphasis: event.target.value as typeof current.components.statCard.emphasis } },
+                  }))}>
+                  <option value="soft">Soft</option>
+                  <option value="strong">Strong</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Timeline gap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.timeline.gap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, timeline: { ...current.components.timeline, gap: event.target.value as typeof current.components.timeline.gap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Timeline style</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.timeline.style}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, timeline: { ...current.components.timeline, style: event.target.value as typeof current.components.timeline.style } },
+                  }))}>
+                  <option value="line">Line</option>
+                  <option value="filled">Filled</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Activity feed density</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.activityFeed.density}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, activityFeed: { ...current.components.activityFeed, density: event.target.value as typeof current.components.activityFeed.density } },
+                  }))}>
+                  <option value="compact">Compact</option>
+                  <option value="comfortable">Comfortable</option>
                 </select>
               </label>
             </div>
@@ -4115,6 +4471,8 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
   const componentFamilies = [
     "button",
     "input",
+    "searchField",
+    "typedField",
     "textarea",
     "badge",
     "alert",
@@ -4123,10 +4481,15 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "checkbox",
     "switch",
     "radioGroup",
+    "list",
     "dropdown",
     "combobox",
+    "autocomplete",
     "listbox",
+    "multiSelect",
     "pagination",
+    "breadcrumbs",
+    "stepper",
     "tabs",
     "tag",
     "toast",
@@ -4136,9 +4499,15 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "loader",
     "skeleton",
     "state",
+    "popover",
+    "tooltip",
     "navbar",
     "sidebar",
     "avatar",
+    "avatarGroup",
+    "statCard",
+    "timeline",
+    "activityFeed",
     "divider",
     "fieldset",
     "descriptionList",
@@ -4236,6 +4605,11 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         <div className="preview-surface p-5">
           <h4 className="preview-heading text-xl font-semibold">Inputs</h4>
           <div className="mt-4 space-y-3">
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ borderColor: system.components.searchField.style === "underline" ? "transparent" : "var(--preview-border-default)", borderBottomColor: system.components.searchField.style === "underline" ? "var(--preview-border-strong)" : undefined, borderRadius: system.components.searchField.style === "underline" ? "0" : system.radius[system.components.searchField.radius], borderWidth: system.components.searchField.style === "underline" ? "0 0 var(--preview-input-border-width) 0" : "var(--preview-input-border-width)", paddingInline: system.foundations.spacing[system.components.searchField.paddingX], paddingBlock: system.foundations.spacing[system.components.searchField.paddingY] }}>
+              <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+              <span className="min-w-0 flex-1">Distinct search field</span>
+              {system.components.searchField.showShortcut ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>⌘K</span> : null}
+            </div>
             <div>
               <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
                 {system.components.input.showPrefix ? <PreviewIcon icon={UserIcon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
@@ -4278,6 +4652,32 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
               </div>
               <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.input.selectStyle === "quiet" ? "Quiet" : "Default"} ⌄</span>
             </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                {system.components.typedField.contactIcon ? <PreviewIcon icon={Mail01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span className="min-w-0 flex-1">hello@northstar.app</span>
+                <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Email</span>
+              </div>
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                {system.components.typedField.contactIcon ? <PreviewIcon icon={UserIcon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
+                <span className="min-w-0 flex-1">+1 (555) 340-2200</span>
+                <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Phone</span>
+              </div>
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                <span className="min-w-0 flex-1">••••••••••••</span>
+                {system.components.typedField.passwordReveal ? <span className="text-xs font-medium" style={{ color: "var(--preview-action-primary)" }}>Show</span> : <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Hidden</span>}
+              </div>
+              <div className="preview-input flex items-center justify-between px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                <span>12</span>
+                <div className="flex gap-2 text-xs" style={{ color: "var(--preview-text-muted)" }}>
+                  {system.components.typedField.numberControls === "split" ? <><span className="rounded border px-2 py-1" style={{ borderColor: "var(--preview-border-default)" }}>-</span><span className="rounded border px-2 py-1" style={{ borderColor: "var(--preview-border-default)" }}>+</span></> : <span>− / +</span>}
+                </div>
+              </div>
+              <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)] md:col-span-2">
+                <span className="min-w-0 flex-1">https://northstar.design/system</span>
+                {system.components.typedField.urlPreview ? <span className="text-xs font-medium" style={{ color: "var(--preview-action-primary)" }}>Open preview</span> : <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>URL</span>}
+              </div>
+            </div>
             <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]" style={{ background: "var(--preview-input-readonly-bg)", borderColor: "var(--preview-input-readonly-border)" }}>
               {system.components.input.showPrefix ? <PreviewIcon icon={DatabaseIcon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} /> : null}
               <span className="min-w-0 flex-1">Read-only token reference</span>
@@ -4305,7 +4705,48 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
 
         <div className="preview-surface p-5">
-          <h4 className="preview-heading text-xl font-semibold">Tabs, Table, and Dialog</h4>
+          <h4 className="preview-heading text-xl font-semibold">Navigation and overlays</h4>
+          <div className="mt-4 flex flex-wrap items-center" style={{ gap: system.foundations.spacing[system.components.breadcrumbs.gap] }}>
+            {["Workspace", "Systems", "Northstar Labs"].map((item, index) => (
+              <div key={item} className="flex items-center" style={{ gap: system.foundations.spacing[system.components.breadcrumbs.gap] }}>
+                <span
+                  className="text-sm"
+                  style={{
+                    color: index === 2 || system.components.breadcrumbs.emphasis === "strong"
+                      ? "var(--preview-text-primary)"
+                      : "var(--preview-text-secondary)",
+                    fontWeight: index === 2 ? 600 : 500,
+                  }}
+                >
+                  {item}
+                </span>
+                {index < 2 ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.breadcrumbs.separatorStyle === "slash" ? "/" : "›"}</span> : null}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex items-center" style={{ gap: system.foundations.spacing[system.components.stepper.gap] }}>
+            {["Brand", "Tokens", "Preview", "Export"].map((step, index) => (
+              <div key={step} className="flex items-center" style={{ gap: system.foundations.spacing[system.components.stepper.gap] }}>
+                <span
+                  className="inline-flex items-center justify-center text-xs font-semibold"
+                  style={{
+                    width: system.foundations.spacing[system.components.stepper.markerSize],
+                    height: system.foundations.spacing[system.components.stepper.markerSize],
+                    borderRadius: system.components.stepper.style === "pill" ? "999px" : system.radius.md,
+                    background: index <= 1 ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-border-default) 36%, transparent)",
+                    color: index <= 1 ? "var(--preview-action-primary-foreground)" : "var(--preview-text-secondary)",
+                  }}
+                >
+                  {index + 1}
+                </span>
+                <span className="text-sm" style={{ color: index <= 1 ? "var(--preview-text-primary)" : "var(--preview-text-secondary)" }}>{step}</span>
+                {index < 3 ? <span className="h-px w-6" style={{ background: "color-mix(in srgb, var(--preview-border-default) 70%, transparent)" }} /> : null}
+              </div>
+            ))}
+          </div>
+
+          <h5 className="preview-heading mt-5 text-lg font-semibold">Tabs, Table, and Dialog</h5>
           <div className="mt-4 flex border p-1" style={{ borderColor: "var(--preview-border-default)", borderRadius: system.radius[system.components.tabs.radius], gap: system.foundations.spacing[system.components.tabs.gap] }}>
             {["Tokens", "Navigation", "Overlays"].map((tab, index) => (
               <button
@@ -4360,14 +4801,26 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
           <div className="preview-overlay mt-5 rounded-[var(--preview-dialog-radius)] p-3" style={{ display: "flex", justifyContent: system.components.dialog.presentation === "drawer" || system.components.dialog.placement === "right" ? "flex-end" : "center" }}>
             <div className="preview-elevated" style={{ maxWidth: "var(--preview-dialog-width)", width: system.components.dialog.presentation === "drawer" ? "100%" : undefined, borderRadius: "var(--preview-dialog-radius)", boxShadow: "var(--preview-dialog-shadow)" }}>
               <div className="px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)]">
-                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>{system.components.dialog.presentation === "drawer" ? "Drawer recipe" : "Dialog recipe"}</p>
-                <h5 className="preview-heading mt-2 text-lg font-semibold">{system.components.dialog.presentation === "drawer" ? "Inspect side panel" : "Review export package"}</h5>
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>
+                  {system.components.dialog.mode === "alert"
+                    ? "Alert dialog"
+                    : system.components.dialog.presentation === "drawer"
+                      ? "Drawer recipe"
+                      : "Dialog recipe"}
+                </p>
+                <h5 className="preview-heading mt-2 text-lg font-semibold">
+                  {system.components.dialog.mode === "alert"
+                    ? "Confirm destructive action"
+                    : system.components.dialog.presentation === "drawer"
+                      ? "Inspect side panel"
+                      : "Review export package"}
+                </h5>
                 <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
-                  Overlay tone, blur, radius, width, shadow, and presentation are all recipe-driven.
+                  Overlay tone, blur, radius, width, shadow, presentation, and alert-dialog treatment are all recipe-driven.
                 </p>
                 <div className="mt-4 flex gap-3">
-                  <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Cancel</button>
-                  <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Export now</button>
+                  <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">{system.components.dialog.mode === "alert" ? "Keep package" : "Cancel"}</button>
+                  <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">{system.components.dialog.mode === "alert" ? "Delete export" : "Export now"}</button>
                 </div>
               </div>
             </div>
@@ -4620,6 +5073,42 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                 <div key={item} className="text-sm" style={{ padding: system.foundations.spacing[system.components.listbox.optionPadding], background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>{item}</div>
               ))}
             </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.autocomplete.radius], padding: system.foundations.spacing[system.components.autocomplete.padding] }}>
+                <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                  <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+                  <span className="min-w-0 flex-1">Autocomplete</span>
+                </div>
+                {system.components.autocomplete.showPreview ? (
+                  <div className="mt-3 grid" style={{ gap: system.components.autocomplete.suggestionDensity === "compact" ? "0.4rem" : "0.6rem" }}>
+                    {["Northstar Labs", "Northstar Health", "Northstar Commerce"].map((item, index) => (
+                      <div key={item} className="text-sm" style={{ padding: system.components.autocomplete.suggestionDensity === "compact" ? "0.45rem 0.6rem" : "0.65rem 0.8rem", borderRadius: "var(--preview-radius-sm)", background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>{item}</div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.multiSelect.radius], padding: system.foundations.spacing[system.components.multiSelect.padding] }}>
+                <p className="text-sm font-medium">Multi-select</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {["Design", "Product", "Engineering", "Ops"].slice(0, system.components.multiSelect.maxVisible).map((item) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center gap-2 text-xs font-semibold"
+                      style={{
+                        padding: `${system.foundations.spacing[system.components.tag.paddingY]} ${system.foundations.spacing[system.components.tag.paddingX]}`,
+                        borderRadius: system.radius[system.components.multiSelect.radius],
+                        background: system.components.multiSelect.tagStyle === "outline" ? "transparent" : tagBackground,
+                        color: tagForeground,
+                        border: `1px solid ${tagBorder}`,
+                      }}
+                    >
+                      {item}
+                    </span>
+                  ))}
+                  <span className="inline-flex items-center text-xs" style={{ color: "var(--preview-text-muted)" }}>+2 more</span>
+                </div>
+              </div>
+            </div>
             <div className="flex items-center" style={{ gap: system.foundations.spacing[system.components.pagination.gap] }}>
               {["Prev", "1", "2", "3", "Next"].map((item, index) => (
                 <span
@@ -4637,6 +5126,34 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   {item}
                 </span>
               ))}
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div
+                className="preview-elevated"
+                style={{
+                  padding: system.foundations.spacing[system.components.popover.padding],
+                  borderRadius: system.radius[system.components.popover.radius],
+                  boxShadow: system.shadows[system.components.popover.shadow],
+                  background: system.components.popover.tone === "strong" ? "var(--preview-surface-elevated)" : "var(--preview-surface)",
+                }}
+              >
+                <p className="text-sm font-semibold">Popover</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>Quick metadata and secondary actions live in a lighter overlay than full dialogs.</p>
+              </div>
+              <div className="flex items-center justify-start">
+                <div
+                  className="inline-flex items-center gap-2"
+                  style={{
+                    padding: system.foundations.spacing[system.components.tooltip.padding],
+                    borderRadius: system.radius[system.components.tooltip.radius],
+                    background: system.components.tooltip.tone === "strong" ? "var(--preview-foreground)" : "color-mix(in srgb, var(--preview-foreground) 86%, transparent)",
+                    color: "var(--preview-background)",
+                  }}
+                >
+                  <span className="text-xs font-semibold">Tooltip</span>
+                  <span className="text-xs">Used for helper explanations and compact metadata.</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -4975,6 +5492,179 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                   <p className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{description}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-grid-gap grid xl:grid-cols-[1.08fr_0.92fr]">
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Data display patterns</h4>
+          <div className="mt-4 grid gap-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                { label: "Token groups", value: String(metrics.paletteCount) },
+                { label: "Type roles", value: String(Object.keys(system.typography.scale).length) },
+                { label: "Preview families", value: String(componentFamilies.length) },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="preview-elevated"
+                  style={{
+                    padding: system.foundations.spacing[system.components.statCard.padding],
+                    borderRadius: system.radius[system.components.statCard.radius],
+                    background: system.components.statCard.emphasis === "strong"
+                      ? "color-mix(in srgb, var(--preview-action-primary) 8%, var(--preview-surface-elevated))"
+                      : "var(--preview-surface-elevated)",
+                  }}
+                >
+                  <p className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{item.label}</p>
+                  <p className="preview-heading mt-3 text-3xl font-semibold">{item.value}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+              <div className="preview-elevated p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">List and list items</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(system.components.list.style)}</span>
+                </div>
+                <div className="mt-4 grid" style={{ gap: system.foundations.spacing[system.components.list.gap] }}>
+                  {["Palette QA report", "Accessibility review", "Export handoff"].map((item, index) => (
+                    <div
+                      key={item}
+                      className="flex items-center justify-between"
+                      style={{
+                        padding: system.foundations.spacing[system.components.list.itemPadding],
+                        borderBottom: system.components.list.style === "divided" && index < 2 ? `1px solid var(--preview-border-default)` : undefined,
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="inline-flex rounded-full"
+                          style={{
+                            width: system.foundations.spacing[system.components.statusDot.size],
+                            height: system.foundations.spacing[system.components.statusDot.size],
+                            background: index === 0 ? "var(--preview-success)" : index === 1 ? "var(--preview-warning)" : "var(--preview-info)",
+                          }}
+                        />
+                        <span className="text-sm">{item}</span>
+                      </div>
+                      <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{index === 0 ? "Ready" : index === 1 ? "Review" : "Queued"}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="preview-elevated p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Avatar group and description list</p>
+                  <div className="flex items-center">
+                    {["NS", "CL", "AM", "+2"].map((label, index) => (
+                      <span
+                        key={label}
+                        className="inline-flex items-center justify-center text-xs font-semibold"
+                        style={{
+                          width: system.foundations.spacing[system.components.avatarGroup.size],
+                          height: system.foundations.spacing[system.components.avatarGroup.size],
+                          borderRadius: "999px",
+                          marginInlineStart: index === 0 ? "0" : `calc(${system.foundations.spacing[system.components.avatarGroup.overlap]} * -1)`,
+                          background: index === 3 ? "var(--preview-surface)" : "color-mix(in srgb, var(--preview-action-primary) 14%, transparent)",
+                          boxShadow: system.components.avatarGroup.ring === "none" ? "none" : system.components.avatarGroup.ring === "soft" ? "0 0 0 2px var(--preview-background)" : "0 0 0 3px var(--preview-background)",
+                        }}
+                      >
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4 grid" style={{ gap: system.foundations.spacing[system.components.descriptionList.gap], gridTemplateColumns: `${system.foundations.containers[system.components.descriptionList.termWidth]} 1fr` }}>
+                  {[
+                    ["Owner", "Design systems guild"],
+                    ["Cadence", "Weekly review"],
+                    ["Scope", "Tokens, previews, exports"],
+                  ].map(([term, value]) => (
+                    <div key={term} className="contents">
+                      <span className="text-sm font-semibold">{term}</span>
+                      <span className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="preview-surface p-5">
+          <h4 className="preview-heading text-xl font-semibold">Timeline and activity feed</h4>
+          <div className="mt-4 grid gap-4">
+            <div className="preview-elevated p-4">
+              <div className="grid" style={{ gap: system.foundations.spacing[system.components.timeline.gap] }}>
+                {[
+                  ["Palette generated", "2m ago"],
+                  ["Semantic roles tuned", "14m ago"],
+                  ["Export package reviewed", "32m ago"],
+                ].map(([title, time], index) => (
+                  <div key={title} className="grid grid-cols-[auto_1fr] gap-3">
+                    <div className="flex flex-col items-center">
+                      <span
+                        className="inline-flex rounded-full"
+                        style={{
+                          width: system.foundations.spacing[system.components.timeline.markerSize],
+                          height: system.foundations.spacing[system.components.timeline.markerSize],
+                          background: system.components.timeline.style === "filled" ? "var(--preview-action-primary)" : "var(--preview-background)",
+                          boxShadow: system.components.timeline.style === "filled" ? "none" : "0 0 0 2px var(--preview-action-primary)",
+                        }}
+                      />
+                      {index < 2 ? <span className="mt-2 w-px flex-1" style={{ background: "color-mix(in srgb, var(--preview-border-default) 70%, transparent)" }} /> : null}
+                    </div>
+                    <div className="pb-2">
+                      <p className="text-sm font-medium">{title}</p>
+                      <p className="mt-1 text-xs" style={{ color: "var(--preview-text-muted)" }}>{time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="preview-elevated p-4">
+              <p className="text-sm font-semibold">Activity feed</p>
+              <div className="mt-4 grid" style={{ gap: system.foundations.spacing[system.components.activityFeed.gap] }}>
+                {[
+                  ["Aurelian Studio", "Updated dashboard preset spacing."],
+                  ["Northstar Labs", "Exported a new Tailwind package."],
+                  ["Vector Health", "Adjusted accessibility focus treatment."],
+                ].map(([title, detail], index) => (
+                  <div
+                    key={title}
+                    className="flex items-start gap-3"
+                    style={{
+                      padding: system.foundations.spacing[system.components.activityFeed.itemPadding],
+                      borderRadius: "var(--preview-radius-md)",
+                      background: system.components.activityFeed.density === "compact" ? "transparent" : "color-mix(in srgb, var(--preview-surface-elevated) 88%, white)",
+                      border: system.components.activityFeed.density === "compact" ? "none" : "1px solid var(--preview-border-default)",
+                    }}
+                  >
+                    <span
+                      className="inline-flex items-center justify-center text-xs font-semibold"
+                      style={{
+                        width: system.foundations.spacing[system.components.avatar.size],
+                        height: system.foundations.spacing[system.components.avatar.size],
+                        borderRadius: system.radius[system.components.avatar.radius],
+                        background: index === 1 ? "color-mix(in srgb, var(--preview-success) 16%, transparent)" : "color-mix(in srgb, var(--preview-action-primary) 12%, transparent)",
+                      }}
+                    >
+                      {title.split(" ").map((part) => part[0]).join("").slice(0, 2)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium">{title}</p>
+                      <p className="mt-1 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{detail}</p>
+                    </div>
+                    <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{index + 1}h</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -5751,6 +6441,15 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
         </nav>
 
         <section className="preview-surface p-5">
+          <div className="mb-4 flex flex-wrap items-center" style={{ gap: system.foundations.spacing[system.components.breadcrumbs.gap] }}>
+            {["Workspace", "Operations", "Northstar Labs"].map((item, index) => (
+              <div key={item} className="flex items-center" style={{ gap: system.foundations.spacing[system.components.breadcrumbs.gap] }}>
+                <span className="text-sm" style={{ color: index === 2 ? "var(--preview-text-primary)" : "var(--preview-text-secondary)", fontWeight: index === 2 ? 600 : 500 }}>{item}</span>
+                {index < 2 ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.breadcrumbs.separatorStyle === "slash" ? "/" : "›"}</span> : null}
+              </div>
+            ))}
+          </div>
+
           <div
             className="mb-4 flex flex-wrap items-center justify-between gap-3 border"
             style={{
@@ -5783,15 +6482,37 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
           </div>
 
           <div className="grid gap-3 lg:grid-cols-[1fr_auto_auto]" style={{ gap: dashboardGap }}>
-            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+            <div className="preview-input flex items-center gap-3" style={{ paddingInline: system.foundations.spacing[system.components.searchField.paddingX], paddingBlock: system.foundations.spacing[system.components.searchField.paddingY], borderColor: system.components.searchField.style === "underline" ? "transparent" : "var(--preview-border-default)", borderBottomColor: system.components.searchField.style === "underline" ? "var(--preview-border-strong)" : undefined, borderRadius: system.components.searchField.style === "underline" ? "0" : system.radius[system.components.searchField.radius], borderWidth: system.components.searchField.style === "underline" ? "0 0 var(--preview-input-border-width) 0" : "var(--preview-input-border-width)" }}>
               <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
               <span className="min-w-0 flex-1">Search systems and exports</span>
+              {system.components.searchField.showShortcut ? <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>⌘K</span> : null}
             </div>
             <div className="preview-input flex items-center justify-between px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
               <span>Theme health</span>
               <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>All</span>
             </div>
             <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Filters</button>
+          </div>
+
+          <div className="mt-4 flex items-center" style={{ gap: system.foundations.spacing[system.components.stepper.gap] }}>
+            {["Profile", "Review", "Export"].map((step, index) => (
+              <div key={step} className="flex items-center" style={{ gap: system.foundations.spacing[system.components.stepper.gap] }}>
+                <span
+                  className="inline-flex items-center justify-center text-xs font-semibold"
+                  style={{
+                    width: system.foundations.spacing[system.components.stepper.markerSize],
+                    height: system.foundations.spacing[system.components.stepper.markerSize],
+                    borderRadius: system.components.stepper.style === "pill" ? "999px" : system.radius.md,
+                    background: index === 0 ? "var(--preview-action-primary)" : "color-mix(in srgb, var(--preview-border-default) 36%, transparent)",
+                    color: index === 0 ? "var(--preview-action-primary-foreground)" : "var(--preview-text-secondary)",
+                  }}
+                >
+                  {index + 1}
+                </span>
+                <span className="text-sm" style={{ color: index === 0 ? "var(--preview-text-primary)" : "var(--preview-text-secondary)" }}>{step}</span>
+                {index < 2 ? <span className="h-px w-6" style={{ background: "color-mix(in srgb, var(--preview-border-default) 70%, transparent)" }} /> : null}
+              </div>
+            ))}
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-4">
@@ -5813,10 +6534,66 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                 maxWidth: "20rem",
               }}
             >
-              <p className="text-sm font-semibold">Toast / notification</p>
-              <p className="mt-1 text-sm" style={{ color: "var(--preview-text-secondary)" }}>Theme export finished and the session file is ready.</p>
+                <p className="text-sm font-semibold">Toast / notification</p>
+                <p className="mt-1 text-sm" style={{ color: "var(--preview-text-secondary)" }}>Theme export finished and the session file is ready.</p>
+              </div>
             </div>
-          </div>
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.autocomplete.radius], padding: system.foundations.spacing[system.components.autocomplete.padding] }}>
+                <p className="text-sm font-semibold">Autocomplete</p>
+                <div className="mt-3 grid" style={{ gap: system.components.autocomplete.suggestionDensity === "compact" ? "0.4rem" : "0.6rem" }}>
+                  {["Northstar Labs", "Northstar Growth", "Northstar Health"].map((item, index) => (
+                    <div key={item} className="text-sm" style={{ padding: system.components.autocomplete.suggestionDensity === "compact" ? "0.45rem 0.6rem" : "0.65rem 0.8rem", borderRadius: "var(--preview-radius-sm)", background: index === 0 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent" }}>{item}</div>
+                  ))}
+                </div>
+              </div>
+              <div className="preview-elevated" style={{ borderRadius: system.radius[system.components.multiSelect.radius], padding: system.foundations.spacing[system.components.multiSelect.padding] }}>
+                <p className="text-sm font-semibold">Multi-select filters</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {["Finance", "Healthcare", "Editorial", "SaaS"].slice(0, system.components.multiSelect.maxVisible).map((item) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center gap-2 text-xs font-semibold"
+                      style={{
+                        padding: `${system.foundations.spacing[system.components.tag.paddingY]} ${system.foundations.spacing[system.components.tag.paddingX]}`,
+                        borderRadius: system.radius[system.components.multiSelect.radius],
+                        background: system.components.multiSelect.tagStyle === "outline" ? "transparent" : "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)",
+                        color: "var(--preview-action-primary)",
+                        border: `1px solid color-mix(in srgb, var(--preview-action-primary) 24%, transparent)`,
+                      }}
+                    >
+                      {item}
+                    </span>
+                  ))}
+                  <span className="inline-flex items-center text-xs" style={{ color: "var(--preview-text-muted)" }}>+2 more</span>
+                </div>
+              </div>
+              <div
+                className="preview-elevated"
+                style={{
+                  padding: system.foundations.spacing[system.components.popover.padding],
+                  borderRadius: system.radius[system.components.popover.radius],
+                  boxShadow: system.shadows[system.components.popover.shadow],
+                  background: system.components.popover.tone === "strong" ? "var(--preview-surface-elevated)" : "var(--preview-surface)",
+                }}
+              >
+                <p className="text-sm font-semibold">Popover</p>
+                <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>QA notes and metadata can surface here without taking over the page.</p>
+              </div>
+              <div className="preview-overlay rounded-[var(--preview-dialog-radius)] p-3" style={{ display: "flex", justifyContent: "center" }}>
+                <div className="preview-elevated" style={{ maxWidth: "20rem", borderRadius: system.radius[system.components.dialog.radius], boxShadow: system.shadows[system.components.dialog.shadow] }}>
+                  <div className="px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)]">
+                    <p className="text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>{system.components.dialog.mode === "alert" ? "Alert dialog" : "Dialog"}</p>
+                    <p className="mt-2 text-sm font-semibold">{system.components.dialog.mode === "alert" ? "Delete this export package?" : "Review package details"}</p>
+                    <div className="mt-3 flex gap-3">
+                      <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">{system.components.dialog.mode === "alert" ? "Cancel" : "Close"}</button>
+                      <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">{system.components.dialog.mode === "alert" ? "Delete" : "Confirm"}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
         </section>
 
         <div className="preview-grid-gap grid lg:grid-cols-3">
@@ -5825,7 +6602,17 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
             { label: "Custom palettes", value: String(metrics.customPaletteCount) },
             { label: "Export files", value: String(metrics.exportFileCount) },
           ].map((card) => (
-            <div key={card.label} className="preview-elevated p-5">
+            <div
+              key={card.label}
+              className="preview-elevated"
+              style={{
+                padding: system.foundations.spacing[system.components.statCard.padding],
+                borderRadius: system.radius[system.components.statCard.radius],
+                background: system.components.statCard.emphasis === "strong"
+                  ? "color-mix(in srgb, var(--preview-action-primary) 8%, var(--preview-surface-elevated))"
+                  : "var(--preview-surface-elevated)",
+              }}
+            >
               <p className="text-sm" style={{ color: "var(--preview-text-secondary)" }}>{card.label}</p>
               <p className="preview-heading mt-3 text-4xl font-semibold">{card.value}</p>
               <p className="mt-3 text-sm" style={{ color: "var(--preview-text-muted)" }}>Updated live from the token editor panel.</p>
@@ -5932,10 +6719,76 @@ function MarketingPreview({ brandName, system }: { brandName: string; system: Ge
                   Tuned for practical product work rather than decorative mock outputs.
                 </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+              <div className="preview-elevated p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold">Avatar group</p>
+                  <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>Owners</span>
+                </div>
+                <div className="mt-4 flex items-center">
+                  {["AM", "CL", "JN", "+3"].map((label, index) => (
+                    <span
+                      key={label}
+                      className="inline-flex items-center justify-center text-xs font-semibold"
+                      style={{
+                        width: system.foundations.spacing[system.components.avatarGroup.size],
+                        height: system.foundations.spacing[system.components.avatarGroup.size],
+                        borderRadius: "999px",
+                        marginInlineStart: index === 0 ? "0" : `calc(${system.foundations.spacing[system.components.avatarGroup.overlap]} * -1)`,
+                        background: index === 3 ? "var(--preview-surface)" : "color-mix(in srgb, var(--preview-action-primary) 14%, transparent)",
+                        boxShadow: system.components.avatarGroup.ring === "none" ? "none" : system.components.avatarGroup.ring === "soft" ? "0 0 0 2px var(--preview-background)" : "0 0 0 3px var(--preview-background)",
+                      }}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="preview-elevated p-4">
+                <p className="text-sm font-semibold">Activity feed</p>
+                <div className="mt-4 grid" style={{ gap: system.foundations.spacing[system.components.activityFeed.gap] }}>
+                  {[
+                    ["Northstar Labs", "Published a new token package."],
+                    ["Aurelian Studio", "Adjusted marketing typography."],
+                    ["Vector Health", "Resolved two contrast warnings."],
+                  ].map(([title, detail], index) => (
+                    <div
+                      key={title}
+                      className="flex items-start gap-3"
+                      style={{
+                        padding: system.foundations.spacing[system.components.activityFeed.itemPadding],
+                        borderRadius: "var(--preview-radius-md)",
+                        background: system.components.activityFeed.density === "compact" ? "transparent" : "color-mix(in srgb, var(--preview-surface-elevated) 88%, white)",
+                        border: system.components.activityFeed.density === "compact" ? "none" : "1px solid var(--preview-border-default)",
+                      }}
+                    >
+                      <span
+                        className="inline-flex items-center justify-center text-xs font-semibold"
+                        style={{
+                          width: system.foundations.spacing[system.components.avatar.size],
+                          height: system.foundations.spacing[system.components.avatar.size],
+                          borderRadius: system.radius[system.components.avatar.radius],
+                          background: index === 2 ? "color-mix(in srgb, var(--preview-success) 16%, transparent)" : "color-mix(in srgb, var(--preview-action-primary) 12%, transparent)",
+                        }}
+                      >
+                        {title.split(" ").map((part) => part[0]).join("").slice(0, 2)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium">{title}</p>
+                        <p className="mt-1 text-sm" style={{ color: "var(--preview-text-secondary)" }}>{detail}</p>
+                      </div>
+                      <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{index + 1}h</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
 
       <section className="preview-grid-gap grid lg:grid-cols-3">
         {[

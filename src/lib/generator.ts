@@ -635,6 +635,19 @@ function buildComponentRecipes(
       messageStyle: density === "compact" ? "inline" : "stacked",
       readOnlyStyle: direction === "minimal" ? "outlined" : "muted",
     },
+    searchField: {
+      radius: direction === "minimal" ? "md" : "pill",
+      paddingX: compact ? "4" : "5",
+      paddingY: compact ? "3" : "4",
+      style: direction === "minimal" ? "underline" : "boxed",
+      showShortcut: direction !== "minimal",
+    },
+    typedField: {
+      passwordReveal: direction !== "editorial",
+      numberControls: compact ? "inline" : "split",
+      contactIcon: direction !== "minimal",
+      urlPreview: direction !== "bold",
+    },
     textarea: {
       radius: direction === "minimal" ? "md" : "lg",
       minHeight: airy ? "16" : "12",
@@ -737,6 +750,12 @@ function buildComponentRecipes(
       padding: compact ? "4" : "5",
       shadow: direction === "bold" ? "md" : "sm",
     },
+    autocomplete: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      suggestionDensity: compact ? "compact" : "comfortable",
+      showPreview: direction !== "minimal",
+    },
     radioGroup: {
       gap: compact ? "3" : "4",
       tone: direction === "bold" ? "strong" : "soft",
@@ -751,6 +770,11 @@ function buildComponentRecipes(
       gap: compact ? "3" : "4",
       termWidth: "sm",
     },
+    list: {
+      gap: compact ? "2" : "3",
+      itemPadding: compact ? "3" : "4",
+      style: direction === "minimal" ? "plain" : "divided",
+    },
     dialog: {
       radius: direction === "editorial" ? "lg" : "xl",
       width: airy ? "lg" : "md",
@@ -760,15 +784,32 @@ function buildComponentRecipes(
       overlayTone: direction === "bold" ? "strong" : "soft",
       presentation: direction === "minimal" ? "drawer" : "modal",
       placement: direction === "minimal" ? "right" : "center",
+      mode: direction === "bold" ? "alert" : "standard",
     },
     listbox: {
       radius: direction === "minimal" ? "md" : "lg",
       optionPadding: compact ? "3" : "4",
       maxHeight: "sm",
     },
+    multiSelect: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      tagStyle: direction === "bold" ? "outline" : "soft",
+      maxVisible: compact ? 2 : 3,
+    },
     pagination: {
       radius: direction === "minimal" ? "md" : "pill",
       gap: compact ? "2" : "3",
+    },
+    breadcrumbs: {
+      gap: compact ? "2" : "3",
+      separatorStyle: direction === "editorial" ? "slash" : "chevron",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    stepper: {
+      gap: compact ? "3" : "4",
+      markerSize: compact ? "5" : "6",
+      style: direction === "minimal" ? "line" : "pill",
     },
     tabs: {
       radius: direction === "minimal" ? "md" : "pill",
@@ -781,6 +822,17 @@ function buildComponentRecipes(
       padding: compact ? "3" : "4",
       shadow: direction === "bold" ? "md" : "sm",
     },
+    popover: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "3" : "4",
+      shadow: direction === "bold" ? "md" : "sm",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
+    tooltip: {
+      radius: direction === "minimal" ? "sm" : "md",
+      padding: compact ? "2" : "3",
+      tone: direction === "bold" ? "strong" : "soft",
+    },
     navbar: {
       height: compact ? "10" : "12",
       paddingX: compact ? "4" : "6",
@@ -790,6 +842,26 @@ function buildComponentRecipes(
       size: compact ? "8" : "10",
       radius: "pill",
       ring: direction === "minimal" ? "none" : direction === "bold" ? "strong" : "soft",
+    },
+    avatarGroup: {
+      size: compact ? "6" : "8",
+      overlap: compact ? "2" : "3",
+      ring: direction === "minimal" ? "none" : direction === "bold" ? "strong" : "soft",
+    },
+    statCard: {
+      radius: direction === "minimal" ? "md" : "lg",
+      padding: compact ? "4" : "5",
+      emphasis: direction === "bold" ? "strong" : "soft",
+    },
+    timeline: {
+      gap: compact ? "3" : "4",
+      markerSize: compact ? "3" : "4",
+      style: direction === "editorial" ? "filled" : "line",
+    },
+    activityFeed: {
+      gap: compact ? "3" : "4",
+      itemPadding: compact ? "3" : "4",
+      density: compact ? "compact" : "comfortable",
     },
     divider: {
       thickness: direction === "bold" ? "2px" : "1px",

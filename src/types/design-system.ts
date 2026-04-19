@@ -458,6 +458,21 @@ export type InputRecipe = {
   readOnlyStyle: "muted" | "outlined";
 };
 
+export type SearchFieldRecipe = {
+  radius: keyof RadiusScale;
+  paddingX: keyof SpacingScale;
+  paddingY: keyof SpacingScale;
+  style: "boxed" | "underline";
+  showShortcut: boolean;
+};
+
+export type TypedFieldRecipe = {
+  passwordReveal: boolean;
+  numberControls: "inline" | "split";
+  contactIcon: boolean;
+  urlPreview: boolean;
+};
+
 export type TextareaRecipe = {
   radius: keyof RadiusScale;
   minHeight: keyof SpacingScale;
@@ -566,6 +581,7 @@ export type DialogRecipe = {
   overlayTone: "soft" | "strong";
   presentation: "modal" | "drawer";
   placement: "center" | "right";
+  mode: "standard" | "alert";
 };
 
 export type CheckboxRecipe = {
@@ -578,6 +594,13 @@ export type ComboboxRecipe = {
   radius: keyof RadiusScale;
   padding: keyof SpacingScale;
   shadow: keyof ShadowScale;
+};
+
+export type AutocompleteRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  suggestionDensity: "compact" | "comfortable";
+  showPreview: boolean;
 };
 
 export type RadioGroupRecipe = {
@@ -597,15 +620,64 @@ export type DescriptionListRecipe = {
   termWidth: keyof ContainerScale;
 };
 
+export type ListRecipe = {
+  gap: keyof SpacingScale;
+  itemPadding: keyof SpacingScale;
+  style: "plain" | "divided";
+};
+
+export type AvatarGroupRecipe = {
+  size: keyof SpacingScale;
+  overlap: keyof SpacingScale;
+  ring: "none" | "soft" | "strong";
+};
+
+export type StatCardRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  emphasis: "soft" | "strong";
+};
+
+export type TimelineRecipe = {
+  gap: keyof SpacingScale;
+  markerSize: keyof SpacingScale;
+  style: "line" | "filled";
+};
+
+export type ActivityFeedRecipe = {
+  gap: keyof SpacingScale;
+  itemPadding: keyof SpacingScale;
+  density: "compact" | "comfortable";
+};
+
 export type ListboxRecipe = {
   radius: keyof RadiusScale;
   optionPadding: keyof SpacingScale;
   maxHeight: keyof ContainerScale;
 };
 
+export type MultiSelectRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  tagStyle: "soft" | "outline";
+  maxVisible: 2 | 3 | 4;
+};
+
 export type PaginationRecipe = {
   radius: keyof RadiusScale;
   gap: keyof SpacingScale;
+};
+
+export type BreadcrumbsRecipe = {
+  gap: keyof SpacingScale;
+  separatorStyle: "chevron" | "slash";
+  emphasis: "soft" | "strong";
+};
+
+export type StepperRecipe = {
+  gap: keyof SpacingScale;
+  markerSize: keyof SpacingScale;
+  style: "line" | "pill";
 };
 
 export type TabsRecipe = {
@@ -619,6 +691,19 @@ export type DropdownRecipe = {
   radius: keyof RadiusScale;
   padding: keyof SpacingScale;
   shadow: keyof ShadowScale;
+};
+
+export type PopoverRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  shadow: keyof ShadowScale;
+  tone: "soft" | "strong";
+};
+
+export type TooltipRecipe = {
+  radius: keyof RadiusScale;
+  padding: keyof SpacingScale;
+  tone: "soft" | "strong";
 };
 
 export type NavbarRecipe = {
@@ -711,13 +796,17 @@ export type IconSystem = {
 export type ComponentRecipes = {
   button: ButtonRecipe;
   input: InputRecipe;
+  searchField: SearchFieldRecipe;
+  typedField: TypedFieldRecipe;
   table: TableRecipe;
   sidebar: SidebarRecipe;
   checkbox: CheckboxRecipe;
   combobox: ComboboxRecipe;
+  autocomplete: AutocompleteRecipe;
   radioGroup: RadioGroupRecipe;
   switch: SwitchRecipe;
   descriptionList: DescriptionListRecipe;
+  list: ListRecipe;
   badge: BadgeRecipe;
   tag: TagRecipe;
   toast: ToastRecipe;
@@ -728,12 +817,21 @@ export type ComponentRecipes = {
   skeleton: SkeletonRecipe;
   state: StateRecipe;
   listbox: ListboxRecipe;
+  multiSelect: MultiSelectRecipe;
   pagination: PaginationRecipe;
+  breadcrumbs: BreadcrumbsRecipe;
+  stepper: StepperRecipe;
   tabs: TabsRecipe;
   dropdown: DropdownRecipe;
+  popover: PopoverRecipe;
+  tooltip: TooltipRecipe;
   alert: AlertRecipe;
   navbar: NavbarRecipe;
   avatar: AvatarRecipe;
+  avatarGroup: AvatarGroupRecipe;
+  statCard: StatCardRecipe;
+  timeline: TimelineRecipe;
+  activityFeed: ActivityFeedRecipe;
   divider: DividerRecipe;
   textarea: TextareaRecipe;
   heading: HeadingRecipe;
