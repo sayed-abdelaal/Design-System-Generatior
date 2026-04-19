@@ -3404,11 +3404,51 @@ function TokenPanel({
 
             <div className="grid gap-2 sm:grid-cols-2">
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Sidebar layout content width</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.sidebarLayout.contentWidth}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, sidebarLayout: { ...current.components.sidebarLayout, contentWidth: event.target.value as typeof current.components.sidebarLayout.contentWidth } },
+                  }))}>
+                  {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Sidebar layout width</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.sidebarLayout.sidebarWidth}
                   onChange={(event) => setSystem((current) => ({
                     ...current,
                     components: { ...current.components, sidebarLayout: { ...current.components.sidebarLayout, sidebarWidth: event.target.value as typeof current.components.sidebarLayout.sidebarWidth } },
+                  }))}>
+                  {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Sidebar layout header</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.sidebarLayout.headerHeight}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, sidebarLayout: { ...current.components.sidebarLayout, headerHeight: event.target.value as typeof current.components.sidebarLayout.headerHeight } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Sidebar layout page gap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.sidebarLayout.pageGap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, sidebarLayout: { ...current.components.sidebarLayout, pageGap: event.target.value as typeof current.components.sidebarLayout.pageGap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Stacked layout content width</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.stackedLayout.contentWidth}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, stackedLayout: { ...current.components.stackedLayout, contentWidth: event.target.value as typeof current.components.stackedLayout.contentWidth } },
                   }))}>
                   {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
                 </select>
@@ -3424,6 +3464,16 @@ function TokenPanel({
                 </select>
               </label>
               <label className="space-y-1 text-xs text-app-muted">
+                <span>Stacked layout page gap</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.stackedLayout.pageGap}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, stackedLayout: { ...current.components.stackedLayout, pageGap: event.target.value as typeof current.components.stackedLayout.pageGap } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
                 <span>Auth card width</span>
                 <select className="field px-3 py-2 text-sm" value={system.components.authLayout.cardWidth}
                   onChange={(event) => setSystem((current) => ({
@@ -3431,6 +3481,26 @@ function TokenPanel({
                     components: { ...current.components, authLayout: { ...current.components.authLayout, cardWidth: event.target.value as typeof current.components.authLayout.cardWidth } },
                   }))}>
                   {Object.keys(system.foundations.containers).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Auth card radius</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.authLayout.cardRadius}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, authLayout: { ...current.components.authLayout, cardRadius: event.target.value as typeof current.components.authLayout.cardRadius } },
+                  }))}>
+                  {Object.keys(system.radius).map((key) => <option key={key} value={key}>{key}</option>)}
+                </select>
+              </label>
+              <label className="space-y-1 text-xs text-app-muted">
+                <span>Auth card padding</span>
+                <select className="field px-3 py-2 text-sm" value={system.components.authLayout.cardPadding}
+                  onChange={(event) => setSystem((current) => ({
+                    ...current,
+                    components: { ...current.components, authLayout: { ...current.components.authLayout, cardPadding: event.target.value as typeof current.components.authLayout.cardPadding } },
+                  }))}>
+                  {Object.keys(system.foundations.spacing).map((key) => <option key={key} value={key}>{key}</option>)}
                 </select>
               </label>
             </div>
@@ -3873,6 +3943,23 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
     "authLayout",
   ] as const;
   const messageInline = system.components.input.messageStyle === "inline";
+  const settingsPreset = system.screens.settings;
+  const dataTablePreset = system.screens.dataTable;
+  const formPagePreset = system.screens.formPage;
+  const authPreset = system.screens.auth;
+  const settingsGap = system.foundations.spacing[settingsPreset.sectionGap];
+  const dataTableGap = system.foundations.spacing[dataTablePreset.sectionGap];
+  const formGap = system.foundations.spacing[formPagePreset.sectionGap];
+  const authGap = system.foundations.spacing[authPreset.sectionGap];
+  const sidebarPageGap = system.foundations.spacing[system.components.sidebarLayout.pageGap];
+  const stackedPageGap = system.foundations.spacing[system.components.stackedLayout.pageGap];
+  const sidebarHeaderHeight = system.foundations.spacing[system.components.sidebarLayout.headerHeight];
+  const stackedHeaderHeight = system.foundations.spacing[system.components.stackedLayout.headerHeight];
+  const sidebarWidth = system.foundations.containers[system.components.sidebarLayout.sidebarWidth];
+  const settingsWidth = system.foundations.containers[settingsPreset.maxWidth];
+  const formWidth = system.foundations.containers[formPagePreset.maxWidth];
+  const dataTableWidth = system.foundations.containers[dataTablePreset.maxWidth];
+  const authWidth = system.foundations.containers[system.components.authLayout.cardWidth];
 
   return (
     <div className="preview-stack flex flex-col">
@@ -4249,28 +4336,180 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
       </section>
 
-      <section className="preview-grid-gap grid xl:grid-cols-3">
+      <section className="preview-grid-gap grid">
         <div className="preview-surface p-5">
-          <h4 className="preview-heading text-xl font-semibold">Sidebar layout</h4>
-          <div className="mt-4 grid" style={{ gridTemplateColumns: `${system.foundations.containers[system.components.sidebarLayout.sidebarWidth]} 1fr`, gap: system.foundations.spacing[system.components.sidebarLayout.pageGap] }}>
-            <div className="preview-elevated p-4">Sidebar</div>
-            <div className="preview-elevated p-4">Content</div>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Page and app-shell patterns</p>
+              <h4 className="preview-heading mt-2 text-xl font-semibold">Page headers, sections, and screen recipes</h4>
+            </div>
+            <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">Stage 2 maturity</span>
           </div>
-        </div>
-        <div className="preview-surface p-5">
-          <h4 className="preview-heading text-xl font-semibold">Stacked layout</h4>
-          <div className="preview-elevated p-4" style={{ minHeight: system.foundations.spacing[system.components.stackedLayout.headerHeight] }}>Header</div>
-          <div className="preview-elevated mt-4 p-4">Page content</div>
-        </div>
-        <div className="preview-surface p-5">
-          <h4 className="preview-heading text-xl font-semibold">Auth layout</h4>
-          <div className="preview-overlay rounded-[var(--preview-dialog-radius)] p-3">
-            <div className="preview-elevated" style={{ maxWidth: system.foundations.containers[system.components.authLayout.cardWidth], borderRadius: system.radius[system.components.authLayout.cardRadius], padding: system.foundations.spacing[system.components.authLayout.cardPadding] }}>
-              <p className="preview-heading text-lg font-semibold">Sign in</p>
-              <div className="mt-3 grid gap-3">
-                <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Email address" readOnly />
-                <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Password" readOnly />
-                <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Continue</button>
+
+          <div className="mt-4 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+            <div className="grid gap-4">
+              <div className="preview-elevated p-4" style={{ maxWidth: settingsWidth }}>
+                <div className="flex flex-wrap items-start justify-between gap-4" style={{ marginBottom: settingsGap }}>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Page header</p>
+                    <h5 className="preview-heading mt-2 text-2xl font-semibold">Theme settings</h5>
+                    <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                      Settings screens inherit page width, chrome padding, and section spacing from the screen preset layer.
+                    </p>
+                  </div>
+                  <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm font-medium">Publish changes</button>
+                </div>
+
+                <div className="grid gap-4 lg:grid-cols-[0.84fr_1.16fr]" style={{ gap: settingsGap }}>
+                  <aside className="preview-surface p-4" style={{ minWidth: sidebarWidth }}>
+                    {["General", "Color roles", "Typography", "Exports"].map((item, index) => (
+                      <div
+                        key={item}
+                        className="flex items-center gap-3 text-sm"
+                        style={{
+                          padding: "0.75rem 0.875rem",
+                          borderRadius: system.radius[system.components.sidebar.itemRadius],
+                          background: index === 1 ? "color-mix(in srgb, var(--preview-action-primary) 10%, transparent)" : "transparent",
+                          color: index === 1 ? "var(--preview-action-primary)" : "var(--preview-text-secondary)",
+                        }}
+                      >
+                        <PreviewIcon icon={index === 0 ? Home01Icon : index === 1 ? Settings01Icon : index === 2 ? DashboardSquare01Icon : DatabaseIcon} context="nav" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+                        {item}
+                      </div>
+                    ))}
+                  </aside>
+                  <div className="grid gap-4" style={{ gap: settingsGap }}>
+                    <div className="preview-surface p-4">
+                      <p className="text-sm font-semibold">Page section</p>
+                      <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                        Description, inputs, and actions stay inside one repeatable section pattern instead of one-off page markup.
+                      </p>
+                    </div>
+                    <div className="preview-surface p-4">
+                      <div className="grid gap-3 md:grid-cols-2">
+                        <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Primary action label" readOnly />
+                        <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Secondary action label" readOnly />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 xl:grid-cols-2">
+                <div className="preview-elevated p-4" style={{ maxWidth: dataTableWidth }}>
+                  <div className="flex flex-wrap items-center justify-between gap-3" style={{ marginBottom: dataTableGap }}>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Data table page</p>
+                      <h5 className="preview-heading mt-2 text-lg font-semibold">Inventory overview</h5>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Filter</button>
+                      <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Export</button>
+                    </div>
+                  </div>
+                  <div className="grid gap-3" style={{ gap: dataTableGap }}>
+                    <div className="grid gap-3 lg:grid-cols-[1fr_auto_auto]">
+                      <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                        <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+                        <span className="min-w-0 flex-1">Search rows</span>
+                      </div>
+                      <div className="preview-input flex items-center justify-between px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+                        <span>Status</span>
+                        <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>All</span>
+                      </div>
+                      <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Apply</button>
+                    </div>
+                    <div className="overflow-hidden rounded-[var(--preview-table-radius)] border" style={{ borderColor: "var(--preview-border-default)" }}>
+                      <div
+                        className="grid grid-cols-[1.2fr_0.8fr_0.7fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-xs uppercase tracking-[0.16em]"
+                        style={{
+                          color: "var(--preview-text-muted)",
+                          background: system.components.table.headerStyle === "elevated" ? "var(--preview-surface-elevated)" : "color-mix(in srgb, var(--preview-border-default) 24%, transparent)",
+                        }}
+                      >
+                        <span>Pattern</span>
+                        <span>Status</span>
+                        <span>Owner</span>
+                      </div>
+                      {[
+                        ["Tokens", "Ready", "AM"],
+                        ["Layouts", "Review", "CL"],
+                        ["Exports", "Ready", "JN"],
+                      ].map((row) => (
+                        <div key={row[0]} data-zebra={system.components.table.zebraStripes ? "true" : "false"} className="preview-table-row grid grid-cols-[1.2fr_0.8fr_0.7fr] px-[var(--preview-table-px)] py-[var(--preview-table-py)] text-sm">
+                          {row.map((cell) => <span key={cell}>{cell}</span>)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="preview-elevated p-4" style={{ maxWidth: formWidth }}>
+                  <div className="flex flex-wrap items-center justify-between gap-3" style={{ marginBottom: formGap }}>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Form page layout</p>
+                      <h5 className="preview-heading mt-2 text-lg font-semibold">Launch checklist</h5>
+                    </div>
+                    <span className="preview-badge px-[var(--preview-badge-px)] py-[var(--preview-badge-py)] text-xs font-semibold">{sectionLabel(formPagePreset.density)}</span>
+                  </div>
+                  <div className="grid gap-4" style={{ gap: formGap }}>
+                    <div className="preview-surface p-4">
+                      <p className="text-sm font-semibold">Form section</p>
+                      <div className="mt-3 grid gap-3">
+                        <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Project name" readOnly />
+                        <textarea className="preview-input min-h-[var(--preview-textarea-min-height)] px-[var(--preview-textarea-padding)] py-[var(--preview-textarea-padding)]" value="Supporting notes and release context." readOnly />
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm font-medium">Save draft</button>
+                      <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm font-medium">Submit review</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="preview-surface p-4">
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>App shell recipes</p>
+                <div className="mt-3 grid gap-4">
+                  <div className="preview-elevated p-4" style={{ maxWidth: system.foundations.containers[system.components.sidebarLayout.contentWidth] }}>
+                    <div className="preview-surface mb-3 flex items-center justify-between px-4" style={{ minHeight: sidebarHeaderHeight }}>
+                      <span className="text-sm font-medium">Sidebar shell header</span>
+                      <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.sidebarLayout.contentWidth} content</span>
+                    </div>
+                    <div className="grid" style={{ gridTemplateColumns: `${sidebarWidth} 1fr`, gap: sidebarPageGap }}>
+                      <div className="preview-surface p-4">Sidebar nav</div>
+                      <div className="preview-surface p-4">Content region</div>
+                    </div>
+                  </div>
+
+                  <div className="preview-elevated p-4" style={{ maxWidth: system.foundations.containers[system.components.stackedLayout.contentWidth] }}>
+                    <div className="preview-surface px-4" style={{ minHeight: stackedHeaderHeight, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span className="text-sm font-medium">Stacked shell header</span>
+                      <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>{system.components.stackedLayout.pageGap} page gap</span>
+                    </div>
+                    <div className="mt-3 grid gap-3" style={{ gap: stackedPageGap }}>
+                      <div className="preview-surface p-4">Page header region</div>
+                      <div className="preview-surface p-4">Main content region</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="preview-surface p-4">
+                <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Auth page</p>
+                <div className="preview-overlay mt-3 rounded-[var(--preview-dialog-radius)] p-3">
+                  <div className="preview-elevated" style={{ maxWidth: authWidth, borderRadius: system.radius[system.components.authLayout.cardRadius], padding: system.foundations.spacing[system.components.authLayout.cardPadding] }}>
+                    <p className="text-xs uppercase tracking-[0.16em]" style={{ color: "var(--preview-text-muted)" }}>{sectionLabel(authPreset.density)} auth preset</p>
+                    <p className="preview-heading mt-2 text-lg font-semibold">Sign in</p>
+                    <div className="mt-3 grid" style={{ gap: authGap }}>
+                      <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Email address" readOnly />
+                      <input className="preview-input px-[var(--preview-input-px)] py-[var(--preview-input-py)]" value="Password" readOnly />
+                      <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] font-medium">Continue</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -5061,6 +5300,8 @@ function IconsPreview({ system }: { system: GeneratedSystem }) {
 
 function DashboardPreview({ brandName, system }: { brandName: string; system: GeneratedSystem }) {
   const metrics = getSystemMetrics(system);
+  const dashboardPreset = system.screens.dashboard;
+  const dashboardGap = system.foundations.spacing[dashboardPreset.sectionGap];
 
   return (
     <div className="preview-grid-gap grid xl:grid-cols-[220px_1fr]">
@@ -5091,6 +5332,34 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
           </div>
           <button className="preview-button-primary rounded-[var(--preview-radius-pill)] px-4 py-3 font-medium">Publish theme package</button>
         </nav>
+
+        <section className="preview-surface p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4" style={{ marginBottom: dashboardGap }}>
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>Page header</p>
+              <h4 className="preview-heading mt-2 text-2xl font-semibold">Operations dashboard</h4>
+              <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
+                Dashboard screens pull max-width, density, section spacing, and chrome padding from the dashboard screen preset.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Share</button>
+              <button className="preview-button-primary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Create profile</button>
+            </div>
+          </div>
+
+          <div className="grid gap-3 lg:grid-cols-[1fr_auto_auto]" style={{ gap: dashboardGap }}>
+            <div className="preview-input flex items-center gap-3 px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+              <PreviewIcon icon={Search01Icon} context="inputs" size={system.icons.defaultSize} strokeWidth={system.icons.strokeWidth} />
+              <span className="min-w-0 flex-1">Search systems and exports</span>
+            </div>
+            <div className="preview-input flex items-center justify-between px-[var(--preview-input-px)] py-[var(--preview-input-py)]">
+              <span>Theme health</span>
+              <span className="text-xs" style={{ color: "var(--preview-text-muted)" }}>All</span>
+            </div>
+            <button className="preview-button-secondary px-[var(--preview-button-px)] py-[var(--preview-button-py)] text-sm">Filters</button>
+          </div>
+        </section>
 
         <div className="preview-grid-gap grid lg:grid-cols-3">
           {[
