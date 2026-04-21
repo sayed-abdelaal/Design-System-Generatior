@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --app-bg: oklch(0.975 0.01 95);
-  --app-surface: oklch(0.995 0.006 95);
-  --app-surface-strong: oklch(0.954 0.011 95);
-  --app-border: oklch(0.884 0.014 90);
-  --app-foreground: oklch(0.23 0.02 46);
-  --app-muted: oklch(0.52 0.018 55);
-  --app-accent: oklch(0.55 0.11 45);
-  --app-accent-soft: oklch(0.93 0.03 45);
+  --app-bg: #f7f8f8;
+  --app-surface: #ffffff;
+  --app-surface-strong: #f3f5f6;
+  --app-border: #eef1f4;
+  --app-foreground: #111827;
+  --app-muted: #64748b;
+  --app-accent: #2563eb;
+  --app-accent-soft: #dbeafe;
 }
 
 @theme inline {
@@ -36,9 +36,7 @@ body {
   height: 100%;
   min-height: 100vh;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top left, color-mix(in oklch, var(--app-accent) 10%, transparent), transparent 28%),
-    linear-gradient(180deg, color-mix(in oklch, var(--app-bg) 92%, white) 0%, var(--app-bg) 100%);
+  background: var(--app-bg);
   color: var(--app-foreground);
   font-family: var(--font-manrope), sans-serif;
 }
@@ -80,11 +78,9 @@ select {
 }
 
 .panel {
-  border: 1px solid color-mix(in oklch, var(--app-border) 84%, white);
-  background: color-mix(in oklch, var(--app-surface) 96%, white);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 18px 40px -30px rgba(62, 34, 12, 0.35);
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  box-shadow: none;
 }
 
 .subtle-grid {
@@ -97,9 +93,9 @@ select {
 .field {
   width: 100%;
   min-height: 2.875rem;
-  border-radius: 0.85rem;
-  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
-  background: color-mix(in oklch, var(--app-surface) 96%, white);
+  border-radius: 0.625rem;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
   padding: 0.78rem 0.95rem;
   color: var(--app-foreground);
   transition:
@@ -128,8 +124,8 @@ select.field {
 
 .field:focus-visible {
   outline: none;
-  border-color: color-mix(in oklch, var(--app-accent) 45%, white);
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--app-accent) 14%, white);
+  border-color: color-mix(in srgb, var(--app-accent) 54%, white);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--app-accent) 14%, transparent);
 }
 
 .field::placeholder {
@@ -137,9 +133,9 @@ select.field {
 }
 
 .workspace-tab {
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
-  background: color-mix(in oklch, var(--app-surface) 96%, white);
+  border-radius: 0.625rem;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
   padding: 0.55rem 0.9rem;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -152,20 +148,23 @@ select.field {
 }
 
 .workspace-tab[data-active="true"] {
-  border-color: color-mix(in oklch, var(--app-accent) 26%, white);
-  background: color-mix(in oklch, var(--app-accent) 10%, white);
-  color: var(--app-foreground);
+  border-color: color-mix(in srgb, var(--app-accent) 20%, var(--app-border));
+  background: var(--app-accent);
+  color: white;
 }
 
 .workspace-tab:hover {
   color: var(--app-foreground);
-  transform: translateY(-1px);
+}
+
+.workspace-tab[data-active="true"]:hover {
+  color: white;
 }
 
 .workspace-card {
-  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
-  border-radius: 1rem;
-  background: color-mix(in oklch, var(--app-surface) 98%, white);
+  border: 1px solid var(--app-border);
+  border-radius: 0.75rem;
+  background: var(--app-surface);
   padding: 1rem;
 }
 
