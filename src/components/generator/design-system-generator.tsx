@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { ChangeEvent, CSSProperties, Dispatch, SetStateAction } from "react";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Alert02Icon,
@@ -677,7 +677,7 @@ function BrandInputPanel({
         <p className="mt-2 text-sm leading-6 text-app-muted">
           Craft a shippable theme from a brand seed, preview it in context, and export Tailwind-ready files.
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="workspace-tabs mt-4">
           {([
             ["brand", "Brand"],
             ["colors", "Colors"],
@@ -1047,10 +1047,10 @@ function PreviewPanel({
             </p>
           </div>
 
-          <div className="flex items-center gap-2 rounded-xl border border-app-border bg-app-bg p-1">
+          <div className="flex items-center gap-2 rounded-full border border-app-border bg-app-bg p-1">
             <button
               type="button"
-              className={`rounded-lg px-3 py-2 text-sm ${activeTheme === "light" ? "bg-app-accent text-white" : "text-app-muted"}`}
+              className={`rounded-full px-4 py-2 text-sm ${activeTheme === "light" ? "bg-app-accent text-white" : "text-app-muted"}`}
               onClick={() => setActiveTheme("light")}
             >
               <SunMedium className="mr-2 inline h-4 w-4" />
@@ -1058,7 +1058,7 @@ function PreviewPanel({
             </button>
             <button
               type="button"
-              className={`rounded-lg px-3 py-2 text-sm ${activeTheme === "dark" ? "bg-app-foreground text-white" : "text-app-muted"}`}
+              className={`rounded-full px-4 py-2 text-sm ${activeTheme === "dark" ? "bg-app-accent text-white" : "text-app-muted"}`}
               onClick={() => setActiveTheme("dark")}
             >
               <MoonStar className="mr-2 inline h-4 w-4" />
@@ -1067,12 +1067,12 @@ function PreviewPanel({
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="preview-mode-tabs mt-4">
           {PREVIEW_MODES.map((mode) => (
             <button
               key={mode}
               type="button"
-              className="rounded-lg border border-app-border px-3 py-2 text-sm text-app-muted transition-colors hover:text-app-foreground"
+              className="preview-mode-tab"
               data-active={previewMode === mode}
               onClick={() => setPreviewMode(mode)}
             >
@@ -1101,9 +1101,6 @@ function PreviewPanel({
               )}
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.22em]" style={{ color: "var(--preview-text-muted)" }}>
-                {activeTheme} theme
-              </p>
               <p className="preview-heading text-lg font-semibold">{brandName}</p>
             </div>
           </div>
@@ -1297,7 +1294,7 @@ function TokenPanel({
         <p className="mt-2 text-sm leading-6 text-app-muted">
           Adjust raw scales, semantic token mappings, typography, radius, shadows, and export production-ready assets.
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="workspace-tabs mt-4">
           {([
             ["foundations", "Foundations"],
             ["system", "System"],
@@ -8592,6 +8589,7 @@ export function DesignSystemGenerator() {
   const [previewMode, setPreviewMode] = useState<PreviewMode>("dashboard");
   const [activeTheme, setActiveTheme] = useState<ActiveTheme>("light");
   const [controlView, setControlView] = useState<ControlPanelView>("inputs");
+  const deferredControlView = useDeferredValue(controlView);
 
   function updateInputs(updater: (current: BrandInputs) => BrandInputs) {
     setInputs((current) => {
@@ -8639,11 +8637,16 @@ export function DesignSystemGenerator() {
     <main className="flex h-dvh w-full flex-col overflow-hidden bg-app-bg">
       <section className="flex min-h-[74px] shrink-0 items-center border-b border-app-border bg-app-surface px-5 py-3">
         <div className="flex w-full flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Generator Workspace</p>
-          <h1 className="mt-1 text-xl font-semibold tracking-[-0.045em] text-app-foreground">
-            Brand seeds in, production-ready theme files out.
-          </h1>
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-app-accent text-sm font-semibold tracking-[-0.04em] text-white">
+            DS
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Generator Workspace</p>
+            <h1 className="mt-1 text-xl font-semibold tracking-[-0.045em] text-app-foreground">
+              Brand seeds in, production-ready theme files out.
+            </h1>
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm text-app-muted">
           <span className="inline-flex items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2"><Layers3 className="h-4 w-4" /> Semantic tokens</span>
@@ -8655,7 +8658,7 @@ export function DesignSystemGenerator() {
       <section className="grid min-h-0 flex-1 grid-cols-1 xl:grid-cols-[390px_minmax(0,1fr)]">
         <div className="flex min-h-0 flex-col border-r border-app-border bg-app-surface">
           <div className="shrink-0 border-b border-app-border p-3">
-            <div className="flex flex-wrap gap-2">
+            <div className="workspace-tabs">
               {([
                 ["inputs", "Brand inputs"],
                 ["editor", "Editable tokens"],
@@ -8674,7 +8677,7 @@ export function DesignSystemGenerator() {
           </div>
 
           <div className="min-h-0 flex-1">
-            {controlView === "inputs" ? (
+            {deferredControlView === "inputs" ? (
               <BrandInputPanel inputs={inputs} setInputs={updateInputs} colorErrors={colorErrors} />
             ) : (
               <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
