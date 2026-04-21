@@ -668,8 +668,8 @@ function BrandInputPanel({
   ];
 
   return (
-    <div className="panel subtle-grid sticky top-5 overflow-hidden rounded-[1.25rem]">
-      <div className="border-b border-app-border/70 px-5 py-4">
+    <div className="panel subtle-grid flex h-full min-h-0 flex-col overflow-hidden rounded-[1.25rem]">
+      <div className="shrink-0 border-b border-app-border/70 px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Brand Inputs</p>
         <h1 className="mt-3 max-w-xs text-2xl font-semibold tracking-[-0.04em] text-app-foreground">
           Tailwind Design System Generator
@@ -696,7 +696,7 @@ function BrandInputPanel({
         </div>
       </div>
 
-      <div className="space-y-6 px-5 py-5">
+      <div className="app-scrollbar min-h-0 flex-1 space-y-6 overflow-auto px-5 py-5">
         {activeTab === "brand" ? (
           <>
             <div className="workspace-card space-y-4">
@@ -1036,8 +1036,8 @@ function PreviewPanel({
   const previewMetrics = getPreviewMetrics(system, previewMode);
 
   return (
-    <div className="space-y-4">
-      <div className="panel rounded-[1.25rem] p-4">
+    <div className="flex h-full min-h-0 flex-col gap-3">
+      <div className="panel shrink-0 rounded-[1.25rem] p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Live Preview</p>
@@ -1089,8 +1089,9 @@ function PreviewPanel({
         ) : null}
       </div>
 
-      <div className="preview-shell panel overflow-hidden rounded-[1.5rem]" style={previewStyle}>
-        <div className="flex items-center justify-between border-b px-6 py-5" style={{ borderColor: "var(--preview-border-default)" }}>
+      <div className="preview-shell panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.5rem]" style={previewStyle}>
+        <div className="shrink-0 border-b px-6 py-4" style={{ borderColor: "var(--preview-border-default)" }}>
+          <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-[var(--preview-surface-elevated)]">
               {logoDataUrl ? (
@@ -1108,9 +1109,10 @@ function PreviewPanel({
           </div>
 
           <div className="rounded-full px-3 py-1 text-xs preview-badge">{sectionLabel(previewMode)}</div>
+          </div>
         </div>
 
-        <div className="max-h-[calc(100vh-15rem)] overflow-auto" style={{ padding: previewMetrics.chromePadding }}>
+        <div className="app-scrollbar min-h-0 flex-1 overflow-auto" style={{ padding: previewMetrics.chromePadding }}>
           <div style={{ maxWidth: previewMetrics.maxWidth, marginInline: "auto", width: "100%" }}>
             {previewMode === "foundations" ? (
               <FoundationsPreview system={system} />
@@ -1288,8 +1290,8 @@ function TokenPanel({
   const qaReport = useMemo(() => auditSystem(system), [system]);
 
   return (
-    <div className="panel sticky top-5 rounded-[1.25rem]">
-      <div className="border-b border-app-border/70 px-5 py-4">
+    <div className="panel flex h-full min-h-0 flex-col overflow-hidden rounded-[1.25rem]">
+      <div className="shrink-0 border-b border-app-border/70 px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Editable Tokens</p>
         <h2 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-app-foreground">Tune before export</h2>
         <p className="mt-2 text-sm leading-6 text-app-muted">
@@ -1315,7 +1317,7 @@ function TokenPanel({
         </div>
       </div>
 
-      <div className="max-h-[calc(100vh-4rem)] space-y-5 overflow-auto px-5 py-5">
+      <div className="app-scrollbar min-h-0 flex-1 space-y-5 overflow-auto px-5 py-5">
         {activeTab === "foundations" ? (
           <div className="workspace-card space-y-2">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Foundations</p>
@@ -8634,11 +8636,12 @@ export function DesignSystemGenerator() {
   const qaReport = useMemo(() => auditSystem(system), [system]);
 
   return (
-    <main className="mx-auto w-full max-w-[1880px] px-4 py-5 sm:px-6 lg:px-8">
-      <section className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-[1.45rem] border border-app-border/70 bg-app-surface/80 px-5 py-4 backdrop-blur-sm">
+    <main className="mx-auto flex h-dvh w-full max-w-[1880px] flex-col overflow-hidden px-4 py-4 sm:px-6 lg:px-8">
+      <section className="mb-4 shrink-0 rounded-[1.25rem] border border-app-border/70 bg-app-surface/80 px-5 py-3 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Generator Workspace</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-[-0.045em] text-app-foreground">
+          <h1 className="mt-1 text-xl font-semibold tracking-[-0.045em] text-app-foreground">
             Brand seeds in, production-ready theme files out.
           </h1>
         </div>
@@ -8646,11 +8649,12 @@ export function DesignSystemGenerator() {
           <span className="inline-flex items-center gap-2 rounded-full border border-app-border bg-app-bg px-3 py-2"><Layers3 className="h-4 w-4" /> Semantic tokens</span>
           <span className="inline-flex items-center gap-2 rounded-full border border-app-border bg-app-bg px-3 py-2"><MonitorCog className="h-4 w-4" /> Live product previews</span>
         </div>
+        </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)] 2xl:grid-cols-[390px_minmax(0,1fr)]">
-        <div className="space-y-4">
-          <div className="panel rounded-[1.25rem] p-3">
+      <section className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[360px_minmax(0,1fr)] 2xl:grid-cols-[390px_minmax(0,1fr)]">
+        <div className="flex min-h-0 flex-col gap-3">
+          <div className="panel shrink-0 rounded-[1.25rem] p-3">
             <div className="flex flex-wrap gap-2">
               {([
                 ["inputs", "Brand inputs"],
@@ -8669,33 +8673,37 @@ export function DesignSystemGenerator() {
             </div>
           </div>
 
-          {controlView === "inputs" ? (
-            <BrandInputPanel inputs={inputs} setInputs={updateInputs} colorErrors={colorErrors} />
-          ) : (
-            <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
-          )}
+          <div className="min-h-0 flex-1">
+            {controlView === "inputs" ? (
+              <BrandInputPanel inputs={inputs} setInputs={updateInputs} colorErrors={colorErrors} />
+            ) : (
+              <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
+            )}
+          </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="panel rounded-[1.25rem] p-4">
+        <div className="flex min-h-0 flex-col gap-3">
+          <div className="panel shrink-0 rounded-[1.25rem] p-3">
             <p className="text-sm font-semibold text-app-foreground">Live generation is active</p>
-            <p className="mt-1 text-sm text-app-muted">
+            <p className="mt-1 text-xs leading-5 text-app-muted">
               Brand inputs regenerate palettes and semantics instantly. Use the unified control sidebar to switch between setup and token editing without shrinking the live preview.
             </p>
           </div>
 
-          <PreviewPanel
-            brandName={inputs.brandName}
-            logoDataUrl={inputs.logoDataUrl}
-            system={system}
-            previewMode={previewMode}
-            setPreviewMode={setPreviewMode}
-            activeTheme={activeTheme}
-            setActiveTheme={setActiveTheme}
-            contrastWarnings={qaReport.contrastWarnings}
-            qualityScore={qaReport.score}
-            exportReadiness={qaReport.exportReadiness}
-          />
+          <div className="min-h-0 flex-1">
+            <PreviewPanel
+              brandName={inputs.brandName}
+              logoDataUrl={inputs.logoDataUrl}
+              system={system}
+              previewMode={previewMode}
+              setPreviewMode={setPreviewMode}
+              activeTheme={activeTheme}
+              setActiveTheme={setActiveTheme}
+              contrastWarnings={qaReport.contrastWarnings}
+              qualityScore={qaReport.score}
+              exportReadiness={qaReport.exportReadiness}
+            />
+          </div>
         </div>
       </section>
     </main>

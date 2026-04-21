@@ -28,16 +28,40 @@
 }
 
 html {
+  height: 100%;
   background: var(--app-bg);
 }
 
 body {
+  height: 100%;
   min-height: 100vh;
+  overflow: hidden;
   background:
     radial-gradient(circle at top left, color-mix(in oklch, var(--app-accent) 10%, transparent), transparent 28%),
     linear-gradient(180deg, color-mix(in oklch, var(--app-bg) 92%, white) 0%, var(--app-bg) 100%);
   color: var(--app-foreground);
   font-family: var(--font-manrope), sans-serif;
+}
+
+.app-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--app-muted) 42%, transparent) transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar {
+  width: 0.65rem;
+  height: 0.65rem;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb {
+  border: 0.2rem solid transparent;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--app-muted) 38%, transparent);
+  background-clip: padding-box;
+}
+
+.app-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 button,
