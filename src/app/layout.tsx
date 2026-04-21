@@ -91,8 +91,8 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "Tailwind Design System Generator",
-  description: "Generate Tailwind-ready design tokens from brand inputs.",
+  title: "Design System Generator",
+  description: "Generate production-ready design tokens from brand inputs.",
 };
 
 export default function RootLayout({

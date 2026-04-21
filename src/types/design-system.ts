@@ -75,7 +75,12 @@ export type StyleDirection =
   | "minimal"
   | "bold"
   | "editorial"
-  | "studio";
+  | "studio"
+  | "luxury"
+  | "playful"
+  | "brutalist"
+  | "futuristic"
+  | "organic";
 
 export type FontOption = {
   id: string;
@@ -1428,6 +1433,7 @@ export type BrandInputs = {
 };
 
 export type GeneratedSystem = {
+  styleDirection: StyleDirection;
   palettes: PaletteCollection;
   customPalettes: CustomPalette[];
   lightTokens: ThemeSemanticTokens;

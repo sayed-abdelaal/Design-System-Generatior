@@ -122,6 +122,67 @@ select.field {
   background-repeat: no-repeat;
 }
 
+.color-field {
+  width: 3.25rem;
+  height: 3rem;
+  cursor: pointer;
+  border: 1px solid var(--app-border);
+  border-radius: 0.75rem;
+  background: var(--app-surface);
+  padding: 0.25rem;
+}
+
+.color-field::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-field::-webkit-color-swatch {
+  border: 0;
+  border-radius: 0.5rem;
+}
+
+.color-field::-moz-color-swatch {
+  border: 0;
+  border-radius: 0.5rem;
+}
+
+.hex-field {
+  display: flex;
+  min-height: 2.875rem;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.625rem;
+  background: var(--app-surface);
+  padding: 0.5rem 0.75rem;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.hex-field:focus-within {
+  border-color: color-mix(in srgb, var(--app-accent) 54%, white);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--app-accent) 14%, transparent);
+}
+
+.hex-field-swatch {
+  width: 0.8rem;
+  height: 0.8rem;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--app-border) 70%, black);
+  border-radius: 999px;
+}
+
+.hex-field-input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--app-foreground);
+  font-size: 0.875rem;
+  outline: none;
+}
+
 .field:focus-visible {
   outline: none;
   border-color: color-mix(in srgb, var(--app-accent) 54%, white);

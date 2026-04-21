@@ -36,6 +36,24 @@ import {
   ZIndexScale,
 } from "@/types/design-system";
 
+type StyleDirection = BrandInputs["styleDirection"];
+
+function isMinimalDirection(direction: StyleDirection) {
+  return direction === "minimal";
+}
+
+function isEditorialDirection(direction: StyleDirection) {
+  return direction === "editorial" || direction === "luxury";
+}
+
+function isBoldDirection(direction: StyleDirection) {
+  return direction === "bold" || direction === "brutalist" || direction === "futuristic";
+}
+
+function isExpressiveDirection(direction: StyleDirection) {
+  return direction === "bold" || direction === "studio" || direction === "playful" || direction === "futuristic";
+}
+
 function buildTypographyScale(direction: BrandInputs["styleDirection"]): TypographyScale {
   const base = {
     display1: { size: "clamp(3.6rem, 6vw, 5.8rem)", lineHeight: "0.92", weight: "700", letterSpacing: "-0.05em" },
@@ -59,23 +77,32 @@ function buildTypographyScale(direction: BrandInputs["styleDirection"]): Typogra
     codeSm: { size: "0.78rem", lineHeight: "1.5", weight: "500", letterSpacing: "-0.005em" },
   } satisfies TypographyScale;
 
-  if (direction === "editorial") {
+  if (isEditorialDirection(direction)) {
     return {
       ...base,
-      display1: { ...base.display1, size: "clamp(4rem, 6.4vw, 6.4rem)", lineHeight: "0.9", weight: "720" },
-      display2: { ...base.display2, size: "clamp(3.35rem, 5.3vw, 5.2rem)", lineHeight: "0.92", weight: "700" },
+      display1: { ...base.display1, size: direction === "luxury" ? "clamp(4.2rem, 6.6vw, 6.8rem)" : "clamp(4rem, 6.4vw, 6.4rem)", lineHeight: "0.9", weight: direction === "luxury" ? "680" : "720" },
+      display2: { ...base.display2, size: "clamp(3.35rem, 5.3vw, 5.2rem)", lineHeight: "0.92", weight: direction === "luxury" ? "660" : "700" },
       bodyLg: { ...base.bodyLg, size: "1.08rem", lineHeight: "1.8" },
       overline: { ...base.overline, letterSpacing: "0.16em" },
     };
   }
 
-  if (direction === "bold") {
+  if (direction === "playful" || direction === "organic") {
     return {
       ...base,
-      display1: { ...base.display1, weight: "760" },
-      display2: { ...base.display2, weight: "740" },
-      h1: { ...base.h1, weight: "720" },
-      h2: { ...base.h2, weight: "700" },
+      display1: { ...base.display1, size: direction === "playful" ? "clamp(3.9rem, 6.2vw, 6.1rem)" : "clamp(3.45rem, 5.4vw, 5.4rem)", lineHeight: direction === "playful" ? "0.95" : "1", weight: direction === "playful" ? "760" : "650", letterSpacing: direction === "playful" ? "-0.055em" : "-0.025em" },
+      h1: { ...base.h1, lineHeight: direction === "organic" ? "1.08" : "1.02", weight: direction === "playful" ? "720" : "620" },
+      body: { ...base.body, lineHeight: direction === "organic" ? "1.75" : "1.65" },
+    };
+  }
+
+  if (isBoldDirection(direction)) {
+    return {
+      ...base,
+      display1: { ...base.display1, weight: direction === "brutalist" ? "820" : "760", letterSpacing: direction === "brutalist" ? "-0.065em" : base.display1.letterSpacing },
+      display2: { ...base.display2, weight: direction === "brutalist" ? "800" : "740" },
+      h1: { ...base.h1, weight: direction === "brutalist" ? "780" : "720" },
+      h2: { ...base.h2, weight: direction === "brutalist" ? "740" : "700" },
       label: { ...base.label, weight: "650" },
     };
   }
@@ -84,11 +111,21 @@ function buildTypographyScale(direction: BrandInputs["styleDirection"]): Typogra
 }
 
 function buildRadii(direction: BrandInputs["styleDirection"]): RadiusScale {
-  if (direction === "minimal") {
+  if (isMinimalDirection(direction)) {
     return { none: "0rem", sm: "0.45rem", md: "0.8rem", lg: "1rem", xl: "1.4rem", pill: "999px" };
   }
 
-  if (direction === "editorial") {
+  if (direction === "brutalist") {
+    return { none: "0rem", sm: "0.05rem", md: "0.12rem", lg: "0.2rem", xl: "0.3rem", pill: "0.3rem" };
+  }
+
+  if (direction === "playful" || direction === "organic") {
+    return direction === "playful"
+      ? { none: "0rem", sm: "0.75rem", md: "1.15rem", lg: "1.6rem", xl: "2.2rem", pill: "999px" }
+      : { none: "0rem", sm: "0.65rem", md: "1rem", lg: "1.45rem", xl: "1.9rem", pill: "999px" };
+  }
+
+  if (isEditorialDirection(direction)) {
     return { none: "0rem", sm: "0.3rem", md: "0.6rem", lg: "0.95rem", xl: "1.2rem", pill: "999px" };
   }
 
@@ -96,7 +133,23 @@ function buildRadii(direction: BrandInputs["styleDirection"]): RadiusScale {
 }
 
 function buildShadows(direction: BrandInputs["styleDirection"]): ShadowScale {
-  if (direction === "bold") {
+  if (direction === "brutalist") {
+    return {
+      sm: "4px 4px 0 rgba(15, 23, 42, 0.92)",
+      md: "7px 7px 0 rgba(15, 23, 42, 0.92)",
+      lg: "10px 10px 0 rgba(15, 23, 42, 0.92)",
+    };
+  }
+
+  if (direction === "luxury") {
+    return {
+      sm: "0 12px 24px -20px rgba(2, 6, 23, 0.28)",
+      md: "0 24px 52px -34px rgba(2, 6, 23, 0.38)",
+      lg: "0 36px 88px -44px rgba(2, 6, 23, 0.48)",
+    };
+  }
+
+  if (isBoldDirection(direction)) {
     return {
       sm: "0 10px 20px -16px rgba(15, 23, 42, 0.24)",
       md: "0 20px 40px -24px rgba(15, 23, 42, 0.28)",
@@ -112,11 +165,11 @@ function buildShadows(direction: BrandInputs["styleDirection"]): ShadowScale {
 }
 
 function buildDensity(direction: BrandInputs["styleDirection"]): Density {
-  if (direction === "minimal") {
+  if (isMinimalDirection(direction) || direction === "brutalist" || direction === "futuristic") {
     return "compact";
   }
 
-  if (direction === "editorial") {
+  if (isEditorialDirection(direction) || direction === "organic") {
     return "airy";
   }
 
@@ -178,16 +231,32 @@ function buildSpacing(density: Density): SpacingScale {
 }
 
 function buildFontWeights(direction: BrandInputs["styleDirection"]): FontWeightScale {
-  if (direction === "bold") {
+  if (isBoldDirection(direction)) {
+    if (direction === "brutalist") {
+      return { regular: "560", medium: "680", semibold: "780", bold: "860" };
+    }
+
     return { regular: "500", medium: "600", semibold: "700", bold: "800" };
+  }
+
+  if (direction === "luxury") {
+    return { regular: "420", medium: "500", semibold: "600", bold: "680" };
   }
 
   return { regular: "450", medium: "520", semibold: "620", bold: "720" };
 }
 
 function buildTracking(direction: BrandInputs["styleDirection"]): TrackingScale {
-  if (direction === "editorial") {
+  if (isEditorialDirection(direction)) {
     return { tight: "-0.045em", normal: "-0.015em", wide: "0.08em" };
+  }
+
+  if (direction === "brutalist" || direction === "futuristic") {
+    return { tight: "-0.055em", normal: "-0.01em", wide: "0.12em" };
+  }
+
+  if (direction === "organic") {
+    return { tight: "-0.02em", normal: "0.005em", wide: "0.045em" };
   }
 
   return { tight: "-0.03em", normal: "0em", wide: "0.06em" };
@@ -232,15 +301,19 @@ function buildDropShadows(): DropShadowScale {
 }
 
 function buildBlur(direction: BrandInputs["styleDirection"]): BlurScale {
-  if (direction === "minimal") {
+  if (isMinimalDirection(direction) || direction === "brutalist") {
     return { sm: "4px", md: "10px", lg: "16px" };
+  }
+
+  if (direction === "futuristic" || direction === "playful") {
+    return { sm: "8px", md: "16px", lg: "28px" };
   }
 
   return { sm: "6px", md: "12px", lg: "20px" };
 }
 
 function buildOpacity(direction: BrandInputs["styleDirection"]): OpacityScale {
-  if (direction === "bold") {
+  if (isBoldDirection(direction)) {
     return { subtle: "0.72", muted: "0.58", disabled: "0.42", strong: "0.9" };
   }
 
@@ -256,12 +329,16 @@ function buildEasing(): EasingScale {
 }
 
 function buildDurations(direction: BrandInputs["styleDirection"]): MotionDurationScale {
-  if (direction === "minimal") {
+  if (isMinimalDirection(direction) || direction === "brutalist") {
     return { fast: "120ms", standard: "180ms", slow: "260ms" };
   }
 
-  if (direction === "bold") {
+  if (isBoldDirection(direction) || direction === "playful") {
     return { fast: "150ms", standard: "220ms", slow: "320ms" };
+  }
+
+  if (direction === "luxury" || direction === "organic") {
+    return { fast: "180ms", standard: "280ms", slow: "420ms" };
   }
 
   return { fast: "140ms", standard: "200ms", slow: "280ms" };
@@ -280,7 +357,11 @@ function buildAspectRatios(): AspectRatioScale {
 }
 
 function buildBorderWidths(direction: BrandInputs["styleDirection"]): BorderWidthScale {
-  if (direction === "bold") {
+  if (direction === "brutalist") {
+    return { hairline: "2px", default: "3px", strong: "4px" };
+  }
+
+  if (isBoldDirection(direction)) {
     return { hairline: "1px", default: "2px", strong: "3px" };
   }
 
@@ -381,10 +462,10 @@ function buildUtilitySettings(
 ): UtilitySettings {
   return {
     layout: {
-      contentWidth: direction === "editorial" ? "xl" : "lg",
+      contentWidth: isEditorialDirection(direction) ? "xl" : direction === "brutalist" ? "md" : "lg",
       sectionGap: density === "airy" ? "12" : "10",
       cardGap: density === "compact" ? "4" : "6",
-      defaultRadius: direction === "editorial" ? "md" : "lg",
+      defaultRadius: direction === "brutalist" ? "sm" : isEditorialDirection(direction) ? "md" : direction === "playful" ? "xl" : "lg",
     },
     spacing: {
       densityMode: density,
@@ -395,18 +476,18 @@ function buildUtilitySettings(
     sizing: {
       controlHeight: density === "compact" ? "10" : "12",
       sidebarWidth: "sm",
-      modalWidth: direction === "editorial" ? "lg" : "md",
+      modalWidth: isEditorialDirection(direction) ? "lg" : "md",
     },
     typography: {
-      headingWeight: direction === "bold" ? "bold" : "semibold",
+      headingWeight: isBoldDirection(direction) ? "bold" : "semibold",
       bodyWeight: "regular",
       bodyLeading: density === "airy" ? "relaxed" : "normal",
-      headingTracking: direction === "editorial" ? "tight" : "normal",
+      headingTracking: isEditorialDirection(direction) || direction === "brutalist" || direction === "futuristic" ? "tight" : "normal",
     },
     borders: {
-      borderRadius: direction === "minimal" ? "md" : "lg",
-      borderWidth: direction === "bold" ? "strong" : "default",
-      outlineStyle: direction === "bold" ? "brand" : "soft",
+      borderRadius: isMinimalDirection(direction) ? "md" : direction === "brutalist" ? "sm" : direction === "playful" ? "xl" : "lg",
+      borderWidth: isBoldDirection(direction) ? "strong" : "default",
+      outlineStyle: isBoldDirection(direction) ? "brand" : "soft",
     },
     effects: {
       surfaceShadow: "sm",
@@ -414,9 +495,9 @@ function buildUtilitySettings(
       surfaceBlur: density === "compact" ? "sm" : "md",
     },
     motion: {
-      motionLevel: direction === "minimal" ? "calm" : direction === "bold" ? "expressive" : "balanced",
-      transitionEase: direction === "bold" ? "emphasized" : "standard",
-      entranceAnimation: direction === "minimal" ? "fadeIn" : "riseIn",
+      motionLevel: isMinimalDirection(direction) ? "calm" : isExpressiveDirection(direction) ? "expressive" : "balanced",
+      transitionEase: isExpressiveDirection(direction) ? "emphasized" : "standard",
+      entranceAnimation: isMinimalDirection(direction) || direction === "brutalist" ? "fadeIn" : "riseIn",
     },
     interactivity: {
       focusRingWidth: density === "compact" ? "3px" : "4px",
@@ -430,8 +511,8 @@ function buildUtilityCoverage(
   density: Density,
   direction: BrandInputs["styleDirection"],
 ): UtilityCoverageMatrix {
-  const expressive = direction === "bold" || direction === "studio";
-  const editorial = direction === "editorial";
+  const expressive = isExpressiveDirection(direction);
+  const editorial = isEditorialDirection(direction);
 
   return {
     layout: {
@@ -575,9 +656,9 @@ function buildScreenPresets(density: Density): ScreenPresets {
 
 function buildIconSystem(direction: BrandInputs["styleDirection"]): IconSystem {
   return {
-    defaultSize: direction === "editorial" ? 22 : direction === "bold" ? 24 : 20,
-    strokeWidth: direction === "minimal" ? 1.5 : direction === "bold" ? 1.9 : 1.7,
-    colorBehavior: direction === "minimal" ? "current" : "semantic",
+    defaultSize: isEditorialDirection(direction) ? 22 : isBoldDirection(direction) || direction === "playful" ? 24 : 20,
+    strokeWidth: isMinimalDirection(direction) ? 1.5 : direction === "brutalist" ? 2.2 : isBoldDirection(direction) ? 1.9 : 1.7,
+    colorBehavior: isMinimalDirection(direction) ? "current" : direction === "organic" ? "muted" : "semantic",
     semanticUsage: {
       buttons: "neutral.50",
       alerts: "warning.700",
@@ -597,13 +678,13 @@ function buildComponentRecipes(
 
   return {
     button: {
-      radius: direction === "editorial" ? "md" : "pill",
+      radius: direction === "brutalist" ? "sm" : isEditorialDirection(direction) ? "md" : "pill",
       paddingX: compact ? "4" : airy ? "6" : "5",
       paddingY: compact ? "3" : "4",
-      primaryShadow: direction === "bold" ? "md" : "sm",
-      secondaryStyle: direction === "minimal" ? "outline" : "soft",
-      ghostStyle: direction === "minimal" ? "minimal" : "subtle",
-      hoverLift: direction === "minimal" ? "none" : direction === "bold" ? "md" : "sm",
+      primaryShadow: isBoldDirection(direction) || direction === "luxury" ? "md" : "sm",
+      secondaryStyle: isMinimalDirection(direction) || direction === "brutalist" ? "outline" : "soft",
+      ghostStyle: isMinimalDirection(direction) ? "minimal" : "subtle",
+      hoverLift: isMinimalDirection(direction) || direction === "brutalist" ? "none" : isBoldDirection(direction) || direction === "playful" ? "md" : "sm",
       colors: {
         primary: {
           background: "primary.600",
@@ -632,18 +713,18 @@ function buildComponentRecipes(
       },
     },
     input: {
-      radius: direction === "minimal" ? "md" : "lg",
+      radius: isMinimalDirection(direction) ? "md" : direction === "brutalist" ? "sm" : direction === "playful" ? "xl" : "lg",
       paddingX: compact ? "4" : "5",
       paddingY: compact ? "3" : "4",
-      borderStyle: direction === "bold" ? "strong" : "soft",
-      validationStyle: direction === "bold" ? "strong" : "soft",
+      borderStyle: isBoldDirection(direction) ? "strong" : "soft",
+      validationStyle: isBoldDirection(direction) ? "strong" : "soft",
       showHelperText: true,
-      showPrefix: direction !== "minimal",
-      showSuffix: direction === "bold" || direction === "studio",
-      searchStyle: direction === "minimal" ? "underline" : "boxed",
-      selectStyle: direction === "editorial" ? "quiet" : "default",
+      showPrefix: !isMinimalDirection(direction),
+      showSuffix: isExpressiveDirection(direction),
+      searchStyle: isMinimalDirection(direction) ? "underline" : "boxed",
+      selectStyle: isEditorialDirection(direction) ? "quiet" : "default",
       messageStyle: density === "compact" ? "inline" : "stacked",
-      readOnlyStyle: direction === "minimal" ? "outlined" : "muted",
+      readOnlyStyle: isMinimalDirection(direction) || direction === "brutalist" ? "outlined" : "muted",
     },
     searchField: {
       radius: direction === "minimal" ? "md" : "pill",
@@ -1437,6 +1518,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
   ] as const;
 
   return {
+    styleDirection: inputs.styleDirection,
     palettes,
     customPalettes,
     lightTokens,

@@ -70,12 +70,12 @@ export function buildThemeCss(system: GeneratedSystem) {
   return `:root {\n${paletteLines(system)}\n${typographyLines(system)}\n${chromeLines(system)}\n${semanticBlock("light", system.lightTokens, system)}\n}\n\n[data-theme="dark"] {\n${semanticBlock("dark", system.darkTokens, system)}\n}\n`;
 }
 
-export function buildTailwindThemeCss(system: GeneratedSystem) {
+export function buildThemeLayerCss(system: GeneratedSystem) {
   const paletteTokens = Object.entries(system.palettes)
     .flatMap(([paletteName, scale]) => SCALE_STEPS.map((step) => `  --color-${paletteName}-${step}: ${scale[step]};`))
     .join("\n");
 
-  return `@import "tailwindcss";\n\n@theme static inline {\n  --color-background: var(--ds-background);\n  --color-foreground: var(--ds-foreground);\n  --color-surface: var(--ds-surface);\n  --color-surface-elevated: var(--ds-surface-elevated);\n  --color-text-primary: var(--ds-text-primary);\n  --color-text-secondary: var(--ds-text-secondary);\n  --color-text-muted: var(--ds-text-muted);\n  --color-border-default: var(--ds-border-default);\n  --color-border-strong: var(--ds-border-strong);\n  --color-action-primary: var(--ds-action-primary);\n  --color-action-secondary: var(--ds-action-secondary);\n  --color-focus-ring: var(--ds-focus-ring);\n  --color-success: var(--ds-success);\n  --color-warning: var(--ds-warning);\n  --color-danger: var(--ds-danger);\n  --color-info: var(--ds-info);\n  --color-attention: var(--ds-attention);\n  --color-highlight: var(--ds-highlight);\n  --font-sans: var(--ds-font-body);\n  --font-display: var(--ds-font-display);\n${paletteTokens}\n${Object.entries(system.foundations.spacing).map(([key, value]) => `  --spacing-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.fontWeights).map(([key, value]) => `  --font-weight-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.tracking).map(([key, value]) => `  --tracking-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.leading).map(([key, value]) => `  --leading-${key}: ${value};`).join("\n")}\n${Object.entries(system.radius).map(([key, value]) => `  --radius-${key}: ${value};`).join("\n")}\n${Object.entries(system.shadows).map(([key, value]) => `  --shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.borderWidths).map(([key, value]) => `  --border-width-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.insetShadows).map(([key, value]) => `  --inset-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.dropShadows).map(([key, value]) => `  --drop-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.blur).map(([key, value]) => `  --blur-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.opacity).map(([key, value]) => `  --opacity-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.breakpoints).map(([key, value]) => `  --breakpoint-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.containers).map(([key, value]) => `  --container-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.aspectRatios).map(([key, value]) => `  --aspect-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.easing).map(([key, value]) => `  --ease-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.durations).map(([key, value]) => `  --duration-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.animations).map(([key, value]) => `  --animate-${key}: ${value};`).join("\n")}\n}\n\n@theme {\n  @keyframes fade-in {\n    0% { opacity: 0; }\n    100% { opacity: 1; }\n  }\n\n  @keyframes rise-in {\n    0% { opacity: 0; transform: translateY(8px); }\n    100% { opacity: 1; transform: translateY(0); }\n  }\n\n  @keyframes pulse-soft {\n    0%, 100% { opacity: 1; }\n    50% { opacity: 0.7; }\n  }\n}\n`;
+  return `@theme static inline {\n  --color-background: var(--ds-background);\n  --color-foreground: var(--ds-foreground);\n  --color-surface: var(--ds-surface);\n  --color-surface-elevated: var(--ds-surface-elevated);\n  --color-text-primary: var(--ds-text-primary);\n  --color-text-secondary: var(--ds-text-secondary);\n  --color-text-muted: var(--ds-text-muted);\n  --color-border-default: var(--ds-border-default);\n  --color-border-strong: var(--ds-border-strong);\n  --color-action-primary: var(--ds-action-primary);\n  --color-action-secondary: var(--ds-action-secondary);\n  --color-focus-ring: var(--ds-focus-ring);\n  --color-success: var(--ds-success);\n  --color-warning: var(--ds-warning);\n  --color-danger: var(--ds-danger);\n  --color-info: var(--ds-info);\n  --color-attention: var(--ds-attention);\n  --color-highlight: var(--ds-highlight);\n  --font-sans: var(--ds-font-body);\n  --font-display: var(--ds-font-display);\n${paletteTokens}\n${Object.entries(system.foundations.spacing).map(([key, value]) => `  --spacing-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.fontWeights).map(([key, value]) => `  --font-weight-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.tracking).map(([key, value]) => `  --tracking-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.leading).map(([key, value]) => `  --leading-${key}: ${value};`).join("\n")}\n${Object.entries(system.radius).map(([key, value]) => `  --radius-${key}: ${value};`).join("\n")}\n${Object.entries(system.shadows).map(([key, value]) => `  --shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.borderWidths).map(([key, value]) => `  --border-width-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.insetShadows).map(([key, value]) => `  --inset-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.dropShadows).map(([key, value]) => `  --drop-shadow-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.blur).map(([key, value]) => `  --blur-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.opacity).map(([key, value]) => `  --opacity-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.breakpoints).map(([key, value]) => `  --breakpoint-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.containers).map(([key, value]) => `  --container-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.aspectRatios).map(([key, value]) => `  --aspect-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.easing).map(([key, value]) => `  --ease-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.durations).map(([key, value]) => `  --duration-${key}: ${value};`).join("\n")}\n${Object.entries(system.foundations.animations).map(([key, value]) => `  --animate-${key}: ${value};`).join("\n")}\n}\n\n@theme {\n  @keyframes fade-in {\n    0% { opacity: 0; }\n    100% { opacity: 1; }\n  }\n\n  @keyframes rise-in {\n    0% { opacity: 0; transform: translateY(8px); }\n    100% { opacity: 1; transform: translateY(0); }\n  }\n\n  @keyframes pulse-soft {\n    0%, 100% { opacity: 1; }\n    50% { opacity: 0.7; }\n  }\n}\n`;
 }
 
 export function buildTokensJson(system: GeneratedSystem, brandName: string) {
@@ -86,7 +86,7 @@ export function buildTokensJson(system: GeneratedSystem, brandName: string) {
   return JSON.stringify(
     {
       meta: {
-        product: "Tailwind Design System Generator",
+        product: "Design System Generator",
         brandName,
       },
       palettes: system.palettes,
@@ -120,7 +120,7 @@ export function buildComponentsJson(system: GeneratedSystem, brandName: string) 
   return JSON.stringify(
     {
       meta: {
-        product: "Tailwind Design System Generator",
+        product: "Design System Generator",
         brandName,
       },
       components: system.components,
@@ -141,7 +141,7 @@ export function buildSessionJson(system: GeneratedSystem, brandName: string) {
     {
       version: 1,
       meta: {
-        product: "Tailwind Design System Generator",
+        product: "Design System Generator",
         brandName,
       },
       system,
@@ -155,7 +155,7 @@ export function buildReadme(system: GeneratedSystem, brandName: string) {
   const paletteCount = Object.keys(system.palettes).length;
   const customPaletteNames = system.customPalettes.map((palette) => palette.name).join(", ") || "None";
 
-  return `# ${brandName} Design Tokens\n\nThis package was generated by Tailwind Design System Generator.\n\n## Snapshot\n- Total palettes: ${paletteCount}\n- Custom palettes: ${customPaletteNames}\n- Density mode: ${system.density}\n\n## Files\n- \`theme.css\` defines raw palette variables, semantic tokens, typography, icon variables, radius, shadows, and density.\n- \`tailwind-theme.css\` maps those variables into Tailwind CSS v4 with \`@theme\`.\n- \`tokens.json\` provides palettes, semantics, foundations, icon settings, utility coverage, screen presets, and density.\n- \`components.json\` provides component recipes, icon settings, utilities, coverage metadata, and screens for tooling.\n- \`design-system-session.json\` stores the full generated system for round-tripping.\n\n## Usage\n1. Import \`theme.css\` after your app styles.\n2. Import \`tailwind-theme.css\` anywhere Tailwind reads your theme layer.\n3. Toggle dark mode by adding \`data-theme="dark"\` on a parent element.\n4. Reload \`design-system-session.json\` in the app if you want to continue editing later.\n`;
+  return `# ${brandName} Design Tokens\n\nThis package was generated by Design System Generator.\n\n## Snapshot\n- Total palettes: ${paletteCount}\n- Custom palettes: ${customPaletteNames}\n- Density mode: ${system.density}\n\n## Files\n- \`theme.css\` defines raw palette variables, semantic tokens, typography, icon variables, radius, shadows, and density.\n- \`theme-layer.css\` maps those variables into a reusable theme layer with \`@theme\`.\n- \`tokens.json\` provides palettes, semantics, foundations, icon settings, utility coverage, screen presets, and density.\n- \`components.json\` provides component recipes, icon settings, utilities, coverage metadata, and screens for tooling.\n- \`design-system-session.json\` stores the full generated system for round-tripping.\n\n## Usage\n1. Import \`theme.css\` after your app styles.\n2. Import \`theme-layer.css\` where your project reads theme variables.\n3. Toggle dark mode by adding \`data-theme="dark"\` on a parent element.\n4. Reload \`design-system-session.json\` in the app if you want to continue editing later.\n`;
 }
 
 export async function buildZip(system: GeneratedSystem, brandName: string) {
@@ -163,7 +163,7 @@ export async function buildZip(system: GeneratedSystem, brandName: string) {
   zip.file("tokens.json", buildTokensJson(system, brandName));
   zip.file("components.json", buildComponentsJson(system, brandName));
   zip.file("theme.css", buildThemeCss(system));
-  zip.file("tailwind-theme.css", buildTailwindThemeCss(system));
+  zip.file("theme-layer.css", buildThemeLayerCss(system));
   zip.file("README.md", buildReadme(system, brandName));
   zip.file("design-system-session.json", buildSessionJson(system, brandName));
 

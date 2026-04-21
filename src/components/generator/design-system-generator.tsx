@@ -41,7 +41,7 @@ import {
   buildComponentsJson,
   buildReadme,
   buildSessionJson,
-  buildTailwindThemeCss,
+  buildThemeLayerCss,
   buildThemeCss,
   buildTokensJson,
   buildZip,
@@ -69,6 +69,11 @@ const STYLE_DIRECTIONS: StyleDirection[] = [
   "bold",
   "editorial",
   "studio",
+  "luxury",
+  "playful",
+  "brutalist",
+  "futuristic",
+  "organic",
 ];
 
 const NEUTRAL_OPTIONS: Array<{ value: NeutralBasePreference; label: string }> = [
@@ -460,7 +465,7 @@ function auditSystem(system: GeneratedSystem) {
 
   const disabledFamilies = Object.entries(system.utilityCoverage).filter(([, value]) => !value.enabled).length;
   if (disabledFamilies > 2) {
-    findings.push({ label: "Several Tailwind utility families are disabled, so exported system coverage is intentionally partial.", severity: "warning" });
+    findings.push({ label: "Several utility families are disabled, so exported system coverage is intentionally partial.", severity: "warning" });
     score -= 8;
   }
 
@@ -582,13 +587,34 @@ function TokenReferencePicker({
   );
 }
 
+function HexFieldWithSwatch({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const swatchColor = isValidHex(value) ? normalizeHex(value, "#000000") : "transparent";
+
+  return (
+    <div className="hex-field">
+      <span className="hex-field-swatch" style={{ background: swatchColor }} />
+      <input className="hex-field-input" value={value} onChange={(event) => onChange(event.target.value)} />
+    </div>
+  );
+}
+
 function BrandInputPanel({
   inputs,
   setInputs,
+  system,
+  setSystem,
   colorErrors,
 }: {
   inputs: BrandInputs;
   setInputs: (updater: (current: BrandInputs) => BrandInputs) => void;
+  system: GeneratedSystem;
+  setSystem: Dispatch<SetStateAction<GeneratedSystem>>;
   colorErrors: Record<string, string | undefined>;
 }) {
   function handleInputChange(key: keyof BrandInputs, value: string) {
@@ -596,6 +622,53 @@ function BrandInputPanel({
   }
 
   const [activeTab, setActiveTab] = useState<BrandPanelTab>("brand");
+  const [customizeStyleOutput, setCustomizeStyleOutput] = useState(false);
+
+  function getPaletteAnchor(key: ColorInputKey) {
+    return system.palettes[key]?.["500"] ?? "";
+  }
+
+  function enableAdvancedPaletteInputs() {
+    setInputs((current) => {
+      const nextOverrides = { ...current.paletteOverrides };
+
+      ADVANCED_PALETTE_ROWS.forEach((row) => {
+        if (!nextOverrides[row.key]) {
+          nextOverrides[row.key] = system.palettes[row.key]?.["500"] ?? "";
+        }
+      });
+
+      return {
+        ...current,
+        advancedPaletteInputs: !current.advancedPaletteInputs,
+        paletteOverrides: current.advancedPaletteInputs ? current.paletteOverrides : nextOverrides,
+      };
+    });
+  }
+
+  function enableCustomNeutralBase() {
+    setInputs((current) => ({
+      ...current,
+      neutralBasePreference: "custom",
+      neutralBaseHex: current.neutralBaseHex || getPaletteAnchor("neutral") || "#7d6b5a",
+    }));
+  }
+
+  function updateStyleUtility<K extends keyof GeneratedSystem["utilities"]>(
+    family: K,
+    patch: Partial<GeneratedSystem["utilities"][K]>,
+  ) {
+    setSystem((current) => ({
+      ...current,
+      utilities: {
+        ...current.utilities,
+        [family]: {
+          ...current.utilities[family],
+          ...patch,
+        },
+      },
+    }));
+  }
 
   function handlePaletteOverrideChange(key: ColorInputKey, value: string) {
     setInputs((current) => ({
@@ -669,13 +742,13 @@ function BrandInputPanel({
 
   return (
     <div className="panel flex h-full min-h-0 flex-col overflow-hidden border-0 shadow-none">
-      <div className="shrink-0 border-b border-app-border px-5 py-4">
+      <div className="shrink-0 border-b border-app-border px-5 pb-0 pt-4">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Brand Inputs</p>
         <h1 className="mt-3 max-w-xs text-2xl font-semibold tracking-[-0.04em] text-app-foreground">
-          Tailwind Design System Generator
+          Design System Foundations
         </h1>
         <p className="mt-2 text-sm leading-6 text-app-muted">
-          Craft a shippable theme from a brand seed, preview it in context, and export Tailwind-ready files.
+          Craft a shippable theme from a brand seed, preview it in context, and export production-ready files.
         </p>
         <div className="workspace-tabs mt-4">
           {([
@@ -727,6 +800,13 @@ function BrandInputPanel({
                       </option>
                     ))}
                   </select>
+                  <button
+                    type="button"
+                    className="text-left text-xs font-semibold text-app-foreground underline decoration-app-border underline-offset-4"
+                    onClick={enableCustomNeutralBase}
+                  >
+                    Customize neutral anchor
+                  </button>
                 </label>
 
                 <label className="block space-y-2">
@@ -744,6 +824,175 @@ function BrandInputPanel({
                   </select>
                 </label>
               </div>
+              <div className="rounded-[0.95rem] border border-app-border/70 bg-app-bg/60 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-app-foreground">Style output controls</p>
+                    <p className="mt-1 text-xs text-app-muted">
+                      Fine-tune the generated feel after choosing a direction.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className={`rounded-full px-3 py-2 text-xs font-semibold ${
+                      customizeStyleOutput ? "bg-app-accent text-white" : "border border-app-border text-app-muted"
+                    }`}
+                    onClick={() => setCustomizeStyleOutput((current) => !current)}
+                  >
+                    {customizeStyleOutput ? "Enabled" : "Enable"}
+                  </button>
+                </div>
+                {customizeStyleOutput ? (
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Density</span>
+                      <select
+                        className="field px-3 py-2 text-sm"
+                        value={system.density}
+                        onChange={(event) => {
+                          const density = event.target.value as Density;
+                          setSystem((current) => ({
+                            ...current,
+                            density,
+                            utilities: {
+                              ...current.utilities,
+                              spacing: { ...current.utilities.spacing, densityMode: density },
+                            },
+                          }));
+                        }}
+                      >
+                        <option value="compact">Compact</option>
+                        <option value="comfortable">Comfortable</option>
+                        <option value="airy">Airy</option>
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Default radius</span>
+                      <select
+                        className="field px-3 py-2 text-sm"
+                        value={system.utilities.layout.defaultRadius}
+                        onChange={(event) =>
+                          updateStyleUtility("layout", {
+                            defaultRadius: event.target.value as keyof GeneratedSystem["radius"],
+                          })}
+                      >
+                        {Object.keys(system.radius).map((key) => <option key={key} value={key}>{sectionLabel(key)}</option>)}
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Heading weight</span>
+                      <select
+                        className="field px-3 py-2 text-sm"
+                        value={system.utilities.typography.headingWeight}
+                        onChange={(event) =>
+                          updateStyleUtility("typography", {
+                            headingWeight: event.target.value as keyof GeneratedSystem["foundations"]["fontWeights"],
+                          })}
+                      >
+                        {Object.keys(system.foundations.fontWeights).map((key) => <option key={key} value={key}>{sectionLabel(key)}</option>)}
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Heading tracking</span>
+                      <select
+                        className="field px-3 py-2 text-sm"
+                        value={system.utilities.typography.headingTracking}
+                        onChange={(event) =>
+                          updateStyleUtility("typography", {
+                            headingTracking: event.target.value as keyof GeneratedSystem["foundations"]["tracking"],
+                          })}
+                      >
+                        {Object.keys(system.foundations.tracking).map((key) => <option key={key} value={key}>{sectionLabel(key)}</option>)}
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Surface shadow</span>
+                      <select
+                        className="field px-3 py-2 text-sm"
+                        value={system.utilities.effects.surfaceShadow}
+                        onChange={(event) =>
+                          updateStyleUtility("effects", {
+                            surfaceShadow: event.target.value as keyof GeneratedSystem["shadows"],
+                          })}
+                      >
+                        {Object.keys(system.shadows).map((key) => <option key={key} value={key}>{sectionLabel(key)}</option>)}
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Motion level</span>
+                      <select
+                        className="field px-3 py-2 text-sm"
+                        value={system.utilities.motion.motionLevel}
+                        onChange={(event) =>
+                          updateStyleUtility("motion", {
+                            motionLevel: event.target.value as GeneratedSystem["utilities"]["motion"]["motionLevel"],
+                          })}
+                      >
+                        <option value="calm">Calm</option>
+                        <option value="balanced">Balanced</option>
+                        <option value="expressive">Expressive</option>
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Button radius</span>
+                      <select
+                        className="field px-3 py-2 text-sm"
+                        value={system.components.button.radius}
+                        onChange={(event) =>
+                          setSystem((current) => ({
+                            ...current,
+                            components: {
+                              ...current.components,
+                              button: {
+                                ...current.components.button,
+                                radius: event.target.value as keyof GeneratedSystem["radius"],
+                              },
+                            },
+                          }))}
+                      >
+                        {Object.keys(system.radius).map((key) => <option key={key} value={key}>{sectionLabel(key)}</option>)}
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted">
+                      <span>Icon size</span>
+                      <input
+                        type="number"
+                        min={12}
+                        max={40}
+                        className="field px-3 py-2 text-sm"
+                        value={system.icons.defaultSize}
+                        onChange={(event) =>
+                          setSystem((current) => ({
+                            ...current,
+                            icons: {
+                              ...current.icons,
+                              defaultSize: Number(event.target.value),
+                            },
+                          }))}
+                      />
+                    </label>
+                    <label className="space-y-1 text-xs text-app-muted sm:col-span-2">
+                      <span>Icon stroke width</span>
+                      <input
+                        type="range"
+                        min={1}
+                        max={3}
+                        step={0.25}
+                        value={system.icons.strokeWidth}
+                        onChange={(event) =>
+                          setSystem((current) => ({
+                            ...current,
+                            icons: {
+                              ...current.icons,
+                              strokeWidth: Number(event.target.value),
+                            },
+                          }))}
+                        className="w-full accent-app-accent"
+                      />
+                    </label>
+                  </div>
+                ) : null}
+              </div>
               {inputs.neutralBasePreference === "custom" ? (
                 <label className="block space-y-2">
                   <span className="text-sm font-medium text-app-foreground">Neutral hex anchor</span>
@@ -751,7 +1000,7 @@ function BrandInputPanel({
                     <input
                       type="color"
                       aria-label="Neutral hex anchor picker"
-                      className="h-12 w-14 cursor-pointer rounded-[0.9rem] border border-app-border bg-transparent p-1"
+                      className="color-field"
                       value={isValidHex(inputs.neutralBaseHex) ? normalizeHex(inputs.neutralBaseHex, "#7d6b5a") : "#7d6b5a"}
                       onChange={(event) => handleInputChange("neutralBaseHex", event.target.value)}
                     />
@@ -790,7 +1039,7 @@ function BrandInputPanel({
                       <input
                         type="color"
                         aria-label={`${row.label} color picker`}
-                        className="h-12 w-14 cursor-pointer rounded-[0.9rem] border border-app-border bg-transparent p-1"
+                        className="color-field"
                         value={isValidHex(inputs[row.key]) ? normalizeHex(inputs[row.key], "#000000") : "#000000"}
                         onChange={(event) => handleInputChange(row.key, event.target.value)}
                       />
@@ -823,7 +1072,7 @@ function BrandInputPanel({
               className={`rounded-full px-3 py-2 text-xs font-semibold ${
                 inputs.advancedPaletteInputs ? "bg-app-accent text-white" : "border border-app-border text-app-muted"
               }`}
-              onClick={() => setInputs((current) => ({ ...current, advancedPaletteInputs: !current.advancedPaletteInputs }))}
+              onClick={enableAdvancedPaletteInputs}
             >
               {inputs.advancedPaletteInputs ? "Enabled" : "Enable"}
             </button>
@@ -841,13 +1090,15 @@ function BrandInputPanel({
                     <input
                       type="color"
                       aria-label={`${row.label} override picker`}
-                      className="h-12 w-14 cursor-pointer rounded-2xl border border-app-border bg-transparent p-1"
-                      value={isValidHex(inputs.paletteOverrides[row.key] ?? "") ? normalizeHex(inputs.paletteOverrides[row.key] ?? "", "#000000") : "#000000"}
+                      className="color-field"
+                      value={isValidHex(inputs.paletteOverrides[row.key] ?? getPaletteAnchor(row.key))
+                        ? normalizeHex(inputs.paletteOverrides[row.key] ?? getPaletteAnchor(row.key), "#000000")
+                        : "#000000"}
                       onChange={(event) => handlePaletteOverrideChange(row.key, event.target.value)}
                     />
                     <input
                       className="field"
-                      value={inputs.paletteOverrides[row.key] ?? ""}
+                      value={inputs.paletteOverrides[row.key] ?? getPaletteAnchor(row.key)}
                       onChange={(event) => handlePaletteOverrideChange(row.key, event.target.value)}
                       placeholder={`Override ${row.label.toLowerCase()} hex`}
                       aria-invalid={Boolean(colorErrors[`paletteOverrides.${row.key}`])}
@@ -900,7 +1151,7 @@ function BrandInputPanel({
                             <input
                               type="color"
                               aria-label={`Custom color ${index + 1} picker`}
-                              className="h-12 w-14 cursor-pointer rounded-[0.9rem] border border-app-border bg-transparent p-1"
+                              className="color-field"
                               value={isValidHex(color.hex) ? normalizeHex(color.hex, "#000000") : "#000000"}
                               onChange={(event) => updateCustomColor(color.id, { hex: event.target.value })}
                             />
@@ -1216,7 +1467,7 @@ function TokenPanel({
     }));
   }
 
-  function exportFile(type: "tokens" | "components" | "theme" | "tailwind" | "readme" | "session") {
+  function exportFile(type: "tokens" | "components" | "theme" | "themeLayer" | "readme" | "session") {
     if (type === "tokens") {
       downloadTextFile("tokens.json", buildTokensJson(system, brandName), "application/json");
       return;
@@ -1232,8 +1483,8 @@ function TokenPanel({
       return;
     }
 
-    if (type === "tailwind") {
-      downloadTextFile("tailwind-theme.css", buildTailwindThemeCss(system), "text/css");
+    if (type === "themeLayer") {
+      downloadTextFile("theme-layer.css", buildThemeLayerCss(system), "text/css");
       return;
     }
 
@@ -1288,7 +1539,7 @@ function TokenPanel({
 
   return (
     <div className="panel flex h-full min-h-0 flex-col overflow-hidden border-0 shadow-none">
-      <div className="shrink-0 border-b border-app-border px-5 py-4">
+      <div className="shrink-0 border-b border-app-border px-5 pb-0 pt-4">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Editable Tokens</p>
         <h2 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-app-foreground">Tune before export</h2>
         <p className="mt-2 text-sm leading-6 text-app-muted">
@@ -1318,7 +1569,7 @@ function TokenPanel({
         {activeTab === "foundations" ? (
           <div className="workspace-card space-y-2">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Foundations</p>
-            <p className="text-sm text-app-muted">Edit the raw scales, Tailwind namespaces, semantic mappings, and design tokens that everything else builds on.</p>
+            <p className="text-sm text-app-muted">Edit the raw scales, exported namespaces, semantic mappings, and design tokens that everything else builds on.</p>
           </div>
         ) : null}
         {activeTab === "system" ? (
@@ -1364,10 +1615,9 @@ function TokenPanel({
                   {SCALE_STEPS.map((step) => (
                     <label key={step} className="space-y-1 text-xs text-app-muted">
                       <span>{step}</span>
-                      <input
-                        className="field px-3 py-2 text-sm"
+                      <HexFieldWithSwatch
                         value={paletteScale[step]}
-                        onChange={(event) => updatePaletteValue(paletteName, step, event.target.value)}
+                        onChange={(value) => updatePaletteValue(paletteName, step, value)}
                       />
                     </label>
                   ))}
@@ -1381,7 +1631,7 @@ function TokenPanel({
         {activeTab === "foundations" ? (
         <details open className="rounded-[1.3rem] border border-app-border bg-app-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
-            <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4" /> Tailwind foundations</span>
+            <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4" /> System foundations</span>
           </summary>
           <div className="space-y-4 border-t border-app-border/70 px-4 py-4">
             <div className="workspace-card space-y-3">
@@ -1464,7 +1714,7 @@ function TokenPanel({
             <div className="workspace-card space-y-3">
               <div>
                 <p className="text-sm font-semibold text-app-foreground">Layout and containers</p>
-                <p className="mt-1 text-xs text-app-muted">Tailwind breakpoints, max-widths, and aspect ratios define how previews and exports scale across layouts.</p>
+                <p className="mt-1 text-xs text-app-muted">Breakpoints, max-widths, and aspect ratios define how previews and exports scale across layouts.</p>
               </div>
               <div className="grid gap-2 sm:grid-cols-2">
                 {Object.entries(system.foundations.breakpoints).map(([key, value]) => (
@@ -4818,22 +5068,35 @@ function TokenPanel({
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-app-foreground">
             <span className="inline-flex items-center gap-2"><SwatchBook className="h-4 w-4" /> Semantic mappings</span>
           </summary>
-          <div className="grid gap-4 border-t border-app-border/70 px-4 py-4">
-            {(["lightTokens", "darkTokens"] as const).map((themeName) => (
-              <div key={themeName} className="space-y-3">
-                <h3 className="text-sm font-semibold text-app-foreground">{themeName === "lightTokens" ? "Light theme" : "Dark theme"}</h3>
-                <div className="grid gap-2">
-                  {SEMANTIC_TOKEN_NAMES.map((token) => (
-                    <label key={`${themeName}-${token}`} className="grid grid-cols-[1fr_1fr] items-center gap-2 text-sm">
-                      <span className="text-app-muted">{sectionLabel(token)}</span>
-                      <TokenReferencePicker
-                        options={tokenOptions}
-                        value={system[themeName][token]}
-                        palettes={system.palettes}
-                        onChange={(nextValue) => updateThemeToken(themeName, token, nextValue)}
-                      />
-                    </label>
-                  ))}
+          <div className="space-y-3 border-t border-app-border/70 px-4 py-4">
+            {SEMANTIC_TOKEN_NAMES.map((token) => (
+              <div
+                key={token}
+                className="rounded-[1rem] border border-app-border/70 bg-app-bg/60 p-3"
+              >
+                <div className="mb-3">
+                  <p className="text-sm font-semibold text-app-foreground">{sectionLabel(token)}</p>
+                  <p className="mt-1 text-xs text-app-muted">Semantic role</p>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="min-w-0 space-y-1 text-xs font-medium text-app-muted">
+                    <span>Light value</span>
+                    <TokenReferencePicker
+                      options={tokenOptions}
+                      value={system.lightTokens[token]}
+                      palettes={system.palettes}
+                      onChange={(nextValue) => updateThemeToken("lightTokens", token, nextValue)}
+                    />
+                  </label>
+                  <label className="min-w-0 space-y-1 text-xs font-medium text-app-muted">
+                    <span>Dark value</span>
+                    <TokenReferencePicker
+                      options={tokenOptions}
+                      value={system.darkTokens[token]}
+                      palettes={system.palettes}
+                      onChange={(nextValue) => updateThemeToken("darkTokens", token, nextValue)}
+                    />
+                  </label>
                 </div>
               </div>
             ))}
@@ -5006,7 +5269,7 @@ function TokenPanel({
             <button type="button" className="field text-left" onClick={() => exportFile("tokens")}>Download `tokens.json`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("components")}>Download `components.json`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("theme")}>Download `theme.css`</button>
-            <button type="button" className="field text-left" onClick={() => exportFile("tailwind")}>Download `tailwind-theme.css`</button>
+            <button type="button" className="field text-left" onClick={() => exportFile("themeLayer")}>Download `theme-layer.css`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("readme")}>Download `README.md`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("session")}>Save session JSON</button>
             <label className="field cursor-pointer text-left">
@@ -6376,8 +6639,8 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
             <div className="grid" style={{ gap: system.foundations.spacing[system.components.descriptionList.gap], gridTemplateColumns: `${system.foundations.containers[system.components.descriptionList.termWidth]} 1fr` }}>
               {[
                 ["Brand", "Northstar Labs"],
-                ["Theme", "Fintech / Balanced"],
-                ["Export", "Tailwind v4 ready"],
+                ["Theme", `${sectionLabel(system.styleDirection)} / ${sectionLabel(system.density)}`],
+                ["Export", "Production ready"],
               ].map(([term, value]) => (
                 <div key={term} className="contents">
                   <span className="flex items-center gap-2 text-sm font-medium">
@@ -6807,7 +7070,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
                 }}
               >
                 <div className="grid gap-2 text-sm">
-                  {["Theme.css", "tailwind-theme.css", "tokens.json", "components.json", "README.md", "design-system-session.json"].map((item) => (
+                  {["theme.css", "theme-layer.css", "tokens.json", "components.json", "README.md", "design-system-session.json"].map((item) => (
                     <div key={item} className="rounded-[var(--preview-radius-sm)] border px-3 py-2" style={{ borderColor: "var(--preview-border-default)" }}>
                       {item}
                     </div>
@@ -7144,7 +7407,7 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
               <div className="mt-4 grid" style={{ gap: system.foundations.spacing[system.components.activityFeed.gap] }}>
                 {[
                   ["Aurelian Studio", "Updated dashboard preset spacing."],
-                  ["Northstar Labs", "Exported a new Tailwind package."],
+                  ["Northstar Labs", "Exported a new system package."],
                   ["Vector Health", "Adjusted accessibility focus treatment."],
                 ].map(([title, detail], index) => (
                   <div
@@ -7858,7 +8121,7 @@ function FoundationsPreview({ system }: { system: GeneratedSystem }) {
             ["tokens.json", "Full token payload including palettes, themes, typography, icons, utilities, and screens."],
             ["components.json", "Component recipes and icon settings for downstream system usage."],
             ["theme.css", "Reusable CSS custom property output for the generated design system."],
-            ["tailwind-theme.css", "Tailwind v4-ready @theme file for direct project integration."],
+            ["theme-layer.css", "Theme-layer file for direct project integration."],
             ["README.md", "Developer handoff guidance for setup, usage, and export structure."],
             ["design-system-session.json", "Round-trip session file so a system can be loaded back into the app."],
           ].map(([fileName, description]) => (
@@ -8431,7 +8694,7 @@ function DashboardPreview({ brandName, system }: { brandName: string; system: Ge
                 <p className="text-xs uppercase tracking-[0.18em]" style={{ color: "var(--preview-text-muted)" }}>{system.components.dialog.presentation === "drawer" ? "Drawer preview" : "Dialog preview"}</p>
                 <h4 className="preview-heading mt-2 text-xl font-semibold">Export package</h4>
                 <p className="mt-2 text-sm" style={{ color: "var(--preview-text-secondary)" }}>
-                  Includes theme CSS, Tailwind v4 theme layer, JSON tokens, component recipes, README, and a reusable session file.
+                  Includes theme CSS, theme-layer CSS, JSON tokens, component recipes, README, and a reusable session file.
                 </p>
                 <div className="mt-4 border px-[var(--preview-dialog-padding)] py-[var(--preview-dialog-padding)] text-sm rounded-[var(--preview-dialog-radius)]" style={{ borderColor: "var(--preview-border-default)" }}>
                   {metrics.exportFileCount} files ready for ZIP download
@@ -8470,7 +8733,7 @@ function MarketingPreview({ brandName, system }: { brandName: string; system: Ge
           </div>
 
           <div className="preview-grid-gap grid sm:grid-cols-2">
-            {["OKLCH scales", "Semantic tokens", "Tailwind export", "Dark mode"].map((item) => (
+            {["OKLCH scales", "Semantic tokens", "System export", "Dark mode"].map((item) => (
               <div key={item} className="preview-elevated p-4">
                 <div className="h-10 w-10 rounded-2xl" style={{ background: "color-mix(in srgb, var(--preview-action-primary) 14%, transparent)" }} />
                 <p className="mt-4 font-medium">{item}</p>
@@ -8553,7 +8816,7 @@ function MarketingPreview({ brandName, system }: { brandName: string; system: Ge
         {[
           "Generate usable palette ladders with intentional 500 anchors.",
           "Preview real components, dashboards, and landing surfaces instantly.",
-          "Ship a reusable package for Tailwind CSS v4 projects.",
+          "Ship a reusable package for modern product projects.",
         ].map((text, index) => (
           <div key={text} className="preview-surface p-5">
             <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "var(--preview-text-muted)" }}>Feature 0{index + 1}</p>
@@ -8642,7 +8905,7 @@ export function DesignSystemGenerator() {
             DS
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Generator Workspace</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Design System Workspace</p>
             <h1 className="mt-1 text-xl font-semibold tracking-[-0.045em] text-app-foreground">
               Brand seeds in, production-ready theme files out.
             </h1>
@@ -8657,7 +8920,7 @@ export function DesignSystemGenerator() {
 
       <section className="grid min-h-0 flex-1 grid-cols-1 xl:grid-cols-[390px_minmax(0,1fr)]">
         <div className="flex min-h-0 flex-col border-r border-app-border bg-app-surface">
-          <div className="shrink-0 border-b border-app-border p-3">
+          <div className="shrink-0 border-b border-app-border px-3 pb-0 pt-3">
             <div className="workspace-tabs">
               {([
                 ["inputs", "Brand inputs"],
@@ -8678,7 +8941,13 @@ export function DesignSystemGenerator() {
 
           <div className="min-h-0 flex-1">
             {deferredControlView === "inputs" ? (
-              <BrandInputPanel inputs={inputs} setInputs={updateInputs} colorErrors={colorErrors} />
+              <BrandInputPanel
+                inputs={inputs}
+                setInputs={updateInputs}
+                system={system}
+                setSystem={setSystem}
+                colorErrors={colorErrors}
+              />
             ) : (
               <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
             )}
