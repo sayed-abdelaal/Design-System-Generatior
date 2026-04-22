@@ -51,6 +51,7 @@ import {
 import { createGeneratedSystem, resolveTokenReference } from "@/lib/generator";
 import {
   BrandInputs,
+  ColorAdjustmentMode,
   ColorInputKey,
   Density,
   GeneratedSystem,
@@ -114,6 +115,7 @@ const INITIAL_INPUTS: BrandInputs = {
   headingFont: "fraunces",
   bodyFont: "manrope",
   styleDirection: "fintech",
+  colorAdjustmentMode: "force",
   logoDataUrl: null,
 };
 
@@ -144,10 +146,38 @@ type ActiveTheme = "light" | "dark";
 type BrandPanelTab = "brand" | "colors" | "assets";
 type EditorPanelTab = "foundations" | "system" | "components" | "handoff";
 type ControlPanelView = "inputs" | "editor";
+type ComponentRecipeKey = keyof GeneratedSystem["components"];
 type QualityFinding = {
   label: string;
   severity: "info" | "warning" | "critical";
 };
+
+const NEUTRAL_INFLUENCE_GROUPS: Array<{
+  label: string;
+  description: string;
+  tokens: SemanticTokenName[];
+}> = [
+  {
+    label: "Backgrounds and surfaces",
+    description: "Controls the main canvas, cards, and elevated surfaces.",
+    tokens: ["background", "surface", "surfaceElevated"],
+  },
+  {
+    label: "Text hierarchy",
+    description: "Controls default foreground, primary copy, secondary copy, and muted text.",
+    tokens: ["foreground", "textPrimary", "textSecondary", "textMuted"],
+  },
+  {
+    label: "Borders and structure",
+    description: "Controls quiet dividers, default borders, and stronger structural outlines.",
+    tokens: ["borderDefault", "borderStrong"],
+  },
+  {
+    label: "Action contrast",
+    description: "Controls the foreground color used on primary action surfaces.",
+    tokens: ["actionPrimaryForeground"],
+  },
+];
 
 function sectionLabel(token: string) {
   return token.replace(/([A-Z])/g, " $1").replace(/^./, (value) => value.toUpperCase());
@@ -623,6 +653,8 @@ function BrandInputPanel({
 
   const [activeTab, setActiveTab] = useState<BrandPanelTab>("brand");
   const [customizeStyleOutput, setCustomizeStyleOutput] = useState(false);
+  const [showNeutralInfluenceMap, setShowNeutralInfluenceMap] = useState(false);
+  const tokenOptions = useMemo(() => tokenReferenceOptions(system), [system]);
 
   function getPaletteAnchor(key: ColorInputKey) {
     return system.palettes[key]?.["500"] ?? "";
@@ -666,6 +698,20 @@ function BrandInputPanel({
           ...current.utilities[family],
           ...patch,
         },
+      },
+    }));
+  }
+
+  function updateNeutralInfluenceToken(
+    theme: "lightTokens" | "darkTokens",
+    token: SemanticTokenName,
+    value: TokenReference,
+  ) {
+    setSystem((current) => ({
+      ...current,
+      [theme]: {
+        ...current[theme],
+        [token]: value,
       },
     }));
   }
@@ -742,15 +788,19 @@ function BrandInputPanel({
 
   return (
     <div className="panel flex h-full min-h-0 flex-col overflow-hidden border-0 shadow-none">
-      <div className="shrink-0 border-b border-app-border px-5 pb-0 pt-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Brand Inputs</p>
-        <h1 className="mt-3 max-w-xs text-2xl font-semibold tracking-[-0.04em] text-app-foreground">
-          Design System Foundations
-        </h1>
-        <p className="mt-2 text-sm leading-6 text-app-muted">
-          Craft a shippable theme from a brand seed, preview it in context, and export production-ready files.
-        </p>
-        <div className="workspace-tabs mt-4">
+      <div className="shrink-0 border-b border-app-border px-5 pb-0 pt-3">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-app-muted">Brand Inputs</p>
+            <h1 className="mt-1 text-lg font-semibold tracking-[-0.035em] text-app-foreground">
+              Design System Foundations
+            </h1>
+          </div>
+          <span className="hidden rounded-full border border-app-border bg-app-bg px-2.5 py-1 text-xs font-medium text-app-muted sm:inline-flex">
+            Setup
+          </span>
+        </div>
+        <div className="workspace-tabs mt-2">
           {([
             ["brand", "Brand"],
             ["colors", "Colors"],
@@ -1017,6 +1067,79 @@ function BrandInputPanel({
                   ) : null}
                 </label>
               ) : null}
+              <div className="rounded-[0.95rem] border border-app-border/70 bg-app-bg/60 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-app-foreground">Neutral influence map</p>
+                    <p className="mt-1 text-xs leading-5 text-app-muted">
+                      See every core role affected by neutral decisions, then choose the exact light and dark values.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className={`rounded-full px-3 py-2 text-xs font-semibold ${
+                      showNeutralInfluenceMap ? "bg-app-accent text-white" : "border border-app-border text-app-muted"
+                    }`}
+                    onClick={() => setShowNeutralInfluenceMap((current) => !current)}
+                  >
+                    {showNeutralInfluenceMap ? "Open" : "Edit"}
+                  </button>
+                </div>
+
+                {showNeutralInfluenceMap ? (
+                  <div className="mt-4 space-y-4">
+                    {NEUTRAL_INFLUENCE_GROUPS.map((group) => (
+                      <div key={group.label} className="space-y-3 rounded-[0.85rem] border border-app-border/70 bg-app-surface p-3">
+                        <div>
+                          <p className="text-sm font-semibold text-app-foreground">{group.label}</p>
+                          <p className="mt-1 text-xs leading-5 text-app-muted">{group.description}</p>
+                        </div>
+                        <div className="space-y-3">
+                          {group.tokens.map((token) => {
+                            const lightHex = resolveTokenReference(system.lightTokens[token], system.palettes);
+                            const darkHex = resolveTokenReference(system.darkTokens[token], system.palettes);
+
+                            return (
+                              <div key={token} className="rounded-[0.8rem] border border-app-border/60 bg-app-bg/70 p-3">
+                                <div className="mb-3 flex items-center justify-between gap-3">
+                                  <div>
+                                    <p className="text-sm font-semibold text-app-foreground">{sectionLabel(token)}</p>
+                                    <p className="mt-1 text-xs text-app-muted">Currently {system.lightTokens[token]} / {system.darkTokens[token]}</p>
+                                  </div>
+                                  <div className="flex shrink-0 items-center gap-1">
+                                    <span className="h-4 w-4 rounded-full border border-app-border" style={{ background: lightHex }} />
+                                    <span className="h-4 w-4 rounded-full border border-app-border" style={{ background: darkHex }} />
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <label className="min-w-0 space-y-1 text-xs font-medium text-app-muted">
+                                    <span>Light value</span>
+                                    <TokenReferencePicker
+                                      options={tokenOptions}
+                                      value={system.lightTokens[token]}
+                                      palettes={system.palettes}
+                                      onChange={(nextValue) => updateNeutralInfluenceToken("lightTokens", token, nextValue)}
+                                    />
+                                  </label>
+                                  <label className="min-w-0 space-y-1 text-xs font-medium text-app-muted">
+                                    <span>Dark value</span>
+                                    <TokenReferencePicker
+                                      options={tokenOptions}
+                                      value={system.darkTokens[token]}
+                                      palettes={system.palettes}
+                                      onChange={(nextValue) => updateNeutralInfluenceToken("darkTokens", token, nextValue)}
+                                    />
+                                  </label>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
             </div>
           </>
         ) : null}
@@ -1027,6 +1150,32 @@ function BrandInputPanel({
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Core palettes</p>
                 <p className="mt-2 text-sm text-app-muted">Start with your brand anchors, then decide whether you want full palette control.</p>
+              </div>
+              <div className="rounded-[0.95rem] border border-app-border/70 bg-app-bg/70 p-3">
+                <p className="text-sm font-medium text-app-foreground">Color handling</p>
+                <p className="mt-1 text-xs leading-5 text-app-muted">
+                  Contrast issues are flagged in the preview. Improvements are only applied when you choose them.
+                </p>
+                <div className="mt-3 grid gap-2">
+                  {([
+                    ["force", "Force entered colors", "Keep your hex values as the 500 anchors and warn if contrast needs work."],
+                    ["improve", "Allow contrast-safe adjustments", "Use generated action steps that may shift away from the exact entered anchor."],
+                  ] as const).map(([mode, label, description]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      className={`rounded-[0.85rem] border px-3 py-3 text-left transition ${
+                        (inputs.colorAdjustmentMode ?? "force") === mode
+                          ? "border-app-foreground bg-app-surface text-app-foreground"
+                          : "border-app-border bg-app-surface/70 text-app-muted"
+                      }`}
+                      onClick={() => handleInputChange("colorAdjustmentMode", mode satisfies ColorAdjustmentMode)}
+                    >
+                      <span className="block text-sm font-semibold">{label}</span>
+                      <span className="mt-1 block text-xs leading-5">{description}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="space-y-4">
                 {colorRows.map((row) => (
@@ -1271,6 +1420,7 @@ function PreviewPanel({
   contrastWarnings,
   qualityScore,
   exportReadiness,
+  onEditComponent,
 }: {
   brandName: string;
   logoDataUrl: string | null;
@@ -1282,62 +1432,69 @@ function PreviewPanel({
   contrastWarnings: string[];
   qualityScore: number;
   exportReadiness: "ready" | "review" | "risky";
+  onEditComponent: (family: ComponentRecipeKey) => void;
 }) {
   const previewStyle = useMemo(() => createPreviewStyle(system, activeTheme), [system, activeTheme]);
   const previewMetrics = getPreviewMetrics(system, previewMode);
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-app-border bg-app-surface px-5 py-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Live Preview</p>
-            <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-app-foreground">Preview the full product system</h2>
-            <p className="mt-2 text-sm text-app-muted">
-              QA score {qualityScore}/100 - export posture {exportReadiness}
-            </p>
+      <div className="shrink-0 border-b border-app-border bg-app-surface px-5 py-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="min-w-[220px] flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-app-muted">Live Preview</p>
+              <span className="rounded-full border border-app-border bg-app-bg px-2.5 py-1 text-xs font-semibold text-app-foreground">
+                QA {qualityScore}/100
+              </span>
+              <span className="rounded-full border border-app-border bg-app-bg px-2.5 py-1 text-xs font-semibold text-app-muted">
+                {sectionLabel(exportReadiness)}
+              </span>
+              {contrastWarnings.length ? (
+                <span
+                  className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-900"
+                  title={contrastWarnings.join(" ")}
+                >
+                  Contrast warning
+                </span>
+              ) : null}
+            </div>
+            <h2 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-app-foreground">Preview the full product system</h2>
           </div>
 
-          <div className="flex items-center gap-2 rounded-full border border-app-border bg-app-bg p-1">
+          <div className="preview-mode-tabs order-3 w-full lg:order-none lg:w-auto">
+            {PREVIEW_MODES.map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className="preview-mode-tab"
+                data-active={previewMode === mode}
+                onClick={() => setPreviewMode(mode)}
+              >
+                {sectionLabel(mode)}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-1 rounded-full border border-app-border bg-app-bg p-1">
             <button
               type="button"
-              className={`rounded-full px-4 py-2 text-sm ${activeTheme === "light" ? "bg-app-accent text-white" : "text-app-muted"}`}
+              className={`rounded-full px-3 py-1.5 text-sm ${activeTheme === "light" ? "bg-app-accent text-white" : "text-app-muted"}`}
               onClick={() => setActiveTheme("light")}
             >
-              <SunMedium className="mr-2 inline h-4 w-4" />
+              <SunMedium className="mr-1.5 inline h-4 w-4" />
               Light
             </button>
             <button
               type="button"
-              className={`rounded-full px-4 py-2 text-sm ${activeTheme === "dark" ? "bg-app-accent text-white" : "text-app-muted"}`}
+              className={`rounded-full px-3 py-1.5 text-sm ${activeTheme === "dark" ? "bg-app-accent text-white" : "text-app-muted"}`}
               onClick={() => setActiveTheme("dark")}
             >
-              <MoonStar className="mr-2 inline h-4 w-4" />
+              <MoonStar className="mr-1.5 inline h-4 w-4" />
               Dark
             </button>
           </div>
         </div>
-
-        <div className="preview-mode-tabs mt-4">
-          {PREVIEW_MODES.map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              className="preview-mode-tab"
-              data-active={previewMode === mode}
-              onClick={() => setPreviewMode(mode)}
-            >
-              {sectionLabel(mode)}
-            </button>
-          ))}
-        </div>
-
-        {contrastWarnings.length ? (
-          <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            <p className="font-semibold">Contrast needs attention</p>
-            <p className="mt-1">{contrastWarnings.join(" ")}</p>
-          </div>
-        ) : null}
       </div>
 
       <div className="preview-shell flex min-h-0 flex-1 flex-col overflow-hidden" style={previewStyle}>
@@ -1367,7 +1524,7 @@ function PreviewPanel({
             ) : previewMode === "ui-kit" ? (
               <UIKitPreview system={system} />
             ) : previewMode === "components" ? (
-              <ComponentsPreview system={system} />
+              <ComponentsPreview system={system} onEditComponent={onEditComponent} />
             ) : previewMode === "icons" ? (
               <IconsPreview system={system} />
             ) : previewMode === "dashboard" ? (
@@ -1387,13 +1544,16 @@ function TokenPanel({
   system,
   setSystem,
   brandName,
+  activeTab,
+  setActiveTab,
 }: {
   setInputs: Dispatch<SetStateAction<BrandInputs>>;
   system: GeneratedSystem;
   setSystem: Dispatch<SetStateAction<GeneratedSystem>>;
   brandName: string;
+  activeTab: EditorPanelTab;
+  setActiveTab: Dispatch<SetStateAction<EditorPanelTab>>;
 }) {
-  const [activeTab, setActiveTab] = useState<EditorPanelTab>("foundations");
   const tokenOptions = useMemo(() => tokenReferenceOptions(system), [system]);
 
   function updatePaletteValue(palette: string, step: ScaleStep, value: string) {
@@ -1539,13 +1699,17 @@ function TokenPanel({
 
   return (
     <div className="panel flex h-full min-h-0 flex-col overflow-hidden border-0 shadow-none">
-      <div className="shrink-0 border-b border-app-border px-5 pb-0 pt-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-app-muted">Editable Tokens</p>
-        <h2 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-app-foreground">Tune before export</h2>
-        <p className="mt-2 text-sm leading-6 text-app-muted">
-          Adjust raw scales, semantic token mappings, typography, radius, shadows, and export production-ready assets.
-        </p>
-        <div className="workspace-tabs mt-4">
+      <div className="shrink-0 border-b border-app-border px-5 pb-0 pt-3">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-app-muted">Editable Tokens</p>
+            <h2 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-app-foreground">Tune before export</h2>
+          </div>
+          <span className="hidden rounded-full border border-app-border bg-app-bg px-2.5 py-1 text-xs font-medium text-app-muted sm:inline-flex">
+            {sectionLabel(activeTab)}
+          </span>
+        </div>
+        <div className="workspace-tabs mt-2">
           {([
             ["foundations", "Foundations"],
             ["system", "System"],
@@ -5401,9 +5565,15 @@ function UIKitPreview({ system }: { system: GeneratedSystem }) {
   );
 }
 
-function ComponentsPreview({ system }: { system: GeneratedSystem }) {
+function ComponentsPreview({
+  system,
+  onEditComponent,
+}: {
+  system: GeneratedSystem;
+  onEditComponent: (family: ComponentRecipeKey) => void;
+}) {
   const metrics = getSystemMetrics(system);
-  const componentFamilies = [
+  const componentFamilies: ComponentRecipeKey[] = [
     "button",
     "input",
     "searchField",
@@ -5595,10 +5765,16 @@ function ComponentsPreview({ system }: { system: GeneratedSystem }) {
         </div>
         <div className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
           {componentFamilies.map((family) => (
-            <div key={family} className="rounded-[var(--preview-radius-sm)] border px-3 py-3 text-sm" style={{ borderColor: "var(--preview-border-default)" }}>
+            <button
+              key={family}
+              type="button"
+              className="group rounded-[var(--preview-radius-sm)] border px-3 py-3 text-left text-sm transition hover:-translate-y-0.5 hover:shadow-[var(--preview-shadow-sm)] focus:outline-none focus:ring-2 focus:ring-[var(--preview-focus-ring)]"
+              style={{ borderColor: "var(--preview-border-default)" }}
+              onClick={() => onEditComponent(family)}
+            >
               <p className="font-medium">{sectionLabel(family)}</p>
-              <p className="mt-1 text-xs" style={{ color: "var(--preview-text-muted)" }}>Modeled and previewed</p>
-            </div>
+              <p className="mt-1 text-xs" style={{ color: "var(--preview-text-muted)" }}>Click to edit recipe</p>
+            </button>
           ))}
         </div>
       </section>
@@ -8852,6 +9028,7 @@ export function DesignSystemGenerator() {
   const [previewMode, setPreviewMode] = useState<PreviewMode>("dashboard");
   const [activeTheme, setActiveTheme] = useState<ActiveTheme>("light");
   const [controlView, setControlView] = useState<ControlPanelView>("inputs");
+  const [editorTab, setEditorTab] = useState<EditorPanelTab>("foundations");
   const deferredControlView = useDeferredValue(controlView);
 
   function updateInputs(updater: (current: BrandInputs) => BrandInputs) {
@@ -8895,6 +9072,11 @@ export function DesignSystemGenerator() {
   }, [inputs]);
 
   const qaReport = useMemo(() => auditSystem(system), [system]);
+
+  function openComponentEditor() {
+    setControlView("editor");
+    setEditorTab("components");
+  }
 
   return (
     <main className="flex h-dvh w-full flex-col overflow-hidden bg-app-bg">
@@ -8949,7 +9131,14 @@ export function DesignSystemGenerator() {
                 colorErrors={colorErrors}
               />
             ) : (
-              <TokenPanel setInputs={setInputs} system={system} setSystem={setSystem} brandName={inputs.brandName} />
+              <TokenPanel
+                setInputs={setInputs}
+                system={system}
+                setSystem={setSystem}
+                brandName={inputs.brandName}
+                activeTab={editorTab}
+                setActiveTab={setEditorTab}
+              />
             )}
           </div>
         </div>
@@ -8966,6 +9155,7 @@ export function DesignSystemGenerator() {
             contrastWarnings={qaReport.contrastWarnings}
             qualityScore={qaReport.score}
             exportReadiness={qaReport.exportReadiness}
+            onEditComponent={openComponentEditor}
           />
         </div>
       </section>

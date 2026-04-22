@@ -1414,6 +1414,7 @@ export type ComponentRecipes = {
 };
 
 export type Density = "compact" | "comfortable" | "airy";
+export type ColorAdjustmentMode = "force" | "improve";
 
 export type BrandInputs = {
   brandName: string;
@@ -1429,11 +1430,13 @@ export type BrandInputs = {
   headingFont: string;
   bodyFont: string;
   styleDirection: StyleDirection;
+  colorAdjustmentMode: ColorAdjustmentMode;
   logoDataUrl: string | null;
 };
 
 export type GeneratedSystem = {
   styleDirection: StyleDirection;
+  colorAdjustmentMode: ColorAdjustmentMode;
   palettes: PaletteCollection;
   customPalettes: CustomPalette[];
   lightTokens: ThemeSemanticTokens;

@@ -67,6 +67,13 @@ export function makeScaleFromAnchor(anchorHex: string, neutral = false) {
   };
 }
 
+export function makeScaleFromAnchorValue(anchorHex: string, neutral = false) {
+  return {
+    ...makeScaleFromAnchor(anchorHex, neutral),
+    "500": normalizeHex(anchorHex, anchorHex),
+  };
+}
+
 export function makeNeutralAnchor(baseHex: string, preference: NeutralBasePreference) {
   const parsed = parse(baseHex);
   const converted = parsed ? toOklch(parsed) : toOklch("#7d6b5a");

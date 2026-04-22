@@ -1,5 +1,5 @@
 import { FONT_OPTIONS } from "@/data/fonts";
-import { makeNeutralAnchor, makeScaleFromAnchor, normalizeHex } from "@/lib/color";
+import { makeNeutralAnchor, makeScaleFromAnchor, makeScaleFromAnchorValue, normalizeHex } from "@/lib/color";
 import {
   AnimationScale,
   AspectRatioScale,
@@ -672,9 +672,11 @@ function buildIconSystem(direction: BrandInputs["styleDirection"]): IconSystem {
 function buildComponentRecipes(
   density: Density,
   direction: BrandInputs["styleDirection"],
+  colorAdjustmentMode: BrandInputs["colorAdjustmentMode"] = "force",
 ): ComponentRecipes {
   const compact = density === "compact";
   const airy = density === "airy";
+  const forceEnteredColors = colorAdjustmentMode === "force";
 
   return {
     button: {
@@ -687,12 +689,12 @@ function buildComponentRecipes(
       hoverLift: isMinimalDirection(direction) || direction === "brutalist" ? "none" : isBoldDirection(direction) || direction === "playful" ? "md" : "sm",
       colors: {
         primary: {
-          background: "primary.600",
+          background: forceEnteredColors ? "primary.500" : "primary.600",
           foreground: "neutral.50",
-          border: "primary.700",
-          hoverBackground: "primary.700",
+          border: forceEnteredColors ? "primary.500" : "primary.700",
+          hoverBackground: forceEnteredColors ? "primary.600" : "primary.700",
           hoverForeground: "neutral.50",
-          hoverBorder: "primary.800",
+          hoverBorder: forceEnteredColors ? "primary.700" : "primary.800",
         },
         secondary: {
           background: "secondary.100",
@@ -1376,7 +1378,9 @@ function buildComponentRecipes(
   };
 }
 
-function buildSemanticTokens(): { lightTokens: ThemeSemanticTokens; darkTokens: ThemeSemanticTokens } {
+function buildSemanticTokens(colorAdjustmentMode: BrandInputs["colorAdjustmentMode"] = "force"): { lightTokens: ThemeSemanticTokens; darkTokens: ThemeSemanticTokens } {
+  const forceEnteredColors = colorAdjustmentMode === "force";
+
   return {
     lightTokens: {
       background: "neutral.50",
@@ -1388,10 +1392,10 @@ function buildSemanticTokens(): { lightTokens: ThemeSemanticTokens; darkTokens: 
       textMuted: "neutral.500",
       borderDefault: "neutral.200",
       borderStrong: "neutral.400",
-      actionPrimary: "primary.600",
+      actionPrimary: forceEnteredColors ? "primary.500" : "primary.600",
       actionPrimaryForeground: "neutral.50",
-      actionPrimaryHover: "primary.700",
-      actionPrimaryActive: "primary.800",
+      actionPrimaryHover: forceEnteredColors ? "primary.600" : "primary.700",
+      actionPrimaryActive: forceEnteredColors ? "primary.700" : "primary.800",
       actionSecondary: "secondary.600",
       focusRing: "accent.500",
       success: "success.600",
@@ -1411,10 +1415,10 @@ function buildSemanticTokens(): { lightTokens: ThemeSemanticTokens; darkTokens: 
       textMuted: "neutral.400",
       borderDefault: "neutral.800",
       borderStrong: "neutral.600",
-      actionPrimary: "primary.400",
+      actionPrimary: forceEnteredColors ? "primary.500" : "primary.400",
       actionPrimaryForeground: "neutral.950",
-      actionPrimaryHover: "primary.300",
-      actionPrimaryActive: "primary.200",
+      actionPrimaryHover: forceEnteredColors ? "primary.400" : "primary.300",
+      actionPrimaryActive: forceEnteredColors ? "primary.300" : "primary.200",
       actionSecondary: "secondary.300",
       focusRing: "accent.400",
       success: "success.400",
@@ -1445,9 +1449,13 @@ function resolvePaletteAnchor(
   return normalizeHex(override ?? "", fallback);
 }
 
-function buildCustomPalettes(inputs: BrandInputs): { metadata: CustomPalette[]; collection: Record<string, ReturnType<typeof makeScaleFromAnchor>> } {
+function buildCustomPalettes(
+  inputs: BrandInputs,
+  colorAdjustmentMode: BrandInputs["colorAdjustmentMode"] = "force",
+): { metadata: CustomPalette[]; collection: Record<string, ReturnType<typeof makeScaleFromAnchor>> } {
   const metadata: CustomPalette[] = [];
   const collection: Record<string, ReturnType<typeof makeScaleFromAnchor>> = {};
+  const buildScale = colorAdjustmentMode === "force" ? makeScaleFromAnchorValue : makeScaleFromAnchor;
 
   for (const color of inputs.customColors) {
     const normalizedHex = normalizeHex(color.hex, "");
@@ -1462,7 +1470,7 @@ function buildCustomPalettes(inputs: BrandInputs): { metadata: CustomPalette[]; 
       slug,
       hex: normalizedHex,
     });
-    collection[slug] = makeScaleFromAnchor(normalizedHex);
+    collection[slug] = buildScale(normalizedHex);
   }
 
   return { metadata, collection };
@@ -1475,6 +1483,8 @@ function getFontCssVariable(fontId: string, fallbackId: string) {
 }
 
 export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
+  const colorAdjustmentMode = inputs.colorAdjustmentMode ?? "force";
+  const buildScale = colorAdjustmentMode === "force" ? makeScaleFromAnchorValue : makeScaleFromAnchor;
   const primary = resolvePaletteAnchor(inputs, "primary", normalizeHex(inputs.primaryColor, "#7c5cff"));
   const secondary = resolvePaletteAnchor(inputs, "secondary", normalizeHex(inputs.secondaryColor, "#c77734"));
   const accent = resolvePaletteAnchor(inputs, "accent", normalizeHex(inputs.accentColor, "#16a34a"));
@@ -1488,27 +1498,27 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
   const info = resolvePaletteAnchor(inputs, "info", "#0284c7");
   const attention = resolvePaletteAnchor(inputs, "attention", "#ea580c");
   const highlight = resolvePaletteAnchor(inputs, "highlight", "#eab308");
-  const { metadata: customPalettes, collection: customPaletteCollection } = buildCustomPalettes(inputs);
+  const { metadata: customPalettes, collection: customPaletteCollection } = buildCustomPalettes(inputs, colorAdjustmentMode);
 
   const palettes: PaletteCollection = {
-    primary: makeScaleFromAnchor(primary),
-    secondary: makeScaleFromAnchor(secondary),
-    accent: makeScaleFromAnchor(accent),
-    neutral: makeScaleFromAnchor(neutralAnchor, true),
-    success: makeScaleFromAnchor(success),
-    warning: makeScaleFromAnchor(warning),
-    danger: makeScaleFromAnchor(danger),
-    info: makeScaleFromAnchor(info),
-    attention: makeScaleFromAnchor(attention),
-    highlight: makeScaleFromAnchor(highlight),
+    primary: buildScale(primary),
+    secondary: buildScale(secondary),
+    accent: buildScale(accent),
+    neutral: buildScale(neutralAnchor, true),
+    success: buildScale(success),
+    warning: buildScale(warning),
+    danger: buildScale(danger),
+    info: buildScale(info),
+    attention: buildScale(attention),
+    highlight: buildScale(highlight),
     ...customPaletteCollection,
   };
 
-  const { lightTokens, darkTokens } = buildSemanticTokens();
+  const { lightTokens, darkTokens } = buildSemanticTokens(colorAdjustmentMode);
   const { foundations, density } = buildFoundations(inputs.styleDirection);
   const utilities = buildUtilitySettings(density, inputs.styleDirection);
   const utilityCoverage = buildUtilityCoverage(density, inputs.styleDirection);
-  const components = buildComponentRecipes(density, inputs.styleDirection);
+  const components = buildComponentRecipes(density, inputs.styleDirection, colorAdjustmentMode);
   const screens = buildScreenPresets(density);
   const icons = buildIconSystem(inputs.styleDirection);
   const brandThemes = [
@@ -1519,6 +1529,7 @@ export function createGeneratedSystem(inputs: BrandInputs): GeneratedSystem {
 
   return {
     styleDirection: inputs.styleDirection,
+    colorAdjustmentMode,
     palettes,
     customPalettes,
     lightTokens,
