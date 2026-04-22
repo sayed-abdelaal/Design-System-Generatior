@@ -527,6 +527,31 @@ select.field {
   padding: 0.35rem;
 }
 
+.token-picker-search-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin-bottom: 0.25rem;
+  background: color-mix(in oklch, var(--app-surface) 99%, white);
+  padding: 0.2rem;
+}
+
+.token-picker-search {
+  width: 100%;
+  border: 1px solid color-mix(in oklch, var(--app-border) 88%, white);
+  border-radius: 0.7rem;
+  background: var(--app-bg);
+  padding: 0.55rem 0.65rem;
+  color: var(--app-foreground);
+  font-size: 0.8125rem;
+  outline: none;
+}
+
+.token-picker-search:focus-visible {
+  border-color: color-mix(in srgb, var(--app-accent) 54%, white);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 12%, transparent);
+}
+
 .token-picker-option {
   display: flex;
   width: 100%;

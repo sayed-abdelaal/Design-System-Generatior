@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { ChangeEvent, CSSProperties, Dispatch, SetStateAction } from "react";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Alert02Icon,
@@ -147,10 +147,28 @@ type BrandPanelTab = "brand" | "colors" | "assets";
 type EditorPanelTab = "foundations" | "system" | "components" | "handoff";
 type ControlPanelView = "inputs" | "editor";
 type ComponentRecipeKey = keyof GeneratedSystem["components"];
+type ProjectSnapshot = {
+  inputs: BrandInputs;
+  system: GeneratedSystem;
+};
+type SavedProject = ProjectSnapshot & {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  previewMode: PreviewMode;
+  activeTheme: ActiveTheme;
+  controlView: ControlPanelView;
+  editorTab: EditorPanelTab;
+};
 type QualityFinding = {
   label: string;
   severity: "info" | "warning" | "critical";
 };
+
+const PROJECTS_STORAGE_KEY = "design-system-generator.projects";
+const ACTIVE_PROJECT_STORAGE_KEY = "design-system-generator.active-project-id";
+const HISTORY_LIMIT = 60;
 
 const NEUTRAL_INFLUENCE_GROUPS: Array<{
   label: string;
@@ -533,6 +551,73 @@ function tokenReferenceOptions(system: GeneratedSystem) {
   );
 }
 
+function createProjectId() {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `project-${Date.now()}`;
+}
+
+function createSavedProject(name: string, snapshot?: Partial<ProjectSnapshot>): SavedProject {
+  const now = new Date().toISOString();
+  const inputs = snapshot?.inputs ?? INITIAL_INPUTS;
+  const system = snapshot?.system ?? createGeneratedSystem(inputs);
+
+  return {
+    id: createProjectId(),
+    name,
+    createdAt: now,
+    updatedAt: now,
+    inputs,
+    system,
+    previewMode: "dashboard",
+    activeTheme: "light",
+    controlView: "inputs",
+    editorTab: "foundations",
+  };
+}
+
+function normalizeProject(project: Partial<SavedProject>): SavedProject {
+  const fallback = createSavedProject(project.name || "Untitled project");
+  const inputs = { ...INITIAL_INPUTS, ...(project.inputs ?? {}) };
+
+  return {
+    ...fallback,
+    ...project,
+    id: project.id || fallback.id,
+    name: project.name || inputs.brandName || "Untitled project",
+    createdAt: project.createdAt || fallback.createdAt,
+    updatedAt: project.updatedAt || fallback.updatedAt,
+    inputs,
+    system: project.system ?? createGeneratedSystem(inputs),
+    previewMode: project.previewMode ?? "dashboard",
+    activeTheme: project.activeTheme ?? "light",
+    controlView: project.controlView ?? "inputs",
+    editorTab: project.editorTab ?? "foundations",
+  };
+}
+
+function readStoredProjects() {
+  if (typeof window === "undefined") {
+    const project = createSavedProject(INITIAL_INPUTS.brandName);
+    return { projects: [project], activeProject: project };
+  }
+
+  try {
+    const storedProjects = window.localStorage.getItem(PROJECTS_STORAGE_KEY);
+    const storedActiveProjectId = window.localStorage.getItem(ACTIVE_PROJECT_STORAGE_KEY);
+    const projects = storedProjects
+      ? (JSON.parse(storedProjects) as Array<Partial<SavedProject>>).map(normalizeProject)
+      : [];
+    const nextProjects = projects.length ? projects : [createSavedProject(INITIAL_INPUTS.brandName)];
+    const activeProject = nextProjects.find((project) => project.id === storedActiveProjectId) ?? nextProjects[0];
+
+    return { projects: nextProjects, activeProject };
+  } catch {
+    const project = createSavedProject(INITIAL_INPUTS.brandName);
+    return { projects: [project], activeProject: project };
+  }
+}
+
 function getSystemMetrics(system: GeneratedSystem) {
   const rawScaleCount = Object.keys(system.palettes).length * SCALE_STEPS.length;
   const semanticCount = SEMANTIC_TOKEN_NAMES.length * 2;
@@ -585,23 +670,52 @@ function TokenReferencePicker({
   onChange: (value: TokenReference) => void;
 }) {
   const selectedColor = getTokenSwatchColor(value, palettes);
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredOptions = normalizedQuery
+    ? options.filter((option) => option.toLowerCase().includes(normalizedQuery))
+    : options;
+
+  useEffect(() => {
+    if (!isOpen || normalizedQuery) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      selectedOptionRef.current?.scrollIntoView({ block: "center" });
+    });
+  }, [isOpen, normalizedQuery, value]);
 
   return (
-    <details className="token-picker">
+    <details className="token-picker" onToggle={(event) => setIsOpen(event.currentTarget.open)}>
       <summary className="token-picker-trigger">
         <span className="token-picker-chip" style={{ background: selectedColor }} />
         <span className="min-w-0 flex-1 truncate">{value}</span>
         <span className="token-picker-caret" aria-hidden="true" />
       </summary>
       <div className="token-picker-menu">
-        {options.map((option) => (
+        <div className="token-picker-search-wrap">
+          <input
+            className="token-picker-search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onClick={(event) => event.stopPropagation()}
+            placeholder="Search token..."
+            aria-label="Search token references"
+          />
+        </div>
+        {filteredOptions.map((option) => (
           <button
             key={option}
+            ref={option === value ? selectedOptionRef : undefined}
             type="button"
             className="token-picker-option"
             data-active={option === value}
             onClick={(event) => {
               onChange(option);
+              setQuery("");
               const details = event.currentTarget.closest("details");
               if (details instanceof HTMLDetailsElement) {
                 details.open = false;
@@ -612,6 +726,9 @@ function TokenReferencePicker({
             <span className="min-w-0 flex-1 truncate text-left">{option}</span>
           </button>
         ))}
+        {filteredOptions.length ? null : (
+          <div className="px-3 py-3 text-sm text-app-muted">No token found.</div>
+        )}
       </div>
     </details>
   );
@@ -9023,20 +9140,217 @@ function MarketingPreview({ brandName, system }: { brandName: string; system: Ge
 }
 
 export function DesignSystemGenerator() {
-  const [inputs, setInputs] = useState(INITIAL_INPUTS);
-  const [system, setSystem] = useState(() => createGeneratedSystem(INITIAL_INPUTS));
-  const [previewMode, setPreviewMode] = useState<PreviewMode>("dashboard");
-  const [activeTheme, setActiveTheme] = useState<ActiveTheme>("light");
-  const [controlView, setControlView] = useState<ControlPanelView>("inputs");
-  const [editorTab, setEditorTab] = useState<EditorPanelTab>("foundations");
+  const [initialWorkspace] = useState(readStoredProjects);
+  const [inputs, setInputs] = useState(initialWorkspace.activeProject.inputs);
+  const [system, setSystem] = useState(initialWorkspace.activeProject.system);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>(initialWorkspace.activeProject.previewMode);
+  const [activeTheme, setActiveTheme] = useState<ActiveTheme>(initialWorkspace.activeProject.activeTheme);
+  const [controlView, setControlView] = useState<ControlPanelView>(initialWorkspace.activeProject.controlView);
+  const [editorTab, setEditorTab] = useState<EditorPanelTab>(initialWorkspace.activeProject.editorTab);
+  const [projects, setProjects] = useState<SavedProject[]>(initialWorkspace.projects);
+  const [activeProjectId, setActiveProjectId] = useState<string>(initialWorkspace.activeProject.id);
+  const [projectMenuOpen, setProjectMenuOpen] = useState(false);
+  const [past, setPast] = useState<ProjectSnapshot[]>([]);
+  const [future, setFuture] = useState<ProjectSnapshot[]>([]);
+  const isRestoringRef = useRef(false);
   const deferredControlView = useDeferredValue(controlView);
+
+  function pushHistory(snapshot: ProjectSnapshot) {
+    setPast((current) => [...current.slice(-(HISTORY_LIMIT - 1)), snapshot]);
+    setFuture([]);
+  }
+
+  const setInputsWithHistory: Dispatch<SetStateAction<BrandInputs>> = (updater) => {
+    setInputs((currentInputs) => {
+      const nextInputs = typeof updater === "function"
+        ? (updater as (value: BrandInputs) => BrandInputs)(currentInputs)
+        : updater;
+
+      if (nextInputs === currentInputs) {
+        return currentInputs;
+      }
+
+      if (!isRestoringRef.current) {
+        pushHistory({ inputs: currentInputs, system });
+      }
+
+      return nextInputs;
+    });
+  };
+
+  const setSystemWithHistory: Dispatch<SetStateAction<GeneratedSystem>> = (updater) => {
+    setSystem((currentSystem) => {
+      const nextSystem = typeof updater === "function"
+        ? (updater as (value: GeneratedSystem) => GeneratedSystem)(currentSystem)
+        : updater;
+
+      if (nextSystem === currentSystem) {
+        return currentSystem;
+      }
+
+      if (!isRestoringRef.current) {
+        pushHistory({ inputs, system: currentSystem });
+      }
+
+      return nextSystem;
+    });
+  };
 
   function updateInputs(updater: (current: BrandInputs) => BrandInputs) {
     setInputs((current) => {
       const next = updater(current);
+
+      if (next === current) {
+        return current;
+      }
+
+      if (!isRestoringRef.current) {
+        pushHistory({ inputs: current, system });
+      }
+
       setSystem(createGeneratedSystem(next));
       return next;
     });
+  }
+
+  useEffect(() => {
+    if (isRestoringRef.current || !activeProjectId) {
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const sourceProjects = projects.length
+      ? projects
+      : [{
+          ...createSavedProject(inputs.brandName || "Untitled project", { inputs, system }),
+          id: activeProjectId,
+        }];
+    const nextProjects = sourceProjects.map((project) => (
+      project.id === activeProjectId
+        ? {
+            ...project,
+            name: project.name || inputs.brandName.trim() || "Untitled project",
+            updatedAt: now,
+            inputs,
+            system,
+            previewMode,
+            activeTheme,
+            controlView,
+            editorTab,
+          }
+        : project
+    ));
+
+    window.localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(nextProjects));
+    window.localStorage.setItem(ACTIVE_PROJECT_STORAGE_KEY, activeProjectId);
+  }, [activeProjectId, projects, inputs, system, previewMode, activeTheme, controlView, editorTab]);
+
+  function applyProject(project: SavedProject, projectList: SavedProject[]) {
+    isRestoringRef.current = true;
+    setProjects(projectList);
+    setActiveProjectId(project.id);
+    setInputs(project.inputs);
+    setSystem(project.system);
+    setPreviewMode(project.previewMode);
+    setActiveTheme(project.activeTheme);
+    setControlView(project.controlView);
+    setEditorTab(project.editorTab);
+    setPast([]);
+    setFuture([]);
+    setProjectMenuOpen(false);
+    window.localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projectList));
+    window.localStorage.setItem(ACTIVE_PROJECT_STORAGE_KEY, project.id);
+    window.setTimeout(() => {
+      isRestoringRef.current = false;
+    }, 0);
+  }
+
+  function restoreProject(project: SavedProject) {
+    const storedWorkspace = readStoredProjects();
+    const latestProject = storedWorkspace.projects.find((item) => item.id === project.id) ?? project;
+    applyProject(latestProject, storedWorkspace.projects);
+  }
+
+  function toggleProjectMenu() {
+    if (!projectMenuOpen) {
+      setProjects(readStoredProjects().projects);
+    }
+
+    setProjectMenuOpen((current) => !current);
+  }
+
+  function createNewProject() {
+    const project = createSavedProject("Untitled project");
+    applyProject(project, [project, ...projects]);
+  }
+
+  function duplicateCurrentProject() {
+    const project = createSavedProject(`${inputs.brandName || "Untitled project"} copy`, { inputs, system });
+    applyProject(project, [project, ...projects]);
+  }
+
+  function renameActiveProject() {
+    const currentProject = projects.find((project) => project.id === activeProjectId);
+    const nextName = window.prompt("Rename project", currentProject?.name ?? inputs.brandName);
+
+    if (!nextName?.trim()) {
+      return;
+    }
+
+    setProjects((current) => current.map((project) => (
+      project.id === activeProjectId
+        ? { ...project, name: nextName.trim(), updatedAt: new Date().toISOString() }
+        : project
+    )));
+  }
+
+  function deleteActiveProject() {
+    if (projects.length <= 1) {
+      const replacementProject = createSavedProject("Untitled project");
+      applyProject(replacementProject, [replacementProject]);
+      return;
+    }
+
+    if (!window.confirm("Delete this saved draft?")) {
+      return;
+    }
+
+    const remainingProjects = projects.filter((project) => project.id !== activeProjectId);
+    applyProject(remainingProjects[0], remainingProjects);
+  }
+
+  function undo() {
+    const previous = past.at(-1);
+
+    if (!previous) {
+      return;
+    }
+
+    isRestoringRef.current = true;
+    setPast((current) => current.slice(0, -1));
+    setFuture((current) => [{ inputs, system }, ...current.slice(0, HISTORY_LIMIT - 1)]);
+    setInputs(previous.inputs);
+    setSystem(previous.system);
+    window.setTimeout(() => {
+      isRestoringRef.current = false;
+    }, 0);
+  }
+
+  function redo() {
+    const next = future[0];
+
+    if (!next) {
+      return;
+    }
+
+    isRestoringRef.current = true;
+    setFuture((current) => current.slice(1));
+    setPast((current) => [...current.slice(-(HISTORY_LIMIT - 1)), { inputs, system }]);
+    setInputs(next.inputs);
+    setSystem(next.system);
+    window.setTimeout(() => {
+      isRestoringRef.current = false;
+    }, 0);
   }
 
   const colorErrors = useMemo(() => {
@@ -9078,6 +9392,8 @@ export function DesignSystemGenerator() {
     setEditorTab("components");
   }
 
+  const activeProject = projects.find((project) => project.id === activeProjectId);
+
   return (
     <main className="flex h-dvh w-full flex-col overflow-hidden bg-app-bg">
       <section className="flex min-h-[74px] shrink-0 items-center border-b border-app-border bg-app-surface px-5 py-3">
@@ -9094,8 +9410,74 @@ export function DesignSystemGenerator() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm text-app-muted">
-          <span className="inline-flex items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2"><Layers3 className="h-4 w-4" /> Semantic tokens</span>
-          <span className="inline-flex items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2"><MonitorCog className="h-4 w-4" /> Live product previews</span>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2 font-medium text-app-foreground disabled:cursor-not-allowed disabled:opacity-45"
+            onClick={undo}
+            disabled={!past.length}
+          >
+            Undo
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2 font-medium text-app-foreground disabled:cursor-not-allowed disabled:opacity-45"
+            onClick={redo}
+            disabled={!future.length}
+          >
+            Redo
+          </button>
+          <div className="relative">
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2 font-medium text-app-foreground"
+              onClick={toggleProjectMenu}
+            >
+              <Layers3 className="h-4 w-4" />
+              {activeProject?.name ?? inputs.brandName}
+            </button>
+            {projectMenuOpen ? (
+              <div className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-80 rounded-[1rem] border border-app-border bg-app-surface p-3 shadow-2xl">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-app-foreground">Saved drafts</p>
+                    <p className="mt-1 text-xs text-app-muted">Stored locally in this browser.</p>
+                  </div>
+                  <button type="button" className="rounded-full bg-app-accent px-3 py-2 text-xs font-semibold text-white" onClick={createNewProject}>
+                    New
+                  </button>
+                </div>
+                <div className="app-scrollbar mt-3 max-h-64 space-y-2 overflow-auto">
+                  {projects.map((project) => (
+                    <button
+                      key={project.id}
+                      type="button"
+                      className={`w-full rounded-[0.85rem] border px-3 py-3 text-left ${
+                        project.id === activeProjectId
+                          ? "border-app-foreground bg-app-bg text-app-foreground"
+                          : "border-app-border bg-app-surface text-app-muted"
+                      }`}
+                      onClick={() => restoreProject(project)}
+                    >
+                      <span className="block text-sm font-semibold">{project.name}</span>
+                      <span className="mt-1 block text-xs">Edited {new Date(project.updatedAt).toLocaleString()}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  <button type="button" className="rounded-lg border border-app-border px-3 py-2 text-xs font-semibold text-app-foreground" onClick={renameActiveProject}>
+                    Rename
+                  </button>
+                  <button type="button" className="rounded-lg border border-app-border px-3 py-2 text-xs font-semibold text-app-foreground" onClick={duplicateCurrentProject}>
+                    Duplicate
+                  </button>
+                  <button type="button" className="rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700" onClick={deleteActiveProject}>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+          <span className="hidden items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2 lg:inline-flex"><MonitorCog className="h-4 w-4" /> Auto-saved</span>
         </div>
         </div>
       </section>
@@ -9127,14 +9509,14 @@ export function DesignSystemGenerator() {
                 inputs={inputs}
                 setInputs={updateInputs}
                 system={system}
-                setSystem={setSystem}
+                setSystem={setSystemWithHistory}
                 colorErrors={colorErrors}
               />
             ) : (
               <TokenPanel
-                setInputs={setInputs}
+                setInputs={setInputsWithHistory}
                 system={system}
-                setSystem={setSystem}
+                setSystem={setSystemWithHistory}
                 brandName={inputs.brandName}
                 activeTab={editorTab}
                 setActiveTab={setEditorTab}
