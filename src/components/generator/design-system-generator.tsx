@@ -39,6 +39,7 @@ import { FONT_OPTIONS } from "@/data/fonts";
 import { getContrastRatio, isValidHex, normalizeHex } from "@/lib/color";
 import {
   buildComponentsJson,
+  buildDesignMd,
   buildReadme,
   buildSessionJson,
   buildThemeLayerCss,
@@ -1744,7 +1745,7 @@ function TokenPanel({
     }));
   }
 
-  function exportFile(type: "tokens" | "components" | "theme" | "themeLayer" | "readme" | "session") {
+  function exportFile(type: "tokens" | "components" | "theme" | "themeLayer" | "readme" | "designMd" | "session") {
     if (type === "tokens") {
       downloadTextFile("tokens.json", buildTokensJson(system, brandName), "application/json");
       return;
@@ -1771,6 +1772,11 @@ function TokenPanel({
         buildSessionJson(system, brandName),
         "application/json",
       );
+      return;
+    }
+
+    if (type === "designMd") {
+      downloadTextFile("design.md", buildDesignMd(system, brandName), "text/markdown");
       return;
     }
 
@@ -5552,6 +5558,7 @@ function TokenPanel({
             <button type="button" className="field text-left" onClick={() => exportFile("theme")}>Download `theme.css`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("themeLayer")}>Download `theme-layer.css`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("readme")}>Download `README.md`</button>
+            <button type="button" className="field text-left" onClick={() => exportFile("designMd")}>Download `design.md`</button>
             <button type="button" className="field text-left" onClick={() => exportFile("session")}>Save session JSON</button>
             <label className="field cursor-pointer text-left">
               Load session JSON
